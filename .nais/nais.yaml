@@ -24,6 +24,11 @@ spec:
   prometheus:
     enabled: true
     path: "/metrics"
+  accessPolicy:
+    inbound:
+      rules:
+        - application: "yrkesskade-melding-api"
+          namespace: "yrkesskade"
   resources:
     limits:
       cpu: "1"
