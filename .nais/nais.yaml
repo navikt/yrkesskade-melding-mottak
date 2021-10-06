@@ -29,6 +29,10 @@ spec:
       rules:
         - application: "yrkesskade-melding-api"
           namespace: "yrkesskade"
+    outbound:
+      rules:
+        - application: "yrkesskade-melding-api"
+          namespace: "yrkesskade"
   resources:
     limits:
       cpu: "1"
