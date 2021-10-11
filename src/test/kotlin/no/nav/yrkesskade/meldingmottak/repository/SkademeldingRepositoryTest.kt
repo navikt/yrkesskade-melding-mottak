@@ -1,4 +1,4 @@
-package no.nav.yrkesskade.ysmeldingmottak.repository
+package no.nav.yrkesskade.meldingmottak.repository
 
 import no.nav.yrkesskade.meldingmottak.domain.Skademelding
 import no.nav.yrkesskade.meldingmottak.repositories.SkademeldingRepository
@@ -24,7 +24,7 @@ class SkademeldingRepositoryTest {
     }
 
     @Test
-    fun contextLoads() {
+    fun `save one skademelding should return one skademelding`() {
         repository.save(
             Skademelding(
                 null,
@@ -34,5 +34,31 @@ class SkademeldingRepositoryTest {
             )
         )
         assertThat(repository.findAll().size).isEqualTo(1)
+    }
+
+    @Test
+    fun `save two skademeldinger should return two skademeldinger`() {
+        repository.save(
+            Skademelding(
+                null,
+                """{"some": "data"}""",
+                "me",
+                Instant.now()
+            )
+        )
+        repository.save(
+            Skademelding(
+                null,
+                """{"some more": "data"}""",
+                "me",
+                Instant.now()
+            )
+        )
+        assertThat(repository.findAll().size).isEqualTo(2)
+    }
+
+    @Test
+    fun `empty database should return no skademelding`() {
+        assertThat(repository.count()).isZero
     }
 }
