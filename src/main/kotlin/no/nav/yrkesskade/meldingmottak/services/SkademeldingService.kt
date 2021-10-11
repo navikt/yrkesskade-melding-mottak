@@ -1,7 +1,7 @@
-package no.nav.yrkesskade.ysmeldingmottak.services
+package no.nav.yrkesskade.meldingmottak.services
 
-import no.nav.yrkesskade.ysmeldingmottak.models.SkademeldingDto
-import no.nav.yrkesskade.ysmeldingmottak.repositories.SkademeldingRepository
+import no.nav.yrkesskade.meldingmottak.models.SkademeldingDto
+import no.nav.yrkesskade.meldingmottak.repositories.SkademeldingRepository
 import org.springframework.stereotype.Service
 
 @Service
