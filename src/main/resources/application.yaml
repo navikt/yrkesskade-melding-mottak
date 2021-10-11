@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${YRKESSKADE_MOTTAK_DB_HOST}:${YRKESSKADE_MOTTAK_DB_PORT}/yrkesskade-mottak
+    url: jdbc:postgresql://${YRKESSKADE_MOTTAK_DB_HOST}:${YRKESSKADE_MOTTAK_DB_PORT}/${YRKESSKADE_MOTTAK_DB_DATABASE}
     username: ${YRKESSKADE_MOTTAK_DB_USERNAME}
     password: ${YRKESSKADE_MOTTAK_DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
