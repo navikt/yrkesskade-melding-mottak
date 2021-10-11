@@ -30,9 +30,10 @@ management:
 
 ---
 spring:
-  profiles:
-    active: db
   datasource:
     url: jdbc:postgresql://localhost:5432/test
     username: test
     password: test
+  config:
+    activate:
+      on-profile: db
