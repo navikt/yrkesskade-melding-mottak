@@ -1,4 +1,4 @@
-package no.nav.yrkesskade.ysmeldingmottak
+package no.nav.yrkesskade.meldingmottak
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

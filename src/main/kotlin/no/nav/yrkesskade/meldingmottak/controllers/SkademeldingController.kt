@@ -1,7 +1,7 @@
-package no.nav.yrkesskade.ysmeldingmottak.controllers
+package no.nav.yrkesskade.meldingmottak.controllers
 
-import no.nav.yrkesskade.ysmeldingmottak.models.SkademeldingDto
-import no.nav.yrkesskade.ysmeldingmottak.services.SkademeldingService
+import no.nav.yrkesskade.meldingmottak.models.SkademeldingDto
+import no.nav.yrkesskade.meldingmottak.services.SkademeldingService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping

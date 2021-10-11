@@ -1,8 +1,8 @@
-package no.nav.yrkesskade.ysmeldingmottak.domain
+package no.nav.yrkesskade.meldingmottak.domain
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.yrkesskade.ysmeldingmottak.models.SkademeldingDto
+import no.nav.yrkesskade.meldingmottak.models.SkademeldingDto
 import java.time.Instant
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
