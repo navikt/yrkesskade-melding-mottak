@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping(
         path = ["/api/"],
-        produces = [MediaType.APPLICATION_JSON_VALUE],
-        consumes = [MediaType.APPLICATION_JSON_VALUE]
+        produces = [MediaType.APPLICATION_JSON_VALUE]
 )
 class SkademeldingController(private val skademeldingService: SkademeldingService) {
 
-    @PostMapping("/skademelding")
+    @PostMapping("/skademelding", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun mottaSkademelding(@RequestBody(required = true) skademeldingDto: SkademeldingDto): ResponseEntity<SkademeldingDto> {
         return ResponseEntity.ok().body(skademeldingService.mottaSkademelding(skademeldingDto))
     }
