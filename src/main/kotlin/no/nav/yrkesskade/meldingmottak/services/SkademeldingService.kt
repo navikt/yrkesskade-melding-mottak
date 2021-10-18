@@ -11,4 +11,8 @@ class SkademeldingService(private val skademeldingRepository: SkademeldingReposi
         val lagretSkademelding = skademeldingRepository.save(skademeldingDto.toSkademelding())
         return lagretSkademelding.toSkademeldingDto()
     }
+
+    fun hentAlleSkademeldinger(): List<SkademeldingDto> {
+        return skademeldingRepository.findAll().map { it.toSkademeldingDto() }
+    }
 }

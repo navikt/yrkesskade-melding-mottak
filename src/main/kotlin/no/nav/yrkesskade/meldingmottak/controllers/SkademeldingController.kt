@@ -4,6 +4,7 @@ import no.nav.yrkesskade.meldingmottak.models.SkademeldingDto
 import no.nav.yrkesskade.meldingmottak.services.SkademeldingService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -20,5 +21,10 @@ class SkademeldingController(private val skademeldingService: SkademeldingServic
     @PostMapping("/skademelding")
     fun mottaSkademelding(@RequestBody(required = true) skademeldingDto: SkademeldingDto): ResponseEntity<SkademeldingDto> {
         return ResponseEntity.ok().body(skademeldingService.mottaSkademelding(skademeldingDto))
+    }
+
+    @GetMapping("/skademelding")
+    fun hentSkademeldinger(): ResponseEntity<List<SkademeldingDto>> {
+        return ResponseEntity.ok().body(skademeldingService.hentAlleSkademeldinger())
     }
 }
