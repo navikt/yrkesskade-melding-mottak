@@ -1,4 +1,21 @@
 spring:
+  autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+  main.banner-mode: "off"
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS}
+    client-id: yrkesskade-melding-mottak
+#    properties:
+#      security.protocol: SASL_SSL
+#      sasl:
+#        mechanism: PLAIN
+#        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${CREDENTIAL_USERNAME}" password="${CREDENTIAL_PASSWORD}";
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      group-id: yrkesskade-melding-mottak
+      auto-offset-reset: earliest
+  #      max-poll-records: 1
+  #      enable-auto-commit: false
   datasource:
     url: jdbc:postgresql://${YRKESSKADE_MOTTAK_DB_HOST}:${YRKESSKADE_MOTTAK_DB_PORT}/${YRKESSKADE_MOTTAK_DB_DATABASE}
     username: ${YRKESSKADE_MOTTAK_DB_USERNAME}
@@ -30,10 +47,21 @@ management:
 
 ---
 spring:
+  config:
+    activate:
+      on-profile: db
   datasource:
     url: jdbc:postgresql://localhost:5432/test
     username: test
     password: test
+KAFKA_BROKERS: http://localhost:9092
+
+---
+spring:
   config:
     activate:
-      on-profile: db
+      on-profile: dev
+kafka:
+  topic:
+    aapen-dok-journalfoering: aapen-dok-journalfoering-v1-q1
+KAFKA_BROKERS: http://localhost:9092
