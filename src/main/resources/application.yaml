@@ -60,6 +60,28 @@ KAFKA_BROKERS: http://localhost:9092
 spring:
   config:
     activate:
+      on-profile: integration
+#  flyway:
+#    enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+    username: test
+    password: test
+  main:
+    allow-bean-definition-overriding: true
+  kafka:
+    properties:
+      schema.registry.url: http://mock:8081
+kafka:
+  topic:
+    aapen-dok-journalfoering: test
+KAFKA_BROKERS: PLAINTEXT://localhost:9092
+bootstrap:
+  servers: PLAINTEXT://localhost:9092
+---
+spring:
+  config:
+    activate:
       on-profile: dev
 kafka:
   topic:
