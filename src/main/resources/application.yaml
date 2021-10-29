@@ -75,9 +75,8 @@ spring:
 kafka:
   topic:
     aapen-dok-journalfoering: test
-KAFKA_BROKERS: PLAINTEXT://localhost:9092
-bootstrap:
-  servers: PLAINTEXT://localhost:9092
+
+KAFKA_BROKERS: http://localhost:9092
 ---
 spring:
   config:
