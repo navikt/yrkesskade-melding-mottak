@@ -76,7 +76,7 @@ kafka:
   topic:
     aapen-dok-journalfoering: test
 
-KAFKA_BROKERS: http://localhost:9092
+KAFKA_BROKERS: ${spring.embedded.kafka.brokers}
 ---
 spring:
   config:

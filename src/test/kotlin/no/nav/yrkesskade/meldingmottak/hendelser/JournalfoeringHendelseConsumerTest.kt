@@ -7,12 +7,18 @@ import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.yrkesskade.meldingmottak.testutils.docker.PostgresDockerContainer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
+import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.Mockito
+import org.mockito.Mockito.timeout
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.context.annotation.Bean
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry
@@ -25,15 +31,24 @@ import org.springframework.kafka.test.condition.EmbeddedKafkaCondition
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.kafka.test.utils.ContainerTestUtils
 import org.springframework.test.context.ActiveProfiles
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
+private const val TOPICS = "test"
 
 @ActiveProfiles("integration")
 @SpringBootTest
-@EmbeddedKafka(partitions = 1, ports = [9092], bootstrapServersProperty = "spring.kafka.bootstrap-servers")
+@EmbeddedKafka(topics = [TOPICS])
 internal class JournalfoeringHendelseConsumerTest {
+
+    @Captor
+    lateinit var argumentCaptor: ArgumentCaptor<JournalfoeringHendelseRecord>
 
     @Autowired
     lateinit var kafkaListenerEndpointRegistry: KafkaListenerEndpointRegistry
+
+    @SpyBean
+    lateinit var consumer: JournalfoeringHendelseConsumer
 
     val topicName: String = "test"
 
@@ -47,13 +62,24 @@ internal class JournalfoeringHendelseConsumerTest {
     @Before
     fun init() {
         for (messageListenerContainer in kafkaListenerEndpointRegistry.listenerContainers) {
-            ContainerTestUtils.waitForAssignment(messageListenerContainer, EmbeddedKafkaCondition.getBroker().partitionsPerTopic)
+            ContainerTestUtils.waitForAssignment(
+                    messageListenerContainer,
+                    EmbeddedKafkaCondition.getBroker().partitionsPerTopic
+            )
         }
     }
 
     @Test
     fun listen() {
-        kafkaTemplate.send(topicName, record()).get()
+        val record = record()
+//        val latch = CountDownLatch(1)
+        kafkaTemplate.send(topicName, record).get()
+//        latch.await(5, TimeUnit.SECONDS)
+//        latch.countDown()
+
+        Mockito.verify(consumer, timeout(5000).times(1))
+                .listen(argumentCaptor.capture())
+        Assertions.assertThat(argumentCaptor.value).isEqualTo(record)
     }
 
     fun record(): JournalfoeringHendelseRecord? {
