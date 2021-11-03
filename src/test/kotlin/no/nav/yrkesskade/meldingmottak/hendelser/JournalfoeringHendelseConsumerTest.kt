@@ -4,16 +4,15 @@ import io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import no.nav.yrkesskade.meldingmottak.hendelser.fixtures.journalfoeringHendelseRecord
 import no.nav.yrkesskade.meldingmottak.testutils.docker.PostgresDockerContainer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
-import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.Mockito.timeout
+import org.mockito.kotlin.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.boot.test.context.SpringBootTest
@@ -31,26 +30,19 @@ import org.springframework.kafka.test.condition.EmbeddedKafkaCondition
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.kafka.test.utils.ContainerTestUtils
 import org.springframework.test.context.ActiveProfiles
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
-private const val TOPICS = "test"
+private const val TOPIC = "test"
 
 @ActiveProfiles("integration")
 @SpringBootTest
-@EmbeddedKafka(topics = [TOPICS])
+@EmbeddedKafka(topics = [TOPIC])
 internal class JournalfoeringHendelseConsumerTest {
-
-    @Captor
-    lateinit var argumentCaptor: ArgumentCaptor<JournalfoeringHendelseRecord>
 
     @Autowired
     lateinit var kafkaListenerEndpointRegistry: KafkaListenerEndpointRegistry
 
     @SpyBean
     lateinit var consumer: JournalfoeringHendelseConsumer
-
-    val topicName: String = "test"
 
     @Autowired
     lateinit var kafkaTemplate: KafkaTemplate<String, Any>
@@ -71,30 +63,9 @@ internal class JournalfoeringHendelseConsumerTest {
 
     @Test
     fun listen() {
-        val record = record()
-//        val latch = CountDownLatch(1)
-        kafkaTemplate.send(topicName, record).get()
-//        latch.await(5, TimeUnit.SECONDS)
-//        latch.countDown()
-
-        Mockito.verify(consumer, timeout(5000).times(1))
-                .listen(argumentCaptor.capture())
-        Assertions.assertThat(argumentCaptor.value).isEqualTo(record)
-    }
-
-    fun record(): JournalfoeringHendelseRecord? {
-        return JournalfoeringHendelseRecord.newBuilder()
-                .setHendelsesId("hendelsesId")
-                .setVersjon(1)
-                .setHendelsesType("hendelsesType")
-                .setJournalpostId(1337)
-                .setJournalpostStatus("journalpostStatus")
-                .setTemaGammelt("YRK")
-                .setTemaNytt("YRK")
-                .setMottaksKanal("NRK")
-                .setKanalReferanseId("P1")
-                .setBehandlingstema("YRK")
-                .build()
+        val record = journalfoeringHendelseRecord()
+        kafkaTemplate.send(TOPIC, record).get()
+        Mockito.verify(consumer, timeout(20000L).times(1)).listen(any())
     }
 
     @TestConfiguration
