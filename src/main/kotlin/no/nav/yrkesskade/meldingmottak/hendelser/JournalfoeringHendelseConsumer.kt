@@ -12,7 +12,7 @@ class JournalfoeringHendelseConsumer {
 
     @KafkaListener(id = "yrkesskade-melding-mottak",
                    topics = ["\${kafka.topic.aapen-dok-journalfoering}"],
-                   containerFactory = "kafkaListenerContainerFactory",
+                   containerFactory = "kafkaJournalfoeringHendelseListenerContainerFactory",
                    idIsGroup = false)
     @Transactional
     fun listen(@Payload record: JournalfoeringHendelseRecord) {

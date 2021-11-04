@@ -1,5 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.config
 
+import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,9 +14,12 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 class KafkaConfig {
 
     @Bean
-    fun kafkaListenerContainerFactory(kafkaProperties: KafkaProperties): ConcurrentKafkaListenerContainerFactory<String, String> {
-        val consumerFactory = DefaultKafkaConsumerFactory<String, String>(kafkaProperties.buildConsumerProperties())
-        return ConcurrentKafkaListenerContainerFactory<String, String>().apply {
+    fun kafkaJournalfoeringHendelseListenerContainerFactory(kafkaProperties: KafkaProperties):
+            ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord> {
+        val consumerProperties = kafkaProperties.buildConsumerProperties()
+        consumerProperties["specific.avro.reader"] = "true"
+        val consumerFactory = DefaultKafkaConsumerFactory<String, JournalfoeringHendelseRecord>(consumerProperties)
+        return ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
             this.setConsumerFactory(consumerFactory)
         }
     }

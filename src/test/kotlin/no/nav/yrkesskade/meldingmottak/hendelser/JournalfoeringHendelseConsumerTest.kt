@@ -88,7 +88,8 @@ internal class JournalfoeringHendelseConsumerTest {
         }
 
         @Bean
-        fun kafkaListenerContainerFactory(kafkaConsumerFactory: ConsumerFactory<String?, Any?>): ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord> {
+        fun kafkaJournalfoeringHendelseListenerContainerFactory(kafkaConsumerFactory: ConsumerFactory<String?, Any?>):
+                ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord> {
             return ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
                 this.setConsumerFactory(kafkaConsumerFactory)
             }
