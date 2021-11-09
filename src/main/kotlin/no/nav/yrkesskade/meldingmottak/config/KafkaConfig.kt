@@ -23,16 +23,4 @@ class KafkaConfig {
             this.setConsumerFactory(consumerFactory)
         }
     }
-
-//    @Bean
-//    fun kafkaJournalføringHendelseListenerContainerFactory(properties: KafkaProperties, kafkaErrorHandler: KafkaErrorHandler)
-//            : ConcurrentKafkaListenerContainerFactory<Long, JournalfoeringHendelseRecord> {
-//        properties.properties.put("specific.avro.reader", "true")
-//        val factory = ConcurrentKafkaListenerContainerFactory<Long, JournalfoeringHendelseRecord>()
-//        factory.containerProperties.ackMode = ContainerProperties.AckMode.MANUAL_IMMEDIATE
-//        factory.containerProperties.authorizationExceptionRetryInterval = Duration.ofSeconds(2)
-//        factory.consumerFactory = DefaultKafkaConsumerFactory(properties.buildConsumerProperties())
-//        factory.setErrorHandler(kafkaErrorHandler)
-//        return factory
-//    }
 }
