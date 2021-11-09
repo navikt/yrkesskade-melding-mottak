@@ -71,7 +71,7 @@ spring:
     allow-bean-definition-overriding: true
   kafka:
     properties:
-      schema.registry.url: http://mock:8081
+      schema.registry.url: denne-maa-bare-ha-en-verdi
 kafka:
   topic:
     aapen-dok-journalfoering: test
