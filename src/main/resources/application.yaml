@@ -14,8 +14,6 @@ spring:
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       group-id: yrkesskade-melding-mottak
       auto-offset-reset: earliest
-  #      max-poll-records: 1
-  #      enable-auto-commit: false
   datasource:
     url: jdbc:postgresql://${YRKESSKADE_MOTTAK_DB_HOST}:${YRKESSKADE_MOTTAK_DB_PORT}/${YRKESSKADE_MOTTAK_DB_DATABASE}
     username: ${YRKESSKADE_MOTTAK_DB_USERNAME}
