@@ -14,7 +14,7 @@ import java.time.Instant
 @DataJpaTest
 @ActiveProfiles("db")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class SkademeldingRepositoryTest {
+class SkademeldingRepositoryIT {
 
     @Autowired
     lateinit var repository: SkademeldingRepository

@@ -1,4 +1,19 @@
 spring:
+  autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+  main.banner-mode: "off"
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS}
+    client-id: yrkesskade-melding-mottak
+#    properties:
+#      security.protocol: SASL_SSL
+#      sasl:
+#        mechanism: PLAIN
+#        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${CREDENTIAL_USERNAME}" password="${CREDENTIAL_PASSWORD}";
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      group-id: yrkesskade-melding-mottak
+      auto-offset-reset: earliest
   datasource:
     url: jdbc:postgresql://${YRKESSKADE_MOTTAK_DB_HOST}:${YRKESSKADE_MOTTAK_DB_PORT}/${YRKESSKADE_MOTTAK_DB_DATABASE}
     username: ${YRKESSKADE_MOTTAK_DB_USERNAME}
@@ -30,10 +45,43 @@ management:
 
 ---
 spring:
+  config:
+    activate:
+      on-profile: db
   datasource:
     url: jdbc:postgresql://localhost:5432/test
     username: test
     password: test
+KAFKA_BROKERS: http://localhost:9092
+
+---
+spring:
   config:
     activate:
-      on-profile: db
+      on-profile: integration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+    username: test
+    password: test
+  main:
+    allow-bean-definition-overriding: true
+  kafka:
+    properties:
+      schema.registry.url: denne-maa-bare-ha-en-verdi
+kafka:
+  topic:
+    aapen-dok-journalfoering: test
+
+KAFKA_BROKERS: ${spring.embedded.kafka.brokers}
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  kafka:
+    properties:
+      schema.registry.url: https://kafka-schema-registry.nais.preprod.local
+kafka:
+  topic:
+    aapen-dok-journalfoering: aapen-dok-journalfoering-v1-q1
+KAFKA_BROKERS: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
