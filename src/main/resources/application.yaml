@@ -59,8 +59,6 @@ spring:
   config:
     activate:
       on-profile: integration
-#  flyway:
-#    enabled: false
   datasource:
     url: jdbc:postgresql://localhost:5432/test
     username: test
@@ -80,6 +78,9 @@ spring:
   config:
     activate:
       on-profile: dev
+  kafka:
+    properties:
+      schema.registry.url: https://kafka-schema-registry.nais.preprod.local
 kafka:
   topic:
     aapen-dok-journalfoering: aapen-dok-journalfoering-v1-q1
