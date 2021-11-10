@@ -36,7 +36,7 @@ private const val TOPIC = "test"
 @ActiveProfiles("integration")
 @SpringBootTest
 @EmbeddedKafka(topics = [TOPIC])
-internal class JournalfoeringHendelseConsumerTest {
+internal class JournalfoeringHendelseConsumerIT {
 
     @Autowired
     lateinit var kafkaListenerEndpointRegistry: KafkaListenerEndpointRegistry
