@@ -16,10 +16,6 @@
 
 	<repositories>
 		<repository>
-			<id>Nexus NAV Repository Group</id>
-			<url>https://repo.adeo.no/repository/maven-public/</url>
-		</repository>
-		<repository>
 			<id>confluent</id>
 			<url>https://packages.confluent.io/maven/</url>
 		</repository>
