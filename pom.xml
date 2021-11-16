@@ -14,13 +14,6 @@
 	<name>ys-melding-mottak</name>
 	<description>Mottaksmodul for innsendte meldinger om yrkesskade, -sykdom og menerstatning</description>
 
-	<repositories>
-		<repository>
-			<id>confluent</id>
-			<url>https://packages.confluent.io/maven/</url>
-		</repository>
-	</repositories>
-
 	<properties>
 		<java.version>11</java.version>
 		<kotlin.version>1.5.31</kotlin.version>
