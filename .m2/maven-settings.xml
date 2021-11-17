@@ -12,30 +12,9 @@
             <id>github</id>
             <repositories>
                 <repository>
-                    <id>central</id>
-                    <url>https://repo1.maven.org/maven2</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </repository>
-                <repository>
-                    <id>confluent</id>
-                    <name>Confluent-pakker</name>
-                    <url>https://packages.confluent.io/maven/</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </repository>
-                <repository>
                     <id>github</id>
-                    <name>journalfoeringhendelser packages</name>
-                    <url>https://maven.pkg.github.com/navikt/teamdokumenthandtering-avro-schemas</url>
+                    <name>soknadarkiv-schema packages</name>
+                    <url>https://maven.pkg.github.com/navikt/soknadarkiv-schema</url>
                 </repository>
             </repositories>
         </profile>
