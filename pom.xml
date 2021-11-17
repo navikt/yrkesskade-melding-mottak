@@ -29,10 +29,6 @@
 			<id>confluent</id>
 			<url>https://packages.confluent.io/maven</url>
 		</repository>
-		<repository>
-			<id>central</id>
-			<url>https://repo1.maven.org/maven2</url>
-		</repository>
 	</repositories>
 
 	<dependencies>
@@ -128,9 +124,9 @@
 			<version>2.7.6</version>
 		</dependency>
 		<dependency>
-			<groupId>no.nav.doknotifikasjon</groupId>
+			<groupId>no.nav.teamdokumenthandtering</groupId>
 			<artifactId>teamdokumenthandtering-avro-schemas</artifactId>
-			<version>58cb38b3</version>
+			<version>45f2c5c6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito.kotlin</groupId>
