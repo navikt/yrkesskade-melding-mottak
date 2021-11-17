@@ -26,6 +26,11 @@
             <username>${GITHUB_USERNAME}</username>
             <password>${GITHUB_TOKEN}</password>
         </server>
+        <server>
+            <id>teamdokumenthandtering-avro-schemas</id>
+            <username>x-access-token</username>
+            <password>${GITHUB_PASSWORD}</password>
+        </server>
     </servers>
 
 </settings>
