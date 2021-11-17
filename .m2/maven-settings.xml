@@ -13,7 +13,7 @@
             <repositories>
                 <repository>
                     <id>github</id>
-                    <name>soknadarkiv-schema packages</name>
+                    <name>GitHub navikt Apache Maven Packages</name>
                     <url>https://maven.pkg.github.com/navikt/teamdokumenthandtering-avro-schemas</url>
                 </repository>
             </repositories>
