@@ -14,7 +14,7 @@
                 <repository>
                     <id>github</id>
                     <name>soknadarkiv-schema packages</name>
-                    <url>https://maven.pkg.github.com/navikt/teamdokumenthandtering-avro-schemas</url>
+                    <url>https://github-registry-files.githubusercontent.com/navikt/teamdokumenthandtering-avro-schemas</url>
                 </repository>
             </repositories>
         </profile>
