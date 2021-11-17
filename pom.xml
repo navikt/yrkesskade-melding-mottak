@@ -18,6 +18,23 @@
 		<java.version>11</java.version>
 		<kotlin.version>1.5.31</kotlin.version>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>github</id>
+			<name>nav github</name>
+			<url>https://github-package-registry-mirror.gc.nav.no/cached/maven-release</url>
+		</repository>
+		<repository>
+			<id>confluent</id>
+			<url>https://packages.confluent.io/maven</url>
+		</repository>
+		<repository>
+			<id>central</id>
+			<url>https://repo1.maven.org/maven2</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
