@@ -124,9 +124,9 @@
 			<version>2.7.6</version>
 		</dependency>
 		<dependency>
-			<groupId>no.nav.teamdokumenthandtering</groupId>
-			<artifactId>teamdokumenthandtering-avro-schemas</artifactId>
-			<version>a4c1e7f5</version>
+			<groupId>no.nav.dok</groupId>
+			<artifactId>dok-journalfoering-hendelse-v1</artifactId>
+			<version>0.0.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito.kotlin</groupId>
