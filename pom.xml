@@ -126,7 +126,7 @@
 		<dependency>
 			<groupId>no.nav.teamdokumenthandtering</groupId>
 			<artifactId>teamdokumenthandtering-avro-schemas</artifactId>
-			<version>45f2c5c6</version>
+			<version>a4c1e7f5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito.kotlin</groupId>
