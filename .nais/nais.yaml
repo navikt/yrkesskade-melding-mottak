@@ -7,6 +7,9 @@ metadata:
     "team": "yrkesskade"
 spec:
   image: {{image}}
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: dev
   liveness:
     path: "/internal/health"
     port: 8080
