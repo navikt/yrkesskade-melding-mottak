@@ -82,9 +82,9 @@ spring:
     properties:
       schema.registry.url: https://kafka-schema-registry.nais.preprod.local
       security.protocol: SASL_SSL
-        sasl:
-          mechanism: PLAIN
-          jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${CREDENTIAL_USERNAME}" password="${CREDENTIAL_PASSWORD}";
+      sasl:
+        mechanism: PLAIN
+        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${CREDENTIAL_USERNAME}" password="${CREDENTIAL_PASSWORD}";
 kafka:
   topic:
     aapen-dok-journalfoering: aapen-dok-journalfoering-v1-q1
