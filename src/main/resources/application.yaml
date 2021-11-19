@@ -94,5 +94,4 @@ spring:
 
 kafka:
   topic:
-    aapen-dok-journalfoering: aapen-dok-journalfoering-v1-q1
-#KAFKA_BROKERS: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
+    aapen-dok-journalfoering: teamdokumenthandtering.aapen-dok-journalfoering-q1
