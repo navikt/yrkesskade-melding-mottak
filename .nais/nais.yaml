@@ -53,3 +53,5 @@ spec:
         databases:
           - name: yrkesskade-mottak
             envVarPrefix: YRKESSKADE_MOTTAK_DB
+  kafka:
+    pool: nav-dev
