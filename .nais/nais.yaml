@@ -53,5 +53,12 @@ spec:
         databases:
           - name: yrkesskade-mottak
             envVarPrefix: YRKESSKADE_MOTTAK_DB
+  azure:
+    application:
+      enabled: true
+      tenant: trygdeetaten.no
+      claims:
+        groups:
+          - id: "b7aaab86-2c12-4b32-89ee-6f795bb69406"
   kafka:
     pool: nav-dev
