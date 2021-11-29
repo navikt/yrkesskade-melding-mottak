@@ -37,6 +37,7 @@ management:
         include: info, health, metrics, prometheus
       base-path: /internal
   metrics.export.prometheus.enabled: true
+saf.graphql.url: https://saf-q1.dev.adeo.no/graphql
 
 ---
 spring:
