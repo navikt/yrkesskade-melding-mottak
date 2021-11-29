@@ -21,9 +21,9 @@ class JournalfoeringHendelseConsumer(@Value("\${saf.graphql.url}") private val s
     val safClient = GraphQLWebClient(url = safGraphqlUrl)
 
     @KafkaListener(id = "yrkesskade-melding-mottak",
-                   topics = ["\${kafka.topic.aapen-dok-journalfoering}"],
-                   containerFactory = "kafkaJournalfoeringHendelseListenerContainerFactory",
-                   idIsGroup = false)
+            topics = ["\${kafka.topic.aapen-dok-journalfoering}"],
+            containerFactory = "kafkaJournalfoeringHendelseListenerContainerFactory",
+            idIsGroup = false)
     @Transactional
     fun listen(@Payload record: JournalfoeringHendelseRecord) {
         log.info(record.toString())
