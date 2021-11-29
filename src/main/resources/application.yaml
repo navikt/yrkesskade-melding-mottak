@@ -39,6 +39,24 @@ management:
   metrics.export.prometheus.enabled: true
 saf.graphql.url: https://saf-q1.dev.adeo.no/graphql
 
+SAF_APP_CLIENT_ID: dev-fss.teamdokumenthandtering.saf
+TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851         # trygdeetaten.no
+
+no.nav.security.jwt:
+  issuer:
+    aad:
+      discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
+      accepted_audience: ${AZURE_APP_CLIENT_ID}
+  client:
+    registration:
+      saf-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${SAF_APP_CLIENT_ID}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
 ---
 spring:
   config:
