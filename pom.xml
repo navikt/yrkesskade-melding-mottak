@@ -17,6 +17,8 @@
 	<properties>
 		<java.version>11</java.version>
 		<kotlin.version>1.5.31</kotlin.version>
+		<graphql-kotlin.version>5.2.0</graphql-kotlin.version>
+		<tokenValidationVersion>1.3.9</tokenValidationVersion>
 	</properties>
 
 	<repositories>
@@ -49,6 +51,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-kotlin</artifactId>
@@ -123,6 +130,21 @@
 			<version>2.7.6</version>
 		</dependency>
 		<dependency>
+			<groupId>com.expediagroup</groupId>
+			<artifactId>graphql-kotlin-spring-client</artifactId>
+			<version>${graphql-kotlin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.security</groupId>
+			<artifactId>token-validation-spring</artifactId>
+			<version>${tokenValidationVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.security</groupId>
+			<artifactId>token-client-spring</artifactId>
+			<version>${tokenValidationVersion}</version>
+		</dependency>
+		<dependency>
 			<groupId>no.nav.teamdokumenthandtering</groupId>
 			<artifactId>teamdokumenthandtering-avro-schemas</artifactId>
 			<version>53bc4de1</version>
@@ -170,6 +192,25 @@
 						<version>${kotlin.version}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>com.expediagroup</groupId>
+				<artifactId>graphql-kotlin-maven-plugin</artifactId>
+				<version>${graphql-kotlin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate-client</goal>
+						</goals>
+						<configuration>
+							<packageName>com.expediagroup.graphql.generated</packageName>
+							<schemaFile>${project.basedir}/src/main/resources/graphql/saf.graphqls</schemaFile>
+							<queryFiles>
+								<queryFile>${project.basedir}/src/main/resources/graphql/journalpost.graphql</queryFile>
+							</queryFiles>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
