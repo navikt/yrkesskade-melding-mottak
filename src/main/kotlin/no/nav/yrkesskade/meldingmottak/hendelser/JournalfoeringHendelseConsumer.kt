@@ -1,19 +1,24 @@
 package no.nav.yrkesskade.meldingmottak.hendelser
 
 import com.expediagroup.graphql.client.spring.GraphQLWebClient
-import com.expediagroup.graphql.client.types.GraphQLClientResponse
 import com.expediagroup.graphql.generated.Journalpost
-import kotlinx.coroutines.runBlocking
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
+import okhttp3.MediaType.Companion.toMediaType
+import org.springframework.http.MediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpHeaders
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Service
 import java.lang.invoke.MethodHandles
 import javax.transaction.Transactional
-import javax.ws.rs.core.HttpHeaders
 
 
 @Service
@@ -24,6 +29,7 @@ class JournalfoeringHendelseConsumer(
     private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
 
     val safClient = GraphQLWebClient(url = safGraphqlUrl)
+    private val httpClient = OkHttpClient()
 
     @KafkaListener(
         id = "yrkesskade-melding-mottak",
@@ -48,17 +54,28 @@ class JournalfoeringHendelseConsumer(
     fun hentOppdatertJournalpost(journalpostId: String): Journalpost.Result? {
         val token = tokenUtil.getAppAccessTokenWithSafScope()
         log.info("Hentet token")
-        val journalpostQuery = Journalpost(Journalpost.Variables(journalpostId))
 
         log.info("Henter oppdatert journalpost for id $journalpostId på url $safGraphqlUrl")
-        val oppdatertJournalpost: Journalpost.Result?
-        runBlocking {
-            val response: GraphQLClientResponse<Journalpost.Result> = safClient.execute(journalpostQuery) {
-                header(HttpHeaders.AUTHORIZATION, "Bearer $token")
-            }
-            oppdatertJournalpost = response.data
-            log.info("SAF Response errors: ${response.errors}")
+        val graphQLQuery =
+            this::class.java.getResource("/graphql/journalpost.graphql")
+                .readText().replace("[\n\r]", "")
+
+        val query = JournalpostQuery(query = graphQLQuery, variables = """{journalpostId: $journalpostId}""")
+        val postBody = jacksonObjectMapper().writeValueAsString(query)
+        val request = Request.Builder()
+            .url(safGraphqlUrl)
+            .post(postBody.toRequestBody(MediaType.APPLICATION_JSON_VALUE.toMediaType()))
+            .header(HttpHeaders.AUTHORIZATION, "Bearer $token")
+            .build()
+
+        httpClient.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw RuntimeException("Unexpected code $response")
+            return jacksonObjectMapper().readValue(response.body!!.string())
         }
-        return oppdatertJournalpost
     }
 }
+
+data class JournalpostQuery(
+    val query: String,
+    val variables: String
+)
