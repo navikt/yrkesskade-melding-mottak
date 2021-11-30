@@ -47,14 +47,17 @@ class JournalfoeringHendelseConsumer(
 
     fun hentOppdatertJournalpost(journalpostId: String): Journalpost.Result? {
         val token = tokenUtil.getAppAccessTokenWithSafScope()
+        log.info("Hentet token")
         val journalpostQuery = Journalpost(Journalpost.Variables(journalpostId))
 
+        log.info("Henter oppdatert journalpost for id $journalpostId på url $safGraphqlUrl")
         val oppdatertJournalpost: Journalpost.Result?
         runBlocking {
             val response: GraphQLClientResponse<Journalpost.Result> = safClient.execute(journalpostQuery) {
                 header(HttpHeaders.AUTHORIZATION, "Bearer $token")
             }
             oppdatertJournalpost = response.data
+            log.info("SAF Response errors: ${response.errors}")
         }
         return oppdatertJournalpost
     }
