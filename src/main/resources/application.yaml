@@ -37,7 +37,7 @@ management:
         include: info, health, metrics, prometheus
       base-path: /internal
   metrics.export.prometheus.enabled: true
-saf.graphql.url: https://saf-q1.dev.adeo.no/graphql
+saf.graphql.url: https://saf.dev-fss-pub.nais.io/graphql
 
 SAF_APP_CLIENT_ID: dev-fss.teamdokumenthandtering.saf
 TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851         # trygdeetaten.no
