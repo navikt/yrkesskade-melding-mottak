@@ -1,22 +1,22 @@
-apiVersion: "nais.io/v1alpha1"
-kind: "Application"
+apiVersion: nais.io/v1alpha1
+kind: Application
 metadata:
-  name: "yrkesskade-melding-mottak"
-  namespace: "yrkesskade"
+  name: yrkesskade-melding-mottak
+  namespace: yrkesskade
   labels:
-    "team": "yrkesskade"
+    team: yrkesskade
 spec:
   image: {{image}}
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: dev
   liveness:
-    path: "/internal/health"
+    path: /internal/health
     port: 8080
     initialDelay: 20
     timeout: 60
   readiness:
-    path: "/internal/health"
+    path: /internal/health
     port: 8080
     initialDelay: 20
     timeout: 60
@@ -26,12 +26,12 @@ spec:
     cpuThresholdPercentage: 50
   prometheus:
     enabled: true
-    path: "/metrics"
+    path: /metrics
   accessPolicy:
     inbound:
       rules:
-        - application: "yrkesskade-melding-api"
-          namespace: "yrkesskade"
+        - application: yrkesskade-melding-api
+          namespace: yrkesskade
     outbound:
       rules:
         - application: yrkesskade-melding-api
@@ -40,11 +40,11 @@ spec:
         - host: saf.dev-fss-pub.nais.io
   resources:
     limits:
-      cpu: "2"
-      memory: "2Gi"
+      cpu: 2
+      memory: 2Gi
     requests:
-      cpu: "200m"
-      memory: "1024Mi"
+      cpu: 200m
+      memory: 1024Mi
   ingresses: 
   {{#each ingresses as |url|}}
     - {{url}}
@@ -61,6 +61,6 @@ spec:
       tenant: trygdeetaten.no
       claims:
         groups:
-          - id: "b7aaab86-2c12-4b32-89ee-6f795bb69406"
+          - id: b7aaab86-2c12-4b32-89ee-6f795bb69406
   kafka:
     pool: nav-dev
