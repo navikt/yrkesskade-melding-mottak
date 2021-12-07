@@ -38,6 +38,7 @@ spec:
           namespace: yrkesskade
       external:
         - host: saf.dev-fss-pub.nais.io
+        - host: oppgave-q1.dev-fss-pub.nais.io
   resources:
     limits:
       cpu: 2000m
