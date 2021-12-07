@@ -39,7 +39,7 @@ management:
       base-path: /internal
   metrics.export.prometheus.enabled: true
 saf.graphql.url: https://saf.dev-fss-pub.nais.io/graphql
-oppgave.url: https://oppgave-q1.dev.intern.nav.no
+oppgave.url: https://oppgave-q1.dev-fss-pub.nais.io
 
 SAF_APP_CLIENT_ID: dev-fss.teamdokumenthandtering.saf
 OPPGAVE_APP_CLIENT_ID: bef7cd4d-e65e-41f8-a743-b643e81f2aea
