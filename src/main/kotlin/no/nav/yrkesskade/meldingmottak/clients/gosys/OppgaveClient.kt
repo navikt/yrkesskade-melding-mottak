@@ -27,8 +27,9 @@ class OppgaveClient(
         log.info("Oppretter oppgave for journalpostId ${oppgave.journalpostId}")
         return oppgaveWebClient.post()
             .uri { uriBuilder ->
-                uriBuilder.pathSegment("Oppgave")
-                    .pathSegment("opprettOppgave")
+                uriBuilder.pathSegment("api")
+                    .pathSegment("v1")
+                    .pathSegment("oppgaver")
                     .build()
             }
             .contentType(MediaType.APPLICATION_JSON)
