@@ -1,4 +1,5 @@
 spring:
+  application.name: yrkesskade-melding-mottak
   autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
   main.banner-mode: "off"
   kafka:
@@ -38,8 +39,10 @@ management:
       base-path: /internal
   metrics.export.prometheus.enabled: true
 saf.graphql.url: https://saf.dev-fss-pub.nais.io/graphql
+oppgave.url: https://oppgave-q1.dev.intern.nav.no
 
 SAF_APP_CLIENT_ID: dev-fss.teamdokumenthandtering.saf
+OPPGAVE_APP_CLIENT_ID: bef7cd4d-e65e-41f8-a743-b643e81f2aea
 TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851         # trygdeetaten.no
 
 no.nav.security.jwt:
@@ -57,6 +60,15 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-jwk: ${AZURE_APP_JWK}
           client-auth-method: private_key_jwt
+      oppgave-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${OPPGAVE_APP_CLIENT_ID}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
+
 ---
 spring:
   config:

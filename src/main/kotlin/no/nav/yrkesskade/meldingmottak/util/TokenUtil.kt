@@ -17,4 +17,9 @@ class TokenUtil(
         return response.accessToken
     }
 
+    fun getAppAccessTokenWithOppgaveScope(): String {
+        val clientProperties = clientConfigurationProperties.registration["oppgave-maskintilmaskin"]
+        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
+        return response.accessToken
+    }
 }
