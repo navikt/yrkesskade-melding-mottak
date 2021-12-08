@@ -48,7 +48,6 @@ data class OpprettJournalfoeringOppgave(
     val tittel: String? = null,
     val journalpostId: String? = null,
     val aktoerId: String? = null,
-    val saksId: String? = null,
     val tema: String,
     val behandlingstema: String? = null,
     val oppgavetype: String,

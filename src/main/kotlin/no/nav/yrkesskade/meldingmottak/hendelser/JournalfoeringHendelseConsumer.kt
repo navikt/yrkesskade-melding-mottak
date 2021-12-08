@@ -45,17 +45,16 @@ class JournalfoeringHendelseConsumer(
 
                         oppgaveClient.opprettOppgave(
                             OpprettJournalfoeringOppgave(
-                                "Tester YRK, Hei og hopp",
-                                journalpost.journalpostId,
-                                journalpost.bruker?.id,
-                                journalpost.sak?.fagsakId,
-                                journalpost.tema.toString(),
-                                BEHANDLINGSTEMA_YRKESSKADE,
-                                OPPGAVETYPE_JOURNALFOERING,
-                                BEHANDLINGSTYPE_YRKESSKADEMELDING,
-                                Prioritet.NORM,
-                                LocalDate.now().plusDays(1),
-                                LocalDate.now()
+                                tittel = "Tester YRK, Hei og hopp",
+                                journalpostId = journalpost.journalpostId,
+                                aktoerId = journalpost.bruker?.id,
+                                tema = journalpost.tema.toString(),
+                                behandlingstema = BEHANDLINGSTEMA_SKADEMELDING,
+                                oppgavetype = OPPGAVETYPE_JOURNALFOERING,
+                                behandlingstype = null,
+                                prioritet = Prioritet.NORM,
+                                fristFerdigstillelse = LocalDate.now().plusDays(1),
+                                aktivDato = LocalDate.now()
                             )
                         )
                     }
@@ -65,7 +64,7 @@ class JournalfoeringHendelseConsumer(
     }
 
     companion object {
-        private const val BEHANDLINGSTEMA_YRKESSKADE = "ab0106"
+        private const val BEHANDLINGSTEMA_SKADEMELDING = "ab0106"
         private const val BEHANDLINGSTYPE_YRKESSKADEMELDING = "ae0045"
         private const val OPPGAVETYPE_JOURNALFOERING = "JFR"
     }
