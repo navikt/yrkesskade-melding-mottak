@@ -24,7 +24,8 @@ class OppgaveClient(
 
     @Retryable
     fun opprettOppgave(oppgave: OpprettJournalfoeringOppgave): Oppgave {
-        log.info("Oppretter oppgave for journalpostId ${oppgave.journalpostId}")
+        val correlation = UUID.randomUUID().toString()
+        log.info("Oppretter oppgave for journalpostId ${oppgave.journalpostId} med correlation $correlation")
         return oppgaveWebClient.post()
             .uri { uriBuilder ->
                 uriBuilder.pathSegment("api")
@@ -34,7 +35,7 @@ class OppgaveClient(
             }
             .contentType(MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithOppgaveScope()}")
-            .header("X-Correlation-ID", UUID.randomUUID().toString())
+            .header("X-Correlation-ID", correlation)
             .header("Nav-Consumer-Id", applicationName)
             .bodyValue(oppgave)
             .retrieve()
