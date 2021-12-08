@@ -64,7 +64,7 @@ class JournalfoeringHendelseConsumer(
     }
 
     companion object {
-        private const val BEHANDLINGSTEMA_YRKESSKADE = "ab0339"
+        private const val BEHANDLINGSTEMA_YRKESSKADE = "ab0106"
         private const val BEHANDLINGSTYPE_YRKESSKADEMELDING = "ae0045"
         private const val OPPGAVETYPE_JOURNALFOERING = "JFR"
     }
