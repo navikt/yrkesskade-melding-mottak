@@ -48,6 +48,7 @@ class JournalfoeringHendelseConsumer(
                                 "Tester YRK, Hei og hopp",
                                 journalpost.journalpostId,
                                 journalpost.bruker?.id,
+                                journalpost.sak?.fagsakId,
                                 journalpost.tema.toString(),
                                 BEHANDLINGSTEMA_YRKESSKADE,
                                 OPPGAVETYPE_JOURNALFOERING,
