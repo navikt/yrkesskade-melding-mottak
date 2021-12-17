@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles
 import java.time.Instant
 
 @DataJpaTest
-@ActiveProfiles("db")
+@ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class SkademeldingRepositoryIT {
 
