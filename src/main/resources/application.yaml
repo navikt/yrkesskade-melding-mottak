@@ -77,16 +77,16 @@ no.nav.security.jwt:
         grant-type: client_credentials
         scope: saf
         authentication:
-          client-id: client-id
-          client-secret: secretttttt
+          client-id: dummy-client-id
+          client-secret: dummy-secret
           client-auth-method: client_secret_basic
       oppgave-maskintilmaskin:
         token-endpoint-url: http://localhost:${mock-oauth2-server.port}/aad/token
         grant-type: client_credentials
         scope: oppgave
         authentication:
-          client-id: client-id
-          client-secret: secretttttt
+          client-id: dummy-client-id
+          client-secret: dummy-secret
           client-auth-method: client_secret_basic
 ---
 spring:
