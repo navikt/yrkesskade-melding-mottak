@@ -45,46 +45,11 @@ SAF_APP_CLIENT_ID: dev-fss.teamdokumenthandtering.saf
 OPPGAVE_APP_CLIENT_ID: bef7cd4d-e65e-41f8-a743-b643e81f2aea
 TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851         # trygdeetaten.no
 
-no.nav.security.jwt:
-  issuer:
-    aad:
-      discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
-      accepted_audience: ${AZURE_APP_CLIENT_ID}
-  client:
-    registration:
-      saf-maskintilmaskin:
-        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
-        grant-type: client_credentials
-        scope: api://${SAF_APP_CLIENT_ID}/.default
-        authentication:
-          client-id: ${AZURE_APP_CLIENT_ID}
-          client-jwk: ${AZURE_APP_JWK}
-          client-auth-method: private_key_jwt
-      oppgave-maskintilmaskin:
-        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
-        grant-type: client_credentials
-        scope: api://${OPPGAVE_APP_CLIENT_ID}/.default
-        authentication:
-          client-id: ${AZURE_APP_CLIENT_ID}
-          client-jwk: ${AZURE_APP_JWK}
-          client-auth-method: private_key_jwt
-
 ---
 spring:
   config:
     activate:
-      on-profile: db
-  datasource:
-    url: jdbc:postgresql://localhost:5432/test
-    username: test
-    password: test
-KAFKA_BROKERS: http://localhost:9092
-
----
-spring:
-  config:
-    activate:
-      on-profile: integration
+      on-profile: test
   datasource:
     url: jdbc:postgresql://localhost:5432/test
     username: test
@@ -99,6 +64,30 @@ kafka:
     aapen-dok-journalfoering: test
 
 KAFKA_BROKERS: ${spring.embedded.kafka.brokers}
+
+no.nav.security.jwt:
+  issuer:
+    aad:
+      discoveryurl: http://localhost:${mock-oauth2-server.port}/aad/.well-known/openid-configuration
+      accepted_audience: aad-client-id
+  client:
+    registration:
+      saf-maskintilmaskin:
+        token-endpoint-url: http://localhost:${mock-oauth2-server.port}/aad/token
+        grant-type: client_credentials
+        scope: saf
+        authentication:
+          client-id: client-id
+          client-secret: secretttttt
+          client-auth-method: client_secret_basic
+      oppgave-maskintilmaskin:
+        token-endpoint-url: http://localhost:${mock-oauth2-server.port}/aad/token
+        grant-type: client_credentials
+        scope: oppgave
+        authentication:
+          client-id: client-id
+          client-secret: secretttttt
+          client-auth-method: client_secret_basic
 ---
 spring:
   config:
@@ -126,3 +115,27 @@ spring:
 kafka:
   topic:
     aapen-dok-journalfoering: teamdokumenthandtering.aapen-dok-journalfoering-q1
+
+no.nav.security.jwt:
+  issuer:
+    aad:
+      discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
+      accepted_audience: ${AZURE_APP_CLIENT_ID}
+  client:
+    registration:
+      saf-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${SAF_APP_CLIENT_ID}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
+      oppgave-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${OPPGAVE_APP_CLIENT_ID}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
