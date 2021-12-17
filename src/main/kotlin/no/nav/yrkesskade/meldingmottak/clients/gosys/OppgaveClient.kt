@@ -1,5 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.clients.gosys
 
+import brave.Tracer
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -9,13 +10,13 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToMono
-import java.util.UUID
 
 @Component
 class OppgaveClient(
     private val oppgaveWebClient: WebClient,
     private val tokenUtil: TokenUtil,
-    @Value("\${spring.application.name}") val applicationName: String
+    @Value("\${spring.application.name}") val applicationName: String,
+    private val tracer: Tracer
 ) {
 
     companion object {
@@ -25,8 +26,7 @@ class OppgaveClient(
 
     @Retryable
     fun opprettOppgave(oppgave: OpprettJournalfoeringOppgave): Oppgave {
-        val correlation = UUID.randomUUID().toString()
-        log.info("Oppretter oppgave for journalpostId ${oppgave.journalpostId} med correlation $correlation")
+        log.info("Oppretter oppgave for journalpostId ${oppgave.journalpostId}")
         return logTimingAndWebClientResponseException("opprettOppgave") {
             oppgaveWebClient.post()
                 .uri { uriBuilder ->
@@ -37,7 +37,7 @@ class OppgaveClient(
                 }
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithOppgaveScope()}")
-                .header("X-Correlation-ID", correlation)
+                .header("X-Correlation-ID", tracer.currentSpan().context().traceIdString())
                 .header("Nav-Consumer-Id", applicationName)
                 .bodyValue(oppgave)
                 .retrieve()
