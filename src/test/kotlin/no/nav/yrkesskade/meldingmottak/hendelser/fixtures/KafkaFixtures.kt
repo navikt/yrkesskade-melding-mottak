@@ -1,5 +1,10 @@
 package no.nav.yrkesskade.meldingmottak.hendelser.fixtures
 
+import com.expediagroup.graphql.generated.Journalpost
+import com.expediagroup.graphql.generated.enums.BrukerIdType
+import com.expediagroup.graphql.generated.enums.Journalstatus
+import com.expediagroup.graphql.generated.enums.Tema
+import com.expediagroup.graphql.generated.journalpost.Bruker
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 
 fun journalfoeringHendelseRecord(): JournalfoeringHendelseRecord? {
@@ -15,4 +20,30 @@ fun journalfoeringHendelseRecord(): JournalfoeringHendelseRecord? {
             .setKanalReferanseId("P1")
             .setBehandlingstema("YRK")
             .build()
+}
+
+fun journalpostResultWithBrukerAktoerid(): Journalpost.Result {
+        return Journalpost.Result(
+                com.expediagroup.graphql.generated.journalpost.Journalpost(
+                        journalpostId = "123",
+                        journalstatus = Journalstatus.MOTTATT,
+                        behandlingstema = "ab1234",
+                        tema = Tema.YRK,
+                        bruker = Bruker("2751737180290", BrukerIdType.AKTOERID),
+                        sak = null
+                )
+        )
+}
+
+fun journalpostResultWithBrukerFnr(): Journalpost.Result {
+        return Journalpost.Result(
+                com.expediagroup.graphql.generated.journalpost.Journalpost(
+                        journalpostId = "123",
+                        journalstatus = Journalstatus.MOTTATT,
+                        behandlingstema = "ab1234",
+                        tema = Tema.YRK,
+                        bruker = Bruker("12345678901", BrukerIdType.FNR),
+                        sak = null
+                )
+        )
 }
