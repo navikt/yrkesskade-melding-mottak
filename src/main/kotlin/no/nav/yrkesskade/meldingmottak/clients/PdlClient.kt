@@ -33,7 +33,7 @@ class PdlClient(
 
         val identerResult: HentIdenter.Result?
         runBlocking {
-            log.info("Pdl: Skal kalle pdl")
+            log.info("Pdl: Henter aktørId for person med fnr $fodselsnummer på url $pdlGraphqlUrl")
             val response: GraphQLClientResponse<HentIdenter.Result> = client.execute(hentIdenterQuery) {
                 header(HttpHeaders.AUTHORIZATION, "Bearer $token")
             }
