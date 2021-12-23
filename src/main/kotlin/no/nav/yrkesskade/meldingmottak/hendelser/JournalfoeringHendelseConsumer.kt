@@ -1,6 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.hendelser
 
+import com.expediagroup.graphql.generated.enums.BrukerIdType
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import no.nav.yrkesskade.meldingmottak.clients.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OpprettJournalfoeringOppgave
@@ -17,6 +19,7 @@ import javax.transaction.Transactional
 @Service
 class JournalfoeringHendelseConsumer(
     private val safClient: SafClient,
+    private val pdlClient: PdlClient,
     private val oppgaveClient: OppgaveClient
 ) {
     private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
@@ -39,25 +42,32 @@ class JournalfoeringHendelseConsumer(
                 log.info("Oppdatert journalpost for journalpostId ${record.journalpostId}: $oppdatertJournalpost")
 
                 oppdatertJournalpost.journalpost?.let { journalpost ->
+                    val aktoerId: String?
+                    val brukerIdType = journalpost.bruker?.type ?: BrukerIdType.__UNKNOWN_VALUE
+
                     if (journalpost.bruker?.type?.toString().equals("AKTOERID")) {
-
-                        // TODO hvis FNR så hent aktørid fra PDL
-
-                        oppgaveClient.opprettOppgave(
-                            OpprettJournalfoeringOppgave(
-                                beskrivelse = "Tester YRK, Hei og hopp",
-                                journalpostId = journalpost.journalpostId,
-                                aktoerId = journalpost.bruker?.id,
-                                tema = journalpost.tema.toString(),
-                                behandlingstema = BEHANDLINGSTEMA_SKADEMELDING,
-                                oppgavetype = OPPGAVETYPE_JOURNALFOERING,
-                                behandlingstype = null,
-                                prioritet = Prioritet.NORM,
-                                fristFerdigstillelse = LocalDate.now().plusDays(1),
-                                aktivDato = LocalDate.now()
-                            )
-                        )
+                        aktoerId = journalpost.bruker?.id
+                    } else if (brukerIdType == BrukerIdType.FNR && journalpost.bruker?.id != null) {
+                        aktoerId = pdlClient.hentAktorId(journalpost.bruker.id)
+                    } else {
+                        log.error("Journalpost med journalpostId ${record.journalpostId} inneholder verken aktørId eller fødselsnummer! Ingen journalføringsoppgave opprettes.")
+                        // TODO: 23/12/2021 Kast exception
                     }
+
+                    oppgaveClient.opprettOppgave(
+                        OpprettJournalfoeringOppgave(
+                            beskrivelse = "Tester YRK, Hei og hopp",
+                            journalpostId = journalpost.journalpostId,
+                            aktoerId = journalpost.bruker?.id,
+                            tema = journalpost.tema.toString(),
+                            behandlingstema = BEHANDLINGSTEMA_SKADEMELDING,
+                            oppgavetype = OPPGAVETYPE_JOURNALFOERING,
+                            behandlingstype = null,
+                            prioritet = Prioritet.NORM,
+                            fristFerdigstillelse = LocalDate.now().plusDays(1),
+                            aktivDato = LocalDate.now()
+                        )
+                    )
                 }
             }
         }
