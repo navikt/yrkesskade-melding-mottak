@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component
 import java.lang.invoke.MethodHandles
 import javax.ws.rs.core.HttpHeaders
 
+/**
+ * Klient for å hente oppdatert journalpost fra saf (Sak og arkiv fasade)
+ */
 @Component
 class SafClient(@Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
                 private val tokenUtil: TokenUtil
@@ -20,7 +23,7 @@ class SafClient(@Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
 
     fun hentOppdatertJournalpost(journalpostId: String): Journalpost.Result? {
         val token = tokenUtil.getAppAccessTokenWithSafScope()
-        log.info("Hentet token")
+        log.info("Hentet token for Saf")
         val journalpostQuery = Journalpost(Journalpost.Variables(journalpostId))
 
         log.info("Henter oppdatert journalpost for id $journalpostId på url $safGraphqlUrl")
@@ -29,8 +32,11 @@ class SafClient(@Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
             val response: GraphQLClientResponse<Journalpost.Result> = client.execute(journalpostQuery) {
                 header(HttpHeaders.AUTHORIZATION, "Bearer $token")
             }
+            if (!response.errors.isNullOrEmpty()) {
+                log.error("SAF response errors: ${response.errors}")
+                // TODO: 23/12/2021 Feilhåndtering
+            }
             oppdatertJournalpost = response.data
-            log.info("SAF Response errors: ${response.errors}")
         }
         return oppdatertJournalpost
     }
