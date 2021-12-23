@@ -32,11 +32,11 @@ class SafClient(@Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
             val response: GraphQLClientResponse<Journalpost.Result> = client.execute(journalpostQuery) {
                 header(HttpHeaders.AUTHORIZATION, "Bearer $token")
             }
+            oppdatertJournalpost = response.data
             if (!response.errors.isNullOrEmpty()) {
                 log.error("SAF response errors: ${response.errors}")
                 // TODO: 23/12/2021 Feilhåndtering
             }
-            oppdatertJournalpost = response.data
         }
         return oppdatertJournalpost
     }

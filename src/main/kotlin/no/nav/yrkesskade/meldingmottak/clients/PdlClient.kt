@@ -25,24 +25,32 @@ class PdlClient(
     private val client = GraphQLWebClient(url = pdlGraphqlUrl)
 
     fun hentAktorId(fodselsnummer: String): String? {
+        log.info("pdl: Kaller hentAktorId med fnr $fodselsnummer")
+
         val token = tokenUtil.getAppAccessTokenWithPdlScope()
-        log.info("Hentet token for Pdl $token")
+        log.info("pdl: Hentet token for Pdl $token")
         val hentIdenterQuery = HentIdenter(HentIdenter.Variables(fodselsnummer))
 
         val identerResult: HentIdenter.Result?
         runBlocking {
+            log.info("Pdl: Skal kalle pdl")
             val response: GraphQLClientResponse<HentIdenter.Result> = client.execute(hentIdenterQuery) {
                 header(HttpHeaders.AUTHORIZATION, "Bearer $token")
             }
+            identerResult = response.data
+            log.info("Pdl: Ferdig med kallet")
+            log.info(response.toString())
+            log.info("Pdl: Data: " + response.data)
+            log.info("Pdl: Errors: " + response.errors)
             if (!response.errors.isNullOrEmpty()) {
                 log.error("PDL response errors: ${response.errors}")
                 // TODO: 23/12/2021 Feilhåndtering
             }
-            identerResult = response.data
         }
 
         val aktorId = extractAktorId(identerResult)
-        return aktorId.also { log.info("Hentet aktørId $aktorId for fnr $fodselsnummer") }
+        log.info("Pdl: Hentet aktørId $aktorId for fnr $fodselsnummer")
+        return aktorId
     }
 
     private fun extractAktorId(identerResult: HentIdenter.Result?): String? {
