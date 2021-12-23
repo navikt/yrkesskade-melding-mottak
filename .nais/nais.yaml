@@ -38,6 +38,7 @@ spec:
           namespace: yrkesskade
       external:
         - host: saf.dev-fss-pub.nais.io
+        - host: pdl-api.dev.intern.nav.no
         - host: oppgave-q1.dev-fss-pub.nais.io
   resources:
     limits:
