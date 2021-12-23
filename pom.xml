@@ -212,6 +212,7 @@
                 <version>${graphql-kotlin.version}</version>
                 <executions>
                     <execution>
+                        <id>generate-saf-client</id>
                         <goals>
                             <goal>generate-client</goal>
                         </goals>
@@ -220,6 +221,19 @@
                             <schemaFile>${project.basedir}/src/main/resources/graphql/saf.graphqls</schemaFile>
                             <queryFiles>
                                 <queryFile>${project.basedir}/src/main/resources/graphql/journalpost.graphql</queryFile>
+                            </queryFiles>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-pdl-client</id>
+                        <goals>
+                            <goal>generate-client</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>com.expediagroup.graphql.generated</packageName>
+                            <schemaFile>${project.basedir}/src/main/resources/graphql/pdl.graphqls</schemaFile>
+                            <queryFiles>
+                                <queryFile>${project.basedir}/src/main/resources/graphql/hentIdenter.graphql</queryFile>
                             </queryFiles>
                         </configuration>
                     </execution>
