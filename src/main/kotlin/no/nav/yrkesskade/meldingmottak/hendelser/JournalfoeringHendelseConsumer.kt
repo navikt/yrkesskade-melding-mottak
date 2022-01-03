@@ -54,10 +54,6 @@ class JournalfoeringHendelseConsumer(
                         // TODO: 23/12/2021 Kast exception
                     }
 
-                    // TODO: 23/12/2021 Fjern dette - Test av kall til pdl
-                    log.info("TMP: Test kall til PDL ")
-                    val TMP_AktorId = pdlClient.hentAktorId("11076206165")
-
                     oppgaveClient.opprettOppgave(
                         OpprettJournalfoeringOppgave(
                             beskrivelse = "Tester YRK, Hei og hopp",
