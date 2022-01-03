@@ -37,6 +37,7 @@ management:
       exposure:
         include: info, health, metrics, prometheus
       base-path: /internal
+      path-mapping.prometheus: prometheus
   metrics.export.prometheus.enabled: true
 saf.graphql.url: https://saf.dev-fss-pub.nais.io/graphql
 pdl.graphql.url: https://pdl-api.dev-fss-pub.nais.io/graphql
