@@ -24,7 +24,7 @@ jobs:
         GITHUB_USERNAME: x-access-token
         GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 #      run: "mvn install --settings .m2/maven-settings.xml --file pom.xml"
-      run: "mvn install"
+      run: "mvn install -X"
     - name: "Login to GitHub Docker Registry"
       uses: "docker/login-action@v1"
       with:
