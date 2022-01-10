@@ -128,7 +128,7 @@ spring:
 
 kafka:
   topic:
-    aapen-dok-journalfoering: teamdokumenthandtering.aapen-dok-journalfoering
+    aapen-dok-journalfoering: teamdokumenthandtering.aapen-dok-journalfoering-q1
 
 no.nav.security.jwt:
   issuer:
