@@ -52,15 +52,16 @@ class JournalfoeringHendelseConsumer(
                     } else {
                         log.error("Journalpost med journalpostId ${record.journalpostId} inneholder verken aktørId eller fødselsnummer! Ingen journalføringsoppgave opprettes.")
                         // TODO: 23/12/2021 Kast exception
+                        throw RuntimeException("Journalpost med journalpostId ${record.journalpostId} inneholder verken aktørId eller fødselsnummer")
                     }
 
                     oppgaveClient.opprettOppgave(
                         OpprettJournalfoeringOppgave(
                             beskrivelse = "Tester YRK, Hei og hopp",
                             journalpostId = journalpost.journalpostId,
-                            aktoerId = journalpost.bruker?.id,
+                            aktoerId = aktoerId,
                             tema = journalpost.tema.toString(),
-                            behandlingstema = BEHANDLINGSTEMA_SKADEMELDING,
+                            behandlingstema = null,
                             oppgavetype = OPPGAVETYPE_JOURNALFOERING,
                             behandlingstype = null,
                             prioritet = Prioritet.NORM,
