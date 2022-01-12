@@ -27,10 +27,9 @@ fun journalpostResultWithBrukerAktoerid(): Journalpost.Result {
                 com.expediagroup.graphql.generated.journalpost.Journalpost(
                         journalpostId = "123",
                         journalstatus = Journalstatus.MOTTATT,
-                        behandlingstema = "ab1234",
                         tema = Tema.YRK,
                         bruker = Bruker("2751737180290", BrukerIdType.AKTOERID),
-                        sak = null
+                        dokumenter = emptyList()
                 )
         )
 }
@@ -40,10 +39,9 @@ fun journalpostResultWithBrukerFnr(): Journalpost.Result {
                 com.expediagroup.graphql.generated.journalpost.Journalpost(
                         journalpostId = "123",
                         journalstatus = Journalstatus.MOTTATT,
-                        behandlingstema = "ab1234",
                         tema = Tema.YRK,
                         bruker = Bruker("12345678901", BrukerIdType.FNR),
-                        sak = null
+                        dokumenter = emptyList()
                 )
         )
 }

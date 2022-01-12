@@ -2,14 +2,14 @@ query($journalpostId: String!) {
   journalpost(journalpostId: $journalpostId) {
     journalpostId
     journalstatus
-    behandlingstema
     tema
+    dokumenter {
+      tittel
+      brevkode
+    }
     bruker {
       id
       type
-    }
-    sak {
-      fagsakId
     }
   }
 }
