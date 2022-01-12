@@ -57,7 +57,7 @@ class JournalfoeringHendelseConsumer(
 
                     oppgaveClient.opprettOppgave(
                         OpprettJournalfoeringOppgave(
-                            beskrivelse = "Tester YRK, Hei og hopp",
+                            beskrivelse = null,
                             journalpostId = journalpost.journalpostId,
                             aktoerId = aktoerId,
                             tema = journalpost.tema.toString(),
