@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.lang.invoke.MethodHandles
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 private const val OPPGAVETYPE_JOURNALFOERING = "JFR"
 
@@ -45,7 +46,7 @@ class JournalfoeringHendelseService(
                 behandlingstema = null, // skal være null
                 behandlingstype = null, // skal være null
                 prioritet = Prioritet.NORM,
-                fristFerdigstillelse = FristFerdigstillelseTimeManager.nextValidFristFerdigstillelse(),
+                fristFerdigstillelse = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(LocalDateTime.now()),
                 aktivDato = LocalDate.now()
             )
         )

@@ -7,22 +7,23 @@ import java.time.ZoneId
 import java.util.Date
 
 object FristFerdigstillelseTimeManager {
-    private const val SISTE_ARBEIDSTIME = 12
+    private const val MIDT_PAA_DAGEN = 12
 
-    fun nextValidFristFerdigstillelse(): LocalDate {
-        val localDateTime: LocalDateTime = LocalDateTime.now()
+    fun nesteGyldigeFristForFerdigstillelse(localDateTime: LocalDateTime): LocalDate {
+        val localdateSomDate = Date.from(
+            localDateTime.toLocalDate()
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant()
+        )
+
         val frist: Date = NorwegianDateUtil.addWorkingDaysToDate(
-            Date.from(
-                localDateTime.toLocalDate()
-                    .atStartOfDay(ZoneId.systemDefault())
-                    .toInstant()
-            ),
-            numberOfDaysUntilFristFerdigstillelse(localDateTime.hour)
+            localdateSomDate,
+            antallDagerTilFristForFerdigstillelse(localDateTime.hour)
         )
         return frist.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
     }
 
-    private fun numberOfDaysUntilFristFerdigstillelse(time: Int): Int {
-        return if (time < SISTE_ARBEIDSTIME) 1 else 2
+    private fun antallDagerTilFristForFerdigstillelse(time: Int): Int {
+        return if (time < MIDT_PAA_DAGEN) 1 else 2
     }
 }
