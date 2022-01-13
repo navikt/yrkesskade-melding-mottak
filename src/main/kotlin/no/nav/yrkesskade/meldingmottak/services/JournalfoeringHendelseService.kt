@@ -33,7 +33,7 @@ class JournalfoeringHendelseService(
         val journalpost = hentJournalpostFraSaf(record)
         log.info("Oppdatert journalpost for journalpostId ${record.journalpostId}: $journalpost")
 
-        val aktoerId = utledAktoerIdFraJournalpost(journalpost.bruker!!)
+        val aktoerId = hentAktoerId(journalpost.bruker!!)
 
         oppgaveClient.opprettOppgave(
             OpprettJournalfoeringOppgave(
@@ -63,7 +63,7 @@ class JournalfoeringHendelseService(
         return safResultat.journalpost
     }
 
-    private fun utledAktoerIdFraJournalpost(bruker: Bruker): String? {
+    private fun hentAktoerId(bruker: Bruker): String? {
         return when (bruker.type) {
             BrukerIdType.AKTOERID -> bruker.id
             BrukerIdType.FNR -> pdlClient.hentAktorId(bruker.id!!)
@@ -86,13 +86,13 @@ class JournalfoeringHendelseService(
             throw RuntimeException("Journalposten mangler dokumenter.")
         }
 
-        if (journalpost.bruker?.id == null) {
-            throw RuntimeException("BrukerId må ikke være null")
+        if (journalpost.bruker?.id.isNullOrEmpty()) {
+            throw RuntimeException("Journalposten mangler brukerId.")
         }
 
         val gyldigeBrukerIdTyper = listOf(BrukerIdType.FNR, BrukerIdType.AKTOERID)
-        if (!gyldigeBrukerIdTyper.contains(journalpost.bruker.type)) {
-            throw RuntimeException("BrukerIdType må være en av: $gyldigeBrukerIdTyper, men er: ${journalpost.bruker.type}")
+        if (!gyldigeBrukerIdTyper.contains(journalpost.bruker?.type)) {
+            throw RuntimeException("BrukerIdType må være en av: $gyldigeBrukerIdTyper, men er: ${journalpost.bruker?.type}")
         }
     }
 }
