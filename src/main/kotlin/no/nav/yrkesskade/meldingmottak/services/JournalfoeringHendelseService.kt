@@ -15,6 +15,7 @@ import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokumentTittel
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.lang.invoke.MethodHandles
 import java.time.LocalDate
 
 private const val OPPGAVETYPE_JOURNALFOERING = "JFR"
@@ -26,7 +27,7 @@ class JournalfoeringHendelseService(
     private val oppgaveClient: OppgaveClient
 ) {
 
-    private val log = LoggerFactory.getLogger(javaClass.enclosingClass)
+    private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
 
     fun prosesserJournalfoeringHendelse(record: JournalfoeringHendelseRecord) {
         val journalpost = hentJournalpostFraSaf(record)
