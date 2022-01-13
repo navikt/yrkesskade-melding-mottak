@@ -5,6 +5,11 @@ import no.nav.yrkesskade.meldingmottak.clients.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.hendelser.fixtures.journalfoeringHendelseRecord
+import no.nav.yrkesskade.meldingmottak.hendelser.fixtures.journalpostResultMedJournalstatusFeilregistrert
+import no.nav.yrkesskade.meldingmottak.hendelser.fixtures.journalpostResultMedTemaSYK
+import no.nav.yrkesskade.meldingmottak.hendelser.fixtures.journalpostResultMedUgyldigBrukerIdType
+import no.nav.yrkesskade.meldingmottak.hendelser.fixtures.journalpostResultUtenBrukerId
+import no.nav.yrkesskade.meldingmottak.hendelser.fixtures.journalpostResultUtenDokumenter
 import no.nav.yrkesskade.meldingmottak.hendelser.fixtures.journalpostResultWithBrukerAktoerid
 import no.nav.yrkesskade.meldingmottak.hendelser.fixtures.journalpostResultWithBrukerFnr
 import no.nav.yrkesskade.meldingmottak.services.JournalfoeringHendelseService
@@ -77,5 +82,65 @@ class JournalfoeringHendelseServiceMockTest {
         service.prosesserJournalfoeringHendelse(record)
         verify(pdlClientMock).hentAktorId(any())
         verify(oppgaveClientMock).opprettOppgave(any())
+    }
+
+    @Test
+    fun `skal kaste exception naar journalstatus paa journalpost fra SAF ikke er MOTTATT`() {
+        val journalpostMedUgyldigStatus = journalpostResultMedJournalstatusFeilregistrert()
+        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostMedUgyldigStatus)
+        val exception = Assertions.assertThrows(RuntimeException::class.java) {
+            service.prosesserJournalfoeringHendelse(record)
+        }
+
+        assertThat(exception.localizedMessage).startsWith("Journalstatus må være")
+        verify(oppgaveClientMock, never()).opprettOppgave(any())
+    }
+
+    @Test
+    fun `skal kaste exception naar tema paa journalpost fra SAF ikke er YRK`() {
+        val journalpostMedUgyldigTema = journalpostResultMedTemaSYK()
+        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostMedUgyldigTema)
+        val exception = Assertions.assertThrows(RuntimeException::class.java) {
+            service.prosesserJournalfoeringHendelse(record)
+        }
+
+        assertThat(exception.localizedMessage).startsWith("Journalpostens tema må være")
+        verify(oppgaveClientMock, never()).opprettOppgave(any())
+    }
+
+    @Test
+    fun `skal kaste exception naar journalpost fra SAF mangler dokumenter`() {
+        val journalpostUtenDokumenter = journalpostResultUtenDokumenter()
+        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostUtenDokumenter)
+        val exception = Assertions.assertThrows(RuntimeException::class.java) {
+            service.prosesserJournalfoeringHendelse(record)
+        }
+
+        assertThat(exception.localizedMessage).isEqualTo("Journalposten mangler dokumenter.")
+        verify(oppgaveClientMock, never()).opprettOppgave(any())
+    }
+
+    @Test
+    fun `skal kaste exception naarjournalpost fra SAF mangler brukerId`() {
+        val journalpostUtenBrukerId = journalpostResultUtenBrukerId()
+        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostUtenBrukerId)
+        val exception = Assertions.assertThrows(RuntimeException::class.java) {
+            service.prosesserJournalfoeringHendelse(record)
+        }
+
+        assertThat(exception.localizedMessage).isEqualTo("Journalposten mangler brukerId.")
+        verify(oppgaveClientMock, never()).opprettOppgave(any())
+    }
+
+    @Test
+    fun `skal kaste exception naar journalpost fra SAF har ugyldig brukerIdType`() {
+        val journalpostMedUgyldigBrukerIdType = journalpostResultMedUgyldigBrukerIdType()
+        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostMedUgyldigBrukerIdType)
+        val exception = Assertions.assertThrows(RuntimeException::class.java) {
+            service.prosesserJournalfoeringHendelse(record)
+        }
+
+        assertThat(exception.localizedMessage).startsWith("BrukerIdType må være en av:")
+        verify(oppgaveClientMock, never()).opprettOppgave(any())
     }
 }

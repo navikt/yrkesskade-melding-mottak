@@ -23,21 +23,23 @@ fun journalfoeringHendelseRecord(): JournalfoeringHendelseRecord? {
         .build()
 }
 
-fun journalpostResultWithBrukerAktoerid(): Journalpost.Result {
-    return Journalpost.Result(
-        com.expediagroup.graphql.generated.journalpost.Journalpost(
-            journalpostId = "1337",
-            journalstatus = Journalstatus.MOTTATT,
-            tema = Tema.YRK,
-            bruker = Bruker("2751737180290", BrukerIdType.AKTOERID),
-            dokumenter = listOf(
-                DokumentInfo(
-                    "Melding om yrkesskade eller yrkessykdom som er påført under tjeneste på skip eller under fiske/fangst",
-                    "NAV 13-07.08"
-                )
+fun gyldigJournalpostMedAktoerId(): com.expediagroup.graphql.generated.journalpost.Journalpost {
+    return com.expediagroup.graphql.generated.journalpost.Journalpost(
+        journalpostId = "1337",
+        journalstatus = Journalstatus.MOTTATT,
+        tema = Tema.YRK,
+        bruker = Bruker("2751737180290", BrukerIdType.AKTOERID),
+        dokumenter = listOf(
+            DokumentInfo(
+                "Melding om yrkesskade eller yrkessykdom som er påført under tjeneste på skip eller under fiske/fangst",
+                "NAV 13-07.08"
             )
         )
     )
+}
+
+fun journalpostResultWithBrukerAktoerid(): Journalpost.Result {
+    return Journalpost.Result(gyldigJournalpostMedAktoerId())
 }
 
 fun journalpostResultWithBrukerFnr(): Journalpost.Result {
@@ -55,4 +57,39 @@ fun journalpostResultWithBrukerFnr(): Journalpost.Result {
             )
         )
     )
+}
+
+fun journalpostResultMedJournalstatusFeilregistrert(): Journalpost.Result {
+    val journalpostMedJournalstatusFeilregistrert = gyldigJournalpostMedAktoerId().copy(
+        journalstatus = Journalstatus.FEILREGISTRERT
+    )
+    return Journalpost.Result(journalpostMedJournalstatusFeilregistrert)
+}
+
+fun journalpostResultMedTemaSYK(): Journalpost.Result {
+    val journalpostMedTemaSyk = gyldigJournalpostMedAktoerId().copy(
+        tema = Tema.SYK
+    )
+    return Journalpost.Result(journalpostMedTemaSyk)
+}
+
+fun journalpostResultUtenDokumenter(): Journalpost.Result {
+    val journalpostUtenDokumenter = gyldigJournalpostMedAktoerId().copy(
+        dokumenter = null
+    )
+    return Journalpost.Result(journalpostUtenDokumenter)
+}
+
+fun journalpostResultUtenBrukerId(): Journalpost.Result {
+    val journalpostUtenBrukerId = gyldigJournalpostMedAktoerId().copy(
+        bruker = Bruker(null, BrukerIdType.AKTOERID)
+    )
+    return Journalpost.Result(journalpostUtenBrukerId)
+}
+
+fun journalpostResultMedUgyldigBrukerIdType(): Journalpost.Result {
+    val journalpostMedUgyldigBrukerIdType = gyldigJournalpostMedAktoerId().copy(
+        bruker = Bruker("920165931", BrukerIdType.ORGNR)
+    )
+    return Journalpost.Result(journalpostMedUgyldigBrukerIdType)
 }
