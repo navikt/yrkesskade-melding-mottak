@@ -63,15 +63,11 @@ class JournalfoeringHendelseService(
     }
 
     private fun utledAktoerIdFraJournalpost(bruker: Bruker): String? {
-        val brukerIdFraJournalpost = bruker.id
-        val brukerIdType = bruker.type
-
-        if (brukerIdType == BrukerIdType.AKTOERID) {
-            return brukerIdFraJournalpost
-        } else if (brukerIdType == BrukerIdType.FNR) {
-            return pdlClient.hentAktorId(brukerIdFraJournalpost!!)
+        return when (bruker.type) {
+            BrukerIdType.AKTOERID -> bruker.id
+            BrukerIdType.FNR -> pdlClient.hentAktorId(bruker.id!!)
+            else -> throw RuntimeException("Ugyldig brukerIdType: ${bruker.type}")
         }
-        throw RuntimeException("Ugyldig brukerIdType: $brukerIdType")
     }
 
     private fun validerJournalpost(journalpost: Journalpost) {
