@@ -27,10 +27,8 @@ class JournalfoeringHendelseServiceMockTest {
 
     private val service: JournalfoeringHendelseService = JournalfoeringHendelseService(safClientMock, pdlClientMock, oppgaveClientMock)
 
-
-
     @Test
-    fun `should call saf`() {
+    fun `skal kalle paa SAF naar det kommer en kafkarecord`() {
         `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultWithBrukerAktoerid())
 
         service.prosesserJournalfoeringHendelse(record)
@@ -38,7 +36,7 @@ class JournalfoeringHendelseServiceMockTest {
     }
 
     @Test
-    fun `should get AKTORID from pdl when fødselsnummer in journalpost`() {
+    fun `skal hente aktoerId fra PDL naar journalpost har foedselsnummer`() {
         `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultWithBrukerFnr())
 
         service.prosesserJournalfoeringHendelse(record)
@@ -46,15 +44,15 @@ class JournalfoeringHendelseServiceMockTest {
     }
 
     @Test
-    fun `should NOT call pdl when aktørID in journalpost`() {
+    fun `skal IKKE kalle paa PDL naar journalpost har aktoerId`() {
         `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultWithBrukerAktoerid())
 
         service.prosesserJournalfoeringHendelse(record)
         verify(pdlClientMock, never()).hentAktorId(any())
     }
 
-    @Test()
-    fun `should NOT create oppgave when journalpost not in saf`() {
+    @Test
+    fun `skal IKKE lage oppgave naar SAF ikke returnerer en journalpost`() {
         `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(null)
 
         val exception = Assertions.assertThrows(RuntimeException::class.java) {
@@ -65,7 +63,7 @@ class JournalfoeringHendelseServiceMockTest {
     }
 
     @Test
-    fun `should create oppgave when journalpost with aktoerid found in saf`() {
+    fun `skal lage oppgave naar SAF returnerer journalpost med aktoerId`() {
         `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultWithBrukerAktoerid())
 
         service.prosesserJournalfoeringHendelse(record)
@@ -73,7 +71,7 @@ class JournalfoeringHendelseServiceMockTest {
     }
 
     @Test
-    fun `should create oppgave when journalpost found in saf and aktørID found in pdl`() {
+    fun `skal lage oppgave naar SAF returnerer journalpost med foedselsnummer og PDL har aktoerId`() {
         `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultWithBrukerFnr())
 
         service.prosesserJournalfoeringHendelse(record)
