@@ -1,4 +1,4 @@
-package no.nav.yrkesskade.meldingmottak.hendelser.fixtures
+package no.nav.yrkesskade.meldingmottak.fixtures
 
 import com.expediagroup.graphql.generated.Journalpost
 import com.expediagroup.graphql.generated.enums.BrukerIdType
@@ -6,22 +6,6 @@ import com.expediagroup.graphql.generated.enums.Journalstatus
 import com.expediagroup.graphql.generated.enums.Tema
 import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.DokumentInfo
-import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
-
-fun journalfoeringHendelseRecord(): JournalfoeringHendelseRecord? {
-    return JournalfoeringHendelseRecord.newBuilder()
-        .setHendelsesId("hendelsesId")
-        .setVersjon(1)
-        .setHendelsesType("hendelsesType")
-        .setJournalpostId(1337)
-        .setJournalpostStatus("journalpostStatus")
-        .setTemaGammelt("YRK")
-        .setTemaNytt("YRK")
-        .setMottaksKanal("NRK")
-        .setKanalReferanseId("P1")
-        .setBehandlingstema("YRK")
-        .build()
-}
 
 fun gyldigJournalpostMedAktoerId(): com.expediagroup.graphql.generated.journalpost.Journalpost {
     return com.expediagroup.graphql.generated.journalpost.Journalpost(
