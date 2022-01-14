@@ -40,6 +40,14 @@ internal class FristFerdigstillelseTimeManagerTest {
         assertThat(resultat).isEqualTo(leggTilDager(klokkenElleveFredag, 3))
     }
 
+    @Test
+    fun `neste gyldige frist er om fire dager om klokken er 13 paa en fredag`() {
+        val klokkenTrettenFredag = LocalDateTime.of(2022, 1, 14, 13, 0, 0)
+        val resultat = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(klokkenTrettenFredag)
+
+        assertThat(resultat).isEqualTo(leggTilDager(klokkenTrettenFredag, 4))
+    }
+
     private fun leggTilDager(localDateTime: LocalDateTime, antallDager: Long): LocalDate {
         return localDateTime.plusDays(antallDager)
             .toLocalDate()
