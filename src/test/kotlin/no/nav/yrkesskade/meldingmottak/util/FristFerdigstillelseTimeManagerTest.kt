@@ -34,10 +34,10 @@ internal class FristFerdigstillelseTimeManagerTest {
 
     @Test
     fun `neste gyldige frist er om tre dager om klokken er 11 paa en fredag`() {
-        val klokkenTrettenVanligArbeidsdag = LocalDateTime.of(2022, 1, 14, 11, 0, 0)
-        val resultat = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(klokkenTrettenVanligArbeidsdag)
+        val klokkenElleveFredag = LocalDateTime.of(2022, 1, 14, 11, 0, 0)
+        val resultat = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(klokkenElleveFredag)
 
-        assertThat(resultat).isEqualTo(leggTilDager(klokkenTrettenVanligArbeidsdag, 3))
+        assertThat(resultat).isEqualTo(leggTilDager(klokkenElleveFredag, 3))
     }
 
     private fun leggTilDager(localDateTime: LocalDateTime, antallDager: Long): LocalDate {
