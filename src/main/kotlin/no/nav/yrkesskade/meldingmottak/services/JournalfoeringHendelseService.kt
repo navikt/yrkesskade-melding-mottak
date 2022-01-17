@@ -1,6 +1,7 @@
 package no.nav.yrkesskade.meldingmottak.services
 
 import com.expediagroup.graphql.generated.enums.BrukerIdType
+import com.expediagroup.graphql.generated.enums.Journalposttype
 import com.expediagroup.graphql.generated.enums.Journalstatus
 import com.expediagroup.graphql.generated.enums.Tema
 import com.expediagroup.graphql.generated.journalpost.Bruker
@@ -81,6 +82,10 @@ class JournalfoeringHendelseService(
 
         if (journalpost.tema != Tema.YRK) {
             throw RuntimeException("Journalpostens tema må være ${Tema.YRK}, men er: ${journalpost.tema}")
+        }
+
+        if (journalpost.journalposttype != Journalposttype.I) {
+            throw RuntimeException("Journalpostens type må være ${Journalposttype.I}, men er: ${journalpost.journalposttype}")
         }
 
         if (journalpost.dokumenter.isNullOrEmpty()) {

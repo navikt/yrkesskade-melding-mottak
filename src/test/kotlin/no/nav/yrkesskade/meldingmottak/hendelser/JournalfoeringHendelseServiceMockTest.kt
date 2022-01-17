@@ -5,6 +5,7 @@ import no.nav.yrkesskade.meldingmottak.clients.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecord
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalposttypeUtgaaende
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalstatusFeilregistrert
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedTemaSYK
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedUgyldigBrukerIdType
@@ -106,6 +107,18 @@ class JournalfoeringHendelseServiceMockTest {
 
         assertThat(exception.localizedMessage).startsWith("Journalpostens tema må være")
         verify(oppgaveClientMock, never()).opprettOppgave(any())
+    }
+
+    @Test
+    fun `skal kaste exception naar journalpost har journalposttype`() {
+        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultMedJournalposttypeUtgaaende())
+
+        val exception = Assertions.assertThrows(RuntimeException::class.java) {
+            service.prosesserJournalfoeringHendelse(record)
+        }
+
+        assertThat(exception.localizedMessage).startsWith("Journalpostens type må være")
+        verify(pdlClientMock, never()).hentAktorId(any())
     }
 
     @Test

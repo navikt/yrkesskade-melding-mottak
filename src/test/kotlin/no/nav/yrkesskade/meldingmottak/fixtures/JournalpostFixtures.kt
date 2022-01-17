@@ -2,6 +2,7 @@ package no.nav.yrkesskade.meldingmottak.fixtures
 
 import com.expediagroup.graphql.generated.Journalpost
 import com.expediagroup.graphql.generated.enums.BrukerIdType
+import com.expediagroup.graphql.generated.enums.Journalposttype
 import com.expediagroup.graphql.generated.enums.Journalstatus
 import com.expediagroup.graphql.generated.enums.Tema
 import com.expediagroup.graphql.generated.journalpost.Bruker
@@ -11,6 +12,7 @@ fun gyldigJournalpostMedAktoerId(): com.expediagroup.graphql.generated.journalpo
     return com.expediagroup.graphql.generated.journalpost.Journalpost(
         journalpostId = "1337",
         journalstatus = Journalstatus.MOTTATT,
+        journalposttype = Journalposttype.I,
         tema = Tema.YRK,
         bruker = Bruker("2751737180290", BrukerIdType.AKTOERID),
         dokumenter = listOf(
@@ -31,6 +33,7 @@ fun journalpostResultWithBrukerFnr(): Journalpost.Result {
         com.expediagroup.graphql.generated.journalpost.Journalpost(
             journalpostId = "1337",
             journalstatus = Journalstatus.MOTTATT,
+            journalposttype = Journalposttype.I,
             tema = Tema.YRK,
             bruker = Bruker("12345678901", BrukerIdType.FNR),
             dokumenter = listOf(
@@ -76,4 +79,11 @@ fun journalpostResultMedUgyldigBrukerIdType(): Journalpost.Result {
         bruker = Bruker("920165931", BrukerIdType.ORGNR)
     )
     return Journalpost.Result(journalpostMedUgyldigBrukerIdType)
+}
+
+fun journalpostResultMedJournalposttypeUtgaaende(): Journalpost.Result {
+    val journalpostMedJournalposttypeUtgaaende = gyldigJournalpostMedAktoerId().copy(
+        journalposttype = Journalposttype.U
+    )
+    return Journalpost.Result(journalpostMedJournalposttypeUtgaaende)
 }
