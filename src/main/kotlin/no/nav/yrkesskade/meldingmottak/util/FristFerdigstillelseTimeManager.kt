@@ -7,12 +7,12 @@ import java.time.ZoneId
 import java.util.Date
 
 /**
- * Hentet fra prosjektet jfr-manuell og noe refaktorert.
  * Hjelpeklasse som beregner frist for behandling av en oppgave ut fra en gitt dato.
  * Hvis tidspunkt for den gitte datoen før klokken 12, er fristen neste virkedag.
  * Hvis tidspunkt for den gitte datoen etter klokken 12, er fristen om to virkedager.
  *
  * Bruker biblioteket [NorwegianDateUtil] som tar hensyn til norske fri-/helligdager.
+ * Hentet fra prosjektet jfr-manuell og noe refaktorert.
  */
 object FristFerdigstillelseTimeManager {
     private const val MIDT_PAA_DAGEN = 12
