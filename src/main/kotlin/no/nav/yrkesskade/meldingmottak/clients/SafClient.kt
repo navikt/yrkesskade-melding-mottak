@@ -35,7 +35,7 @@ class SafClient(@Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
             oppdatertJournalpost = response.data
             if (!response.errors.isNullOrEmpty()) {
                 log.error("SAF response errors: ${response.errors}")
-                // TODO: 23/12/2021 Feilhåndtering
+                throw RuntimeException(response.errors.toString())
             }
         }
         return oppdatertJournalpost
