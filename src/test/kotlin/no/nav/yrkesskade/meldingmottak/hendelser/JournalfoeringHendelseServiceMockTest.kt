@@ -110,7 +110,7 @@ class JournalfoeringHendelseServiceMockTest {
     }
 
     @Test
-    fun `skal kaste exception naar journalpost har journalposttype`() {
+    fun `skal kaste exception naar journalpost har journalposttype ulik innkommende`() {
         `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultMedJournalposttypeUtgaaende())
 
         val exception = Assertions.assertThrows(RuntimeException::class.java) {
