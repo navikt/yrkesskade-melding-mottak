@@ -1,7 +1,7 @@
 package no.nav.yrkesskade.meldingmottak.hendelser
 
 import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
-import no.nav.yrkesskade.meldingmottak.hendelser.fixtures.journalfoeringHendelseRecord
+import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecord
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
