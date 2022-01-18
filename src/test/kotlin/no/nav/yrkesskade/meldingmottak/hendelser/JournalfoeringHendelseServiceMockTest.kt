@@ -87,8 +87,7 @@ class JournalfoeringHendelseServiceMockTest {
 
     @Test
     fun `skal kaste exception naar journalstatus paa journalpost fra SAF ikke er MOTTATT`() {
-        val journalpostMedUgyldigStatus = journalpostResultMedJournalstatusFeilregistrert()
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostMedUgyldigStatus)
+        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultMedJournalstatusFeilregistrert())
         val exception = Assertions.assertThrows(RuntimeException::class.java) {
             service.prosesserJournalfoeringHendelse(record)
         }
@@ -99,8 +98,7 @@ class JournalfoeringHendelseServiceMockTest {
 
     @Test
     fun `skal kaste exception naar tema paa journalpost fra SAF ikke er YRK`() {
-        val journalpostMedUgyldigTema = journalpostResultMedTemaSYK()
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostMedUgyldigTema)
+        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultMedTemaSYK())
         val exception = Assertions.assertThrows(RuntimeException::class.java) {
             service.prosesserJournalfoeringHendelse(record)
         }
@@ -123,8 +121,7 @@ class JournalfoeringHendelseServiceMockTest {
 
     @Test
     fun `skal kaste exception naar journalpost fra SAF mangler dokumenter`() {
-        val journalpostUtenDokumenter = journalpostResultUtenDokumenter()
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostUtenDokumenter)
+        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultUtenDokumenter())
         val exception = Assertions.assertThrows(RuntimeException::class.java) {
             service.prosesserJournalfoeringHendelse(record)
         }
@@ -135,8 +132,7 @@ class JournalfoeringHendelseServiceMockTest {
 
     @Test
     fun `skal kaste exception naarjournalpost fra SAF mangler brukerId`() {
-        val journalpostUtenBrukerId = journalpostResultUtenBrukerId()
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostUtenBrukerId)
+        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultUtenBrukerId())
         val exception = Assertions.assertThrows(RuntimeException::class.java) {
             service.prosesserJournalfoeringHendelse(record)
         }
@@ -147,8 +143,7 @@ class JournalfoeringHendelseServiceMockTest {
 
     @Test
     fun `skal kaste exception naar journalpost fra SAF har ugyldig brukerIdType`() {
-        val journalpostMedUgyldigBrukerIdType = journalpostResultMedUgyldigBrukerIdType()
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostMedUgyldigBrukerIdType)
+        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultMedUgyldigBrukerIdType())
         val exception = Assertions.assertThrows(RuntimeException::class.java) {
             service.prosesserJournalfoeringHendelse(record)
         }
