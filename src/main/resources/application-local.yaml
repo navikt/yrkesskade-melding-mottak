@@ -1,0 +1,56 @@
+AUTH_SERVER: https://fakedings.dev-gcp.nais.io/fake
+KAFKA_BROKERS: http://localhost:9092
+
+server:
+  port: 9080
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS}
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl:
+        mechanism: PLAIN
+        jaas:
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username="igroup" password="itest";
+      schema.registry.url: http://localhost:8081
+    consumer:
+      group-id: srvc01
+  datasource:
+    url: jdbc:postgresql://localhost:5432/yrkesskade_mottak
+
+# bruk oneshot for å opprette topic
+kafka:
+  topic:
+    aapen-dok-journalfoering: aapen-dok-journalfoering
+
+no.nav.security.jwt:
+  issuer:
+    aad:
+      discoveryurl: ${AUTH_SERVER}/.well-known/openid-configuration
+      accepted_audience: aad-client-id
+  client:
+    registration:
+      saf-maskintilmaskin:
+        token-endpoint-url: ${AUTH_SERVER}/aad
+        grant-type: client_credentials
+        scope: saf
+        authentication:
+          client-id: dummy-client-id
+          client-secret: dummy-secret
+          client-auth-method: client_secret_basic
+      pdl-maskintilmaskin:
+        token-endpoint-url: ${AUTH_SERVER}/aad
+        grant-type: client_credentials
+        scope: pdl
+        authentication:
+          client-id: dummy-client-id
+          client-secret: dummy-secret
+          client-auth-method: client_secret_basic
+      oppgave-maskintilmaskin:
+        token-endpoint-url: ${AUTH_SERVER}/aad
+        grant-type: client_credentials
+        scope: oppgave
+        authentication:
+          client-id: dummy-client-id
+          client-secret: dummy-secret
+          client-auth-method: client_secret_basic
