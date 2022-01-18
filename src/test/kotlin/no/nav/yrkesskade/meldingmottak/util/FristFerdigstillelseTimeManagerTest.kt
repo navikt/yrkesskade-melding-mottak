@@ -13,7 +13,8 @@ internal class FristFerdigstillelseTimeManagerTest {
         val klokkenElleveVanligArbeidsdag = LocalDateTime.of(2022, 1, 12, 11, 0, 0)
         val resultat = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(klokkenElleveVanligArbeidsdag)
 
-        assertThat(resultat).isEqualTo(leggTilDager(klokkenElleveVanligArbeidsdag, 1))
+        val forventetFrist = leggTilDager(klokkenElleveVanligArbeidsdag, 1)
+        assertThat(resultat).isEqualTo(forventetFrist)
     }
 
     @Test
@@ -21,7 +22,8 @@ internal class FristFerdigstillelseTimeManagerTest {
         val klokkenTolvVanligArbeidsdag = LocalDateTime.of(2022, 1, 12, 12, 0, 0)
         val resultat = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(klokkenTolvVanligArbeidsdag)
 
-        assertThat(resultat).isEqualTo(leggTilDager(klokkenTolvVanligArbeidsdag, 2))
+        val forventetFrist = leggTilDager(klokkenTolvVanligArbeidsdag, 2)
+        assertThat(resultat).isEqualTo(forventetFrist)
     }
 
     @Test
@@ -29,7 +31,8 @@ internal class FristFerdigstillelseTimeManagerTest {
         val klokkenTrettenVanligArbeidsdag = LocalDateTime.of(2022, 1, 12, 13, 0, 0)
         val resultat = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(klokkenTrettenVanligArbeidsdag)
 
-        assertThat(resultat).isEqualTo(leggTilDager(klokkenTrettenVanligArbeidsdag, 2))
+        val forventetFrist = leggTilDager(klokkenTrettenVanligArbeidsdag, 2)
+        assertThat(resultat).isEqualTo(forventetFrist)
     }
 
     @Test
@@ -37,7 +40,8 @@ internal class FristFerdigstillelseTimeManagerTest {
         val klokkenElleveFredag = LocalDateTime.of(2022, 1, 14, 11, 0, 0)
         val resultat = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(klokkenElleveFredag)
 
-        assertThat(resultat).isEqualTo(leggTilDager(klokkenElleveFredag, 3))
+        val forventetFrist = leggTilDager(klokkenElleveFredag, 3)
+        assertThat(resultat).isEqualTo(forventetFrist)
     }
 
     @Test
@@ -45,7 +49,8 @@ internal class FristFerdigstillelseTimeManagerTest {
         val klokkenTrettenFredag = LocalDateTime.of(2022, 1, 14, 13, 0, 0)
         val resultat = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(klokkenTrettenFredag)
 
-        assertThat(resultat).isEqualTo(leggTilDager(klokkenTrettenFredag, 4))
+        val forventetFrist = leggTilDager(klokkenTrettenFredag, 4)
+        assertThat(resultat).isEqualTo(forventetFrist)
     }
 
     private fun leggTilDager(localDateTime: LocalDateTime, antallDager: Long): LocalDate {
