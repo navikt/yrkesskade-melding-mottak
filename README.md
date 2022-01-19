@@ -4,7 +4,7 @@ Mottaksmodul for innsendte meldinger om yrkesskade, -sykdom og menerstatning
 ## Lokal kjøring
 Applikasjonen kan startes ved å kjøre YrkesskadeMeldingMottakApplication.
 
-Legg til VM argumentene `-DYRKESSKADE_API_DB_USERNAME=<brukernavn>`og `-DYRKESSKADE_API_DB_PASSWORD=<passord>`
+Legg til VM argumentene `-DYRKESSKADE_MOTTAK_DB_USERNAME=<brukernavn>`og `-DYRKESSKADE_MOTTAK_DB_PASSWORD=<passord>`
 
 Spring profilen `local` må aktiveres med VM argument `-Dspring.profiles.active=local` eller ved hjelp av Active profile feltet i IntelliJ.
 
