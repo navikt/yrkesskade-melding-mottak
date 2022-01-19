@@ -1,7 +1,7 @@
 {
     "topics": [
       {
-        "topicName": "aapen-dok-journalfoering-lokal",
+        "topicName": "aapen-dok-journalfoering",
         "members": [
           {"member":"srvc01", "role":"CONSUMER"},
           {"member":"srvp01", "role":"PRODUCER"}
