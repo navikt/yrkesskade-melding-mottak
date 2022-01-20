@@ -35,7 +35,12 @@
 
     <servers>
         <server>
-            <id>github</id>
+            <id>teamdokumenthandtering-avro-schemas</id>
+            <username>${GITHUB_USERNAME}</username>
+            <password>${GITHUB_TOKEN}</password>
+        </server>
+        <server>
+            <id>yrkesskade-prosessering</id>
             <username>${GITHUB_USERNAME}</username>
             <password>${GITHUB_TOKEN}</password>
         </server>
