@@ -94,6 +94,23 @@
             <artifactId>kotlin-stdlib-jdk8</artifactId>
         </dependency>
 
+        <!-- Prosessering/rekjøring -->
+        <dependency>
+            <groupId>no.nav.yrkesskade</groupId>
+            <artifactId>prosessering-core</artifactId>
+            <version>1.20220119151616_5d6652d</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.yrkesskade</groupId>
+            <artifactId>prosessering-jpa</artifactId>
+            <version>1.20220119151616_5d6652d</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.yrkesskade</groupId>
+            <artifactId>prosessering-jdbc</artifactId>
+            <version>1.20220119151616_5d6652d</version>
+        </dependency>
+
         <!-- Diverse -->
         <dependency>
             <groupId>com.expediagroup</groupId>
@@ -152,12 +169,6 @@
             <groupId>io.mockk</groupId>
             <artifactId>mockk</artifactId>
             <version>1.10.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.security</groupId>
-            <artifactId>token-validation-spring-test</artifactId>
-            <version>1.3.9</version>
             <scope>test</scope>
         </dependency>
         <dependency>
