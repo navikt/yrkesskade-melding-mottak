@@ -86,16 +86,6 @@
         <!-- Prosessering/rekjøring -->
         <dependency>
             <groupId>no.nav.yrkesskade</groupId>
-            <artifactId>prosessering-core</artifactId>
-            <version>1.20220119151616_5d6652d</version>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.yrkesskade</groupId>
-            <artifactId>prosessering-jpa</artifactId>
-            <version>1.20220119151616_5d6652d</version>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.yrkesskade</groupId>
             <artifactId>prosessering-jdbc</artifactId>
             <version>1.20220119151616_5d6652d</version>
         </dependency>
