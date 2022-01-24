@@ -9,7 +9,7 @@ spec:
   image: {{image}}
   env:
     - name: SPRING_PROFILES_ACTIVE
-      value: dev
+      value: {{springProfile}}
   liveness:
     path: /internal/health
     port: 8080
@@ -82,9 +82,9 @@ spec:
   azure:
     application:
       enabled: true
-      tenant: trygdeetaten.no
+      tenant: {{tenant}}
       claims:
         groups:
           - id: b7aaab86-2c12-4b32-89ee-6f795bb69406
   kafka:
-    pool: nav-dev
+    pool: {{kafka_pool}}

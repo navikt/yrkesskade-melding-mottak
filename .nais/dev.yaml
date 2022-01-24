@@ -8,3 +8,6 @@ externalHosts:
   - host: saf.dev-fss-pub.nais.io
   - host: pdl-api.dev-fss-pub.nais.io
   - host: oppgave-q1.dev-fss-pub.nais.io
+springProfile: dev
+tenant: trygdeetaten.no
+kafka_pool: nav-dev
