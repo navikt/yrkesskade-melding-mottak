@@ -1,2 +1,10 @@
 ingresses:
-- "https://yrkesskade-melding-mottak.dev.intern.nav.no"
+  - https://yrkesskade-melding-mottak.dev.intern.nav.no
+inboundApplications:
+  - application: yrkesskade-melding-api
+outboundApplications:
+  - application: yrkesskade-melding-api
+externalHosts:
+  - host: saf.dev-fss-pub.nais.io
+  - host: pdl-api.dev-fss-pub.nais.io
+  - host: oppgave-q1.dev-fss-pub.nais.io
