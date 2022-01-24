@@ -1,5 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.controllers
 
+import no.nav.security.token.support.core.api.Unprotected
 import no.nav.yrkesskade.meldingmottak.models.SkademeldingDto
 import no.nav.yrkesskade.meldingmottak.services.SkademeldingService
 import no.nav.yrkesskade.meldingmottak.task.DummyTask
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @RequestMapping(
@@ -33,9 +35,10 @@ class SkademeldingController(
         return ResponseEntity.ok().body(skademeldingService.hentAlleSkademeldinger())
     }
 
+    @Unprotected
     @PostMapping("/dummytask")
     fun dummytask(): Iterable<Task> {
-        val dummyTask = DummyTask.opprettTask("dette er en payload")
+        val dummyTask = DummyTask.opprettTask("dette er en payload ${UUID.randomUUID()}")
         taskRepository.save(dummyTask)
         return taskRepository.findAll()
     }

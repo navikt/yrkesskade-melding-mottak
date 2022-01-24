@@ -1,7 +1,12 @@
 spring:
   application.name: yrkesskade-melding-mottak
   autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
-  main.banner-mode: "off"
+  main:
+    banner-mode: "off"
+    allow-bean-definition-overriding: true
+  sleuth:
+    async:
+      enabled: false
   kafka:
     bootstrap-servers: ${KAFKA_BROKERS}
     client-id: yrkesskade-melding-mottak
@@ -71,8 +76,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/test
     username: test
     password: test
-  main:
-    allow-bean-definition-overriding: true
   kafka:
     properties:
       schema.registry.url: denne-maa-bare-ha-en-verdi
