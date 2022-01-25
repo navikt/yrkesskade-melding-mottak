@@ -15,11 +15,11 @@ CREATE INDEX IF NOT EXISTS task_status_idx ON task (status);
 CREATE TABLE IF NOT EXISTS task_logg (
     id            bigserial    NOT NULL PRIMARY KEY,
     task_id       bigint       NOT NULL REFERENCES task,
-    type          varchar  NOT NULL,
-    node          varchar NOT NULL,
+    type          varchar      NOT NULL,
+    node          varchar      NOT NULL,
     opprettet_tid timestamp(3) DEFAULT LOCALTIMESTAMP,
     melding       text,
-    endret_av     varchar NOT NULL
+    endret_av     varchar      NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS task_logg_task_id_idx ON task_logg (task_id);
