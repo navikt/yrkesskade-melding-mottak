@@ -4,9 +4,6 @@ spring:
   main:
     banner-mode: "off"
     allow-bean-definition-overriding: true
-  sleuth:
-    async:
-      enabled: false
   kafka:
     bootstrap-servers: ${KAFKA_BROKERS}
     client-id: yrkesskade-melding-mottak

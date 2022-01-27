@@ -1,6 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.clients.gosys
 
-import brave.Tracer
+import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -15,8 +15,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 class OppgaveClient(
     private val oppgaveWebClient: WebClient,
     private val tokenUtil: TokenUtil,
-    @Value("\${spring.application.name}") val applicationName: String,
-    private val tracer: Tracer
+    @Value("\${spring.application.name}") val applicationName: String
 ) {
 
     companion object {
@@ -37,7 +36,7 @@ class OppgaveClient(
                 }
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithOppgaveScope()}")
-                .header("X-Correlation-ID", tracer.currentSpan().context().traceIdString())
+                .header("X-Correlation-ID", MDCConstants.MDC_CALL_ID)
                 .header("Nav-Consumer-Id", applicationName)
                 .bodyValue(oppgave)
                 .retrieve()
