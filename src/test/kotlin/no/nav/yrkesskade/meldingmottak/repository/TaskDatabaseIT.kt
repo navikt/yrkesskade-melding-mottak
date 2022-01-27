@@ -2,7 +2,10 @@ package no.nav.yrkesskade.meldingmottak.repository
 
 import no.nav.yrkesskade.meldingmottak.testutils.docker.PostgresDockerContainer
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
@@ -22,13 +25,16 @@ class TaskDatabaseIT {
 
     lateinit var connection: Connection
 
+    @Value("\${spring.datasource.url}")
+    lateinit var jdbcUrl: String
+
     init {
         PostgresDockerContainer.container
     }
 
     @BeforeEach
     fun setUp() {
-        connection = DriverManager.getConnection(Companion.JDBC_URL, "test", "test")
+        connection = DriverManager.getConnection(jdbcUrl, "test", "test")
     }
 
     @Test
@@ -72,10 +78,5 @@ class TaskDatabaseIT {
     @AfterEach
     fun tearDown() {
         connection.close()
-    }
-
-
-    companion object {
-        const val JDBC_URL = "jdbc:postgresql://localhost:5432/test"
     }
 }
