@@ -84,13 +84,13 @@ KAFKA_BROKERS: ${spring.embedded.kafka.brokers}
 
 no.nav.security.jwt:
   issuer:
-    aad:
-      discoveryurl: http://localhost:${mock-oauth2-server.port}/aad/.well-known/openid-configuration
+    azuread:
+      discoveryurl: http://localhost:${mock-oauth2-server.port}/azuread/.well-known/openid-configuration
       accepted_audience: aad-client-id
   client:
     registration:
       saf-maskintilmaskin:
-        token-endpoint-url: http://localhost:${mock-oauth2-server.port}/aad/token
+        token-endpoint-url: http://localhost:${mock-oauth2-server.port}/azuread/token
         grant-type: client_credentials
         scope: saf
         authentication:
@@ -98,7 +98,7 @@ no.nav.security.jwt:
           client-secret: dummy-secret
           client-auth-method: client_secret_basic
       pdl-maskintilmaskin:
-        token-endpoint-url: http://localhost:${mock-oauth2-server.port}/aad/token
+        token-endpoint-url: http://localhost:${mock-oauth2-server.port}/azuread/token
         grant-type: client_credentials
         scope: pdl
         authentication:
@@ -106,7 +106,7 @@ no.nav.security.jwt:
           client-secret: dummy-secret
           client-auth-method: client_secret_basic
       oppgave-maskintilmaskin:
-        token-endpoint-url: http://localhost:${mock-oauth2-server.port}/aad/token
+        token-endpoint-url: http://localhost:${mock-oauth2-server.port}/azuread/token
         grant-type: client_credentials
         scope: oppgave
         authentication:
@@ -143,7 +143,7 @@ kafka:
 
 no.nav.security.jwt:
   issuer:
-    aad:
+    azuread:
       discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
       accepted_audience: ${AZURE_APP_CLIENT_ID}
   client:
