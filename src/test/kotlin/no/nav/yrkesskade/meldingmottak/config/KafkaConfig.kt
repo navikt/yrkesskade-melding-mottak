@@ -15,6 +15,9 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
+import org.springframework.kafka.listener.ContainerStoppingErrorHandler
+import org.springframework.retry.backoff.ExponentialBackOffPolicy
+import org.springframework.retry.support.RetryTemplate
 
 @TestConfiguration
 class KafkaConfig {
@@ -41,6 +44,12 @@ class KafkaConfig {
             ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord> {
         return ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
             this.setConsumerFactory(kafkaConsumerFactory)
+            this.setErrorHandler(ContainerStoppingErrorHandler())
+            this.setRetryTemplate(
+                RetryTemplate().apply {
+                    this.setBackOffPolicy(ExponentialBackOffPolicy())
+                }
+            )
         }
     }
 
