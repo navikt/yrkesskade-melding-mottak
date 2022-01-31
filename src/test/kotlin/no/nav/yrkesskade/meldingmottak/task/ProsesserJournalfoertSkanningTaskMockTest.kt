@@ -86,36 +86,29 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     }
 
     @Test
-    fun `skal kaste exception naar journalstatus paa journalpost fra SAF ikke er MOTTATT`() {
+    fun `skal ikke opprette oppgave naar journalstatus paa journalpost fra SAF ikke er MOTTATT`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultMedJournalstatusFeilregistrert()
-        val exception = assertThrows(RuntimeException::class.java) {
-            prosesserJournalfoertSkanningTask.doTask(task)
-        }
 
-        assertThat(exception.localizedMessage).startsWith("Journalstatus må være")
+        prosesserJournalfoertSkanningTask.doTask(task)
+
         verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
     }
 
     @Test
-    fun `skal kaste exception naar tema paa journalpost fra SAF ikke er YRK`() {
+    fun `skal ikke opprette oppgave naar tema paa journalpost fra SAF ikke er YRK`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultMedTemaSYK()
-        val exception = assertThrows(RuntimeException::class.java) {
-            prosesserJournalfoertSkanningTask.doTask(task)
-        }
 
-        assertThat(exception.localizedMessage).startsWith("Journalpostens tema må være")
+        prosesserJournalfoertSkanningTask.doTask(task)
+
         verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
     }
 
     @Test
-    fun `skal kaste exception naar journalpost har journalposttype ulik innkommende`() {
+    fun `skal ikke opprette oppgave naar journalpost har journalposttype ulik innkommende`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultMedJournalposttypeUtgaaende()
 
-        val exception = assertThrows(RuntimeException::class.java) {
-            prosesserJournalfoertSkanningTask.doTask(task)
-        }
+        prosesserJournalfoertSkanningTask.doTask(task)
 
-        assertThat(exception.localizedMessage).startsWith("Journalpostens type må være")
         verify(exactly = 0) { pdlClientMock.hentAktorId(any()) }
     }
 

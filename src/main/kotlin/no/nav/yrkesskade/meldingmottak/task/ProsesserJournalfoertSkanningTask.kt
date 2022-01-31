@@ -47,7 +47,12 @@ class ProsesserJournalfoertSkanningTask(
         val payloadDto = jacksonObjectMapper().readValue<ProsesserJournalfoertSkanningTaskPayloadDto>(task.payload)
 
         val journalpost = hentJournalpostFraSaf(payloadDto.journalpostId)
-        log.info("Oppdatert journalpost for journalpostId ${payloadDto.journalpostId}: $journalpost")
+
+        if (!journalpostErRelevant(journalpost)) {
+            return
+        }
+        validerJournalpost(journalpost)
+
 
         val aktoerId = hentAktoerId(journalpost.bruker!!)
 
@@ -68,6 +73,34 @@ class ProsesserJournalfoertSkanningTask(
         )
     }
 
+    /**
+     * Avgjør om en journalpost er relevant for opprettelse av journalføringsoppgave.
+     * Kriterier:
+     * 1. Journalpostens status må være mottatt
+     * 2. Journalpostens tema må være YRK
+     * 3. Journalpostens type på være I (innkommende)
+     *
+     * @param journalpost journalposten som skal vurderes
+     */
+    private fun journalpostErRelevant(journalpost: Journalpost): Boolean {
+        log.info("Sjekker om journalpost med journalpostId ${journalpost.journalpostId} er relevant for oppgaveopprettelse")
+        if (journalpost.journalstatus != Journalstatus.MOTTATT) {
+            log.warn("Journalstatus må være ${Journalstatus.MOTTATT}, men er: ${journalpost.journalstatus}")
+            return false
+        }
+
+        if (journalpost.tema != Tema.YRK) {
+            log.warn("Journalpostens tema må være ${Tema.YRK}, men er: ${journalpost.tema}")
+            return false
+        }
+
+        if (journalpost.journalposttype != Journalposttype.I) {
+            log.warn("Journalpostens type må være ${Journalposttype.I}, men er: ${journalpost.journalposttype}")
+            return false
+        }
+        return true
+    }
+
     @Throws(RuntimeException::class)
     private fun hentJournalpostFraSaf(journalpostId: String): Journalpost {
         val safResultat = safClient.hentOppdatertJournalpost(journalpostId)
@@ -75,7 +108,6 @@ class ProsesserJournalfoertSkanningTask(
             log.error("Fant ikke journalpost i SAF for journalpostId $journalpostId")
             throw RuntimeException("Journalpost med journalpostId $journalpostId finnes ikke i SAF")
         }
-        validerJournalpost(safResultat.journalpost)
 
         return safResultat.journalpost
     }
@@ -88,20 +120,17 @@ class ProsesserJournalfoertSkanningTask(
         }
     }
 
+    /**
+     * Avgjør om en journalpost er gyldig (inneholder data som vi kan jobbe med)
+     * Kriterier:
+     * 1. Det må foreligge dokumenter på journalposten
+     * 2. Det må foreligge en brukerId
+     * 3. BrukerId må være fødselsnummer/D-nummer, eller aktørId (kan ikke være orgnr)
+     *
+     * @param journalpost journalposten som skal vurderes
+     */
     private fun validerJournalpost(journalpost: Journalpost) {
         log.info("Validerer journalpost fra SAF med journalpostId ${journalpost.journalpostId}")
-
-        if (journalpost.journalstatus != Journalstatus.MOTTATT) {
-            throw RuntimeException("Journalstatus må være ${Journalstatus.MOTTATT}, men er: ${journalpost.journalstatus}")
-        }
-
-        if (journalpost.tema != Tema.YRK) {
-            throw RuntimeException("Journalpostens tema må være ${Tema.YRK}, men er: ${journalpost.tema}")
-        }
-
-        if (journalpost.journalposttype != Journalposttype.I) {
-            throw RuntimeException("Journalpostens type må være ${Journalposttype.I}, men er: ${journalpost.journalposttype}")
-        }
 
         if (journalpost.dokumenter.isNullOrEmpty()) {
             throw RuntimeException("Journalposten mangler dokumenter.")
