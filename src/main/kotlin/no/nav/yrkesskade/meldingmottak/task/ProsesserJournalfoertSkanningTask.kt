@@ -56,7 +56,7 @@ class ProsesserJournalfoertSkanningTask(
 
         val aktoerId = hentAktoerId(journalpost.bruker!!)
 
-        // TODO: 26/01/2022 burde fristFerdigstillelse og aktivDato settes fra tidspunktet tasken ble opprettet, og ikke tidspunktet for vellykket task-kjøring?
+        // TODO: (YSMOD-31) burde fristFerdigstillelse og aktivDato settes fra tidspunktet tasken ble opprettet, og ikke tidspunktet for vellykket task-kjøring?
         oppgaveClient.opprettOppgave(
             OpprettJournalfoeringOppgave(
                 beskrivelse = journalpost.hentHovedDokumentTittel(),
