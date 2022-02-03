@@ -46,3 +46,33 @@ fun journalfoeringHendelseRecordMedKanalNAVNO(): JournalfoeringHendelseRecord {
         .setBehandlingstema("YRK")
         .build()
 }
+
+fun journalfoeringHendelseRecordMedKanalALTINN(): JournalfoeringHendelseRecord {
+    return JournalfoeringHendelseRecord.newBuilder()
+        .setHendelsesId("hendelsesId")
+        .setVersjon(1)
+        .setHendelsesType("hendelsesType")
+        .setJournalpostId(1337)
+        .setJournalpostStatus("journalpostStatus")
+        .setTemaGammelt("YRK")
+        .setTemaNytt("YRK")
+        .setMottaksKanal("ALTINN")
+        .setKanalReferanseId("P1")
+        .setBehandlingstema("YRK")
+        .build()
+}
+
+fun journalfoeringHendelseRecordMedKanalSKAN_NETS(): JournalfoeringHendelseRecord {
+    return JournalfoeringHendelseRecord.newBuilder()
+        .setHendelsesId("hendelsesId")
+        .setVersjon(1)
+        .setHendelsesType("hendelsesType")
+        .setJournalpostId(1337)
+        .setJournalpostStatus("journalpostStatus")
+        .setTemaGammelt("YRK")
+        .setTemaNytt("YRK")
+        .setMottaksKanal("SKAN_NETS")
+        .setKanalReferanseId("P1")
+        .setBehandlingstema("YRK")
+        .build()
+}
