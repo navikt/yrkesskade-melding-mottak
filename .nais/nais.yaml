@@ -9,7 +9,7 @@ spec:
   image: {{image}}
   env:
     - name: SPRING_PROFILES_ACTIVE
-      value: dev
+      value: {{springProfile}}
   liveness:
     path: /internal/health
     port: 8080
@@ -30,18 +30,38 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: yrkesskade-melding-api
-          namespace: yrkesskade
-        - application: yrkesskade-prosessering
-          namespace: yrkesskade
+      {{#each inboundApplications as |inbound|}}
+        - application: {{inbound.application}}
+#        {{#if inbound.namespace}}
+          namespace: {{inbound.namespace}}
+#        {{/if}}
+#        {{#if inbound.cluster}}
+          cluster: {{inbound.cluster}}
+#        {{/if}}
+      {{/each}}
     outbound:
       rules:
-        - application: yrkesskade-melding-api
-          namespace: yrkesskade
+      {{#each outboundApplications as |outbound|}}
+        - application: {{outbound.application}}
+#        {{#if outbound.namespace}}
+          namespace: {{outbound.namespace}}
+#        {{/if}}
+#        {{#if outbound.cluster}}
+          cluster: {{outbound.cluster}}
+#        {{/if}}
+      {{/each}}
       external:
-        - host: saf.dev-fss-pub.nais.io
-        - host: pdl-api.dev-fss-pub.nais.io
-        - host: oppgave-q1.dev-fss-pub.nais.io
+      {{#each externalHosts}}
+        - host: {{host}}
+          {{#if ports}}
+          ports:
+            {{#each ports}}
+            - name: {{name}}
+              port: {{port}}
+              protocol: {{protocol}}
+            {{/each}}
+          {{/if}}
+      {{/each}}
   resources:
     limits:
       cpu: 2000m
@@ -64,4 +84,4 @@ spec:
       enabled: true
       tenant: trygdeetaten.no
   kafka:
-    pool: nav-dev
+    pool: {{kafka_pool}}
