@@ -1,154 +1,43 @@
 package no.nav.yrkesskade.meldingmottak.hendelser
 
-import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
-import no.nav.yrkesskade.meldingmottak.clients.PdlClient
-import no.nav.yrkesskade.meldingmottak.clients.SafClient
-import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecord
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalposttypeUtgaaende
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalstatusFeilregistrert
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedTemaSYK
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedUgyldigBrukerIdType
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBrukerId
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenDokumenter
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerAktoerid
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerFnr
+import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecordMedKanalNAVNO
+import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecordMedTemaSYK
 import no.nav.yrkesskade.meldingmottak.services.JournalfoeringHendelseService
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions
+import no.nav.yrkesskade.meldingmottak.task.ProsesserJournalfoertSkanningTask
+import no.nav.yrkesskade.prosessering.domene.TaskRepository
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
-import org.mockito.kotlin.any
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.never
-import org.mockito.kotlin.verify
 
 class JournalfoeringHendelseServiceMockTest {
 
-    private val safClientMock: SafClient = mock()
-    private val pdlClientMock: PdlClient = mock()
-    private val oppgaveClientMock: OppgaveClient = mock()
+    private val taskRepository: TaskRepository = mockk()
 
-    private val record: JournalfoeringHendelseRecord = journalfoeringHendelseRecord()!!
+    private val service: JournalfoeringHendelseService = JournalfoeringHendelseService(taskRepository)
 
-    private val service: JournalfoeringHendelseService = JournalfoeringHendelseService(safClientMock, pdlClientMock, oppgaveClientMock)
-
-    @Test
-    fun `skal kalle paa SAF naar det kommer en kafkarecord`() {
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultWithBrukerAktoerid())
-
-        service.prosesserJournalfoeringHendelse(record)
-        verify(safClientMock).hentOppdatertJournalpost(any())
+    @BeforeEach
+    fun setup() {
+        every { taskRepository.save(any()) } returns ProsesserJournalfoertSkanningTask.opprettTask("123")
     }
 
     @Test
-    fun `skal hente aktoerId fra PDL naar journalpost har foedselsnummer`() {
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultWithBrukerFnr())
-
-        service.prosesserJournalfoeringHendelse(record)
-        verify(pdlClientMock).hentAktorId(any())
+    fun `skal kalle paa taskRepository naar en relevant record kommer inn`() {
+        service.prosesserJournalfoeringHendelse(journalfoeringHendelseRecord()!!)
+        verify(exactly = 1) { taskRepository.save(any()) }
     }
 
     @Test
-    fun `skal IKKE kalle paa PDL naar journalpost har aktoerId`() {
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultWithBrukerAktoerid())
-
-        service.prosesserJournalfoeringHendelse(record)
-        verify(pdlClientMock, never()).hentAktorId(any())
+    fun `skal ikke kalle paa taskRepository naar en record med tema ulikt YRK kommer inn`() {
+        service.prosesserJournalfoeringHendelse(journalfoeringHendelseRecordMedTemaSYK())
+        verify(exactly = 0) { taskRepository.save(any()) }
     }
 
     @Test
-    fun `skal IKKE lage oppgave naar SAF ikke returnerer en journalpost`() {
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(null)
-
-        val exception = Assertions.assertThrows(RuntimeException::class.java) {
-            service.prosesserJournalfoeringHendelse(record)
-        }
-        assertThat(exception.localizedMessage).isEqualTo("Journalpost med journalpostId ${record.journalpostId} finnes ikke i SAF")
-        verify(oppgaveClientMock, never()).opprettOppgave(any())
-    }
-
-    @Test
-    fun `skal lage oppgave naar SAF returnerer journalpost med aktoerId`() {
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultWithBrukerAktoerid())
-
-        service.prosesserJournalfoeringHendelse(record)
-        verify(oppgaveClientMock).opprettOppgave(any())
-    }
-
-    @Test
-    fun `skal lage oppgave naar SAF returnerer journalpost med foedselsnummer og PDL har aktoerId`() {
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultWithBrukerFnr())
-
-        service.prosesserJournalfoeringHendelse(record)
-        verify(pdlClientMock).hentAktorId(any())
-        verify(oppgaveClientMock).opprettOppgave(any())
-    }
-
-    @Test
-    fun `skal kaste exception naar journalstatus paa journalpost fra SAF ikke er MOTTATT`() {
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultMedJournalstatusFeilregistrert())
-        val exception = Assertions.assertThrows(RuntimeException::class.java) {
-            service.prosesserJournalfoeringHendelse(record)
-        }
-
-        assertThat(exception.localizedMessage).startsWith("Journalstatus må være")
-        verify(oppgaveClientMock, never()).opprettOppgave(any())
-    }
-
-    @Test
-    fun `skal kaste exception naar tema paa journalpost fra SAF ikke er YRK`() {
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultMedTemaSYK())
-        val exception = Assertions.assertThrows(RuntimeException::class.java) {
-            service.prosesserJournalfoeringHendelse(record)
-        }
-
-        assertThat(exception.localizedMessage).startsWith("Journalpostens tema må være")
-        verify(oppgaveClientMock, never()).opprettOppgave(any())
-    }
-
-    @Test
-    fun `skal kaste exception naar journalpost har journalposttype ulik innkommende`() {
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultMedJournalposttypeUtgaaende())
-
-        val exception = Assertions.assertThrows(RuntimeException::class.java) {
-            service.prosesserJournalfoeringHendelse(record)
-        }
-
-        assertThat(exception.localizedMessage).startsWith("Journalpostens type må være")
-        verify(pdlClientMock, never()).hentAktorId(any())
-    }
-
-    @Test
-    fun `skal kaste exception naar journalpost fra SAF mangler dokumenter`() {
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultUtenDokumenter())
-        val exception = Assertions.assertThrows(RuntimeException::class.java) {
-            service.prosesserJournalfoeringHendelse(record)
-        }
-
-        assertThat(exception.localizedMessage).isEqualTo("Journalposten mangler dokumenter.")
-        verify(oppgaveClientMock, never()).opprettOppgave(any())
-    }
-
-    @Test
-    fun `skal kaste exception naarjournalpost fra SAF mangler brukerId`() {
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultUtenBrukerId())
-        val exception = Assertions.assertThrows(RuntimeException::class.java) {
-            service.prosesserJournalfoeringHendelse(record)
-        }
-
-        assertThat(exception.localizedMessage).isEqualTo("Journalposten mangler brukerId.")
-        verify(oppgaveClientMock, never()).opprettOppgave(any())
-    }
-
-    @Test
-    fun `skal kaste exception naar journalpost fra SAF har ugyldig brukerIdType`() {
-        `when`(safClientMock.hentOppdatertJournalpost(any())).thenReturn(journalpostResultMedUgyldigBrukerIdType())
-        val exception = Assertions.assertThrows(RuntimeException::class.java) {
-            service.prosesserJournalfoeringHendelse(record)
-        }
-
-        assertThat(exception.localizedMessage).startsWith("BrukerIdType må være en av:")
-        verify(oppgaveClientMock, never()).opprettOppgave(any())
+    fun `skal kalle paa taskRepository naar en record med kanal som ikke begynner paa SKAN_ kommer inn`() {
+        service.prosesserJournalfoeringHendelse(journalfoeringHendelseRecordMedKanalNAVNO())
+        verify(exactly = 0) { taskRepository.save(any()) }
     }
 }

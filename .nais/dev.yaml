@@ -2,6 +2,7 @@ ingresses:
   - https://yrkesskade-melding-mottak.dev.intern.nav.no
 inboundApplications:
   - application: yrkesskade-melding-api
+  - application: yrkesskade-prosessering
 outboundApplications:
   - application: yrkesskade-melding-api
 externalHosts:

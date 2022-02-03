@@ -83,8 +83,5 @@ spec:
     application:
       enabled: true
       tenant: {{tenant}}
-      claims:
-        groups:
-          - id: b7aaab86-2c12-4b32-89ee-6f795bb69406
   kafka:
     pool: {{kafka_pool}}
