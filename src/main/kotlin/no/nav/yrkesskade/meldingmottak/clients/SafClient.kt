@@ -18,8 +18,13 @@ import javax.ws.rs.core.HttpHeaders
 class SafClient(@Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
                 private val tokenUtil: TokenUtil
 ) {
-    private val logger = getLogger(javaClass.enclosingClass)
-    private val secureLogger = getSecureLogger()
+
+    companion object {
+        @Suppress("JAVA_CLASS_ON_COMPANION")
+        private val logger = getLogger(javaClass.enclosingClass)
+        private val secureLogger = getSecureLogger()
+    }
+
     private val client = GraphQLWebClient(url = safGraphqlUrl)
 
     fun hentOppdatertJournalpost(journalpostId: String): Journalpost.Result? {

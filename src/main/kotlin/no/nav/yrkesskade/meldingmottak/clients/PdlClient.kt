@@ -21,8 +21,12 @@ class PdlClient(
     private val tokenUtil: TokenUtil
 ) {
 
-    private val logger = getLogger(javaClass.enclosingClass)
-    private val secureLogger = getSecureLogger()
+    companion object {
+        @Suppress("JAVA_CLASS_ON_COMPANION")
+        private val logger = getLogger(javaClass.enclosingClass)
+        private val secureLogger = getSecureLogger()
+    }
+
     private val client = GraphQLWebClient(url = pdlGraphqlUrl)
 
     fun hentAktorId(fodselsnummer: String): String? {
