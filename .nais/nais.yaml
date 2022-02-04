@@ -85,3 +85,5 @@ spec:
       tenant: {{tenant}}
   kafka:
     pool: {{kafka_pool}}
+  secureLogs:
+    enabled: true

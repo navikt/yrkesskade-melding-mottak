@@ -5,10 +5,10 @@ import com.expediagroup.graphql.client.types.GraphQLClientResponse
 import com.expediagroup.graphql.generated.Journalpost
 import kotlinx.coroutines.runBlocking
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
-import org.slf4j.LoggerFactory
+import no.nav.yrkesskade.meldingmottak.util.getLogger
+import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.lang.invoke.MethodHandles
 import javax.ws.rs.core.HttpHeaders
 
 /**
@@ -18,15 +18,18 @@ import javax.ws.rs.core.HttpHeaders
 class SafClient(@Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
                 private val tokenUtil: TokenUtil
 ) {
-    private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
+    private val logger = getLogger(javaClass.enclosingClass)
+    private val secureLogger = getSecureLogger()
     private val client = GraphQLWebClient(url = safGraphqlUrl)
 
     fun hentOppdatertJournalpost(journalpostId: String): Journalpost.Result? {
         val token = tokenUtil.getAppAccessTokenWithSafScope()
-        log.info("Hentet token for Saf")
+        logger.info("Hentet token for Saf")
+        secureLogger.info("Hentet token for Saf")
         val journalpostQuery = Journalpost(Journalpost.Variables(journalpostId))
 
-        log.info("Henter oppdatert journalpost for id $journalpostId på url $safGraphqlUrl")
+        logger.info("Henter oppdatert journalpost for id $journalpostId på url $safGraphqlUrl")
+        secureLogger.info("Henter oppdatert journalpost for id $journalpostId på url $safGraphqlUrl")
         val oppdatertJournalpost: Journalpost.Result?
         runBlocking {
             val response: GraphQLClientResponse<Journalpost.Result> = client.execute(journalpostQuery) {
@@ -34,7 +37,8 @@ class SafClient(@Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
             }
             oppdatertJournalpost = response.data
             if (!response.errors.isNullOrEmpty()) {
-                log.error("SAF response errors: ${response.errors}")
+                logger.error("SAF response errors: ${response.errors}")
+                secureLogger.error("SAF response errors: ${response.errors}")
                 throw RuntimeException(response.errors.toString())
             }
         }
