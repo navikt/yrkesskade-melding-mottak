@@ -30,26 +30,7 @@ spec:
   accessPolicy:
     inbound:
       rules:
-      {{#each inboundApplications as |inbound|}}
-        - application: {{inbound.application}}
-#        {{#if inbound.namespace}}
-          namespace: {{inbound.namespace}}
-#        {{/if}}
-#        {{#if inbound.cluster}}
-          cluster: {{inbound.cluster}}
-#        {{/if}}
-      {{/each}}
-    outbound:
-      rules:
-      {{#each outboundApplications as |outbound|}}
-        - application: {{outbound.application}}
-#        {{#if outbound.namespace}}
-          namespace: {{outbound.namespace}}
-#        {{/if}}
-#        {{#if outbound.cluster}}
-          cluster: {{outbound.cluster}}
-#        {{/if}}
-      {{/each}}
+        - application: yrkesskade-prosessering
       external:
       {{#each externalHosts}}
         - host: {{host}}

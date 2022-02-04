@@ -1,10 +1,5 @@
 ingresses:
   - https://yrkesskade-melding-mottak.intern.nav.no
-inboundApplications:
-  - application: yrkesskade-melding-api
-  - application: yrkesskade-prosessering
-outboundApplications:
-  - application: yrkesskade-melding-api
 externalHosts:
   - host: saf.prod-fss-pub.nais.io
   - host: pdl-api.prod-fss-pub.nais.io
