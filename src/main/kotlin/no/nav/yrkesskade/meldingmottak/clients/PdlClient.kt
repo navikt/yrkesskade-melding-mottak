@@ -6,10 +6,10 @@ import com.expediagroup.graphql.generated.HentIdenter
 import com.expediagroup.graphql.generated.enums.IdentGruppe
 import kotlinx.coroutines.runBlocking
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
-import org.slf4j.LoggerFactory
+import no.nav.yrkesskade.meldingmottak.util.getLogger
+import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.lang.invoke.MethodHandles
 import javax.ws.rs.core.HttpHeaders
 
 /**
@@ -21,35 +21,38 @@ class PdlClient(
     private val tokenUtil: TokenUtil
 ) {
 
-    private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
+    companion object {
+        @Suppress("JAVA_CLASS_ON_COMPANION")
+        private val logger = getLogger(javaClass.enclosingClass)
+        private val secureLogger = getSecureLogger()
+    }
+
     private val client = GraphQLWebClient(url = pdlGraphqlUrl)
 
     fun hentAktorId(fodselsnummer: String): String? {
-        log.info("pdl: Kaller hentAktorId med fnr $fodselsnummer")
-
         val token = tokenUtil.getAppAccessTokenWithPdlScope()
-        log.info("pdl: Hentet token for Pdl $token")
+        logger.info("Hentet token for Pdl $token")
         val hentIdenterQuery = HentIdenter(HentIdenter.Variables(fodselsnummer))
 
         val identerResult: HentIdenter.Result?
         runBlocking {
-            log.info("Pdl: Henter aktørId for person med fnr $fodselsnummer på url $pdlGraphqlUrl")
+            logger.info("Henter aktørId fra PDL på url $pdlGraphqlUrl")
+            secureLogger.info("Henter aktørId fra PDL for person med fnr $fodselsnummer på url $pdlGraphqlUrl")
             val response: GraphQLClientResponse<HentIdenter.Result> = client.execute(hentIdenterQuery) {
                 header(HttpHeaders.AUTHORIZATION, "Bearer $token")
             }
             identerResult = response.data
-            log.info("Pdl: Ferdig med kallet")
-            log.info(response.toString())
-            log.info("Pdl: Data: " + response.data)
-            log.info("Pdl: Errors: " + response.errors)
+            logger.info("Returnerte fra PDL, se securelogs for detaljer")
+            secureLogger.info("Returnerte fra PDL, data: " + response.data)
             if (!response.errors.isNullOrEmpty()) {
-                log.error("PDL response errors: ${response.errors}")
+                logger.error("Responsen fra PDL inneholder feil! Se securelogs")
+                secureLogger.error("Responsen fra PDL inneholder feil: ${response.errors}")
                 // TODO: 23/12/2021 Feilhåndtering
             }
         }
 
         val aktorId = extractAktorId(identerResult)
-        log.info("Pdl: Hentet aktørId $aktorId for fnr $fodselsnummer")
+        logger.info("Hentet aktørId $aktorId fra PDL")
         return aktorId
     }
 

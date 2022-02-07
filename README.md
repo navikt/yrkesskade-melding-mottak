@@ -35,7 +35,7 @@ docker-compose up
 Topicen vi lytter på må opprettes ved å kjøre en PUT mot [kafka-adminrest](http://localhost:8840/api/v1/apidocs/index.html?url=swagger.json) ved hjelp av følgende kommando:
 
 ```bash
-curl -X PUT "http://igroup:itest@localhost:8840/api/v1/oneshot" -H  "Accept: application/json" -H  "Content-Type: application/json" --data "./local-setup/kafka_oneshot.json"
+curl -X PUT "http://igroup:itest@localhost:8840/api/v1/oneshot" -H  "Accept: application/json" -H  "Content-Type: application/json" --data "@local-setup/kafka_oneshot.json"
 ```
 
 Det er allerede opprettet en data fil for oneshot, som ligger i ./local-setup mappen. navkafka-docker-compose repoet inneholder mer informasjon om en slik datafil og eksempler på flere topics.

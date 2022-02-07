@@ -12,12 +12,22 @@
             <id>github</id>
             <repositories>
                 <repository>
-                    <id>github</id>
-                    <name>teamdokumenthandtering-avro-schemas</name>
+                    <id>teamdokumenthandtering-avro-schemas</id>
                     <url>https://maven.pkg.github.com/navikt/teamdokumenthandtering-avro-schemas</url>
                     <snapshots>
                         <enabled>true</enabled>
                     </snapshots>
+                </repository>
+                <repository>
+                    <id>yrkesskade-prosessering</id>
+                    <url>https://maven.pkg.github.com/navikt/yrkesskade-prosessering-backend</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>confluent</id>
+                    <url>https://packages.confluent.io/maven</url>
                 </repository>
             </repositories>
         </profile>
@@ -25,7 +35,12 @@
 
     <servers>
         <server>
-            <id>github</id>
+            <id>teamdokumenthandtering-avro-schemas</id>
+            <username>${GITHUB_USERNAME}</username>
+            <password>${GITHUB_TOKEN}</password>
+        </server>
+        <server>
+            <id>yrkesskade-prosessering</id>
             <username>${GITHUB_USERNAME}</username>
             <password>${GITHUB_TOKEN}</password>
         </server>
