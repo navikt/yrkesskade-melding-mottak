@@ -1,8 +1,5 @@
 name: "Build and deploy yrkesskade-melding-mottak"
-on:
-  push:
-    branches:
-    - "master"
+on: push
 env:
   "IMAGE": "ghcr.io/${{ github.repository }}:${{ github.sha }}"
 jobs:
