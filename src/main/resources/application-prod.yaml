@@ -1,0 +1,58 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  kafka:
+    properties:
+      schema.registry.url: ${KAFKA_SCHEMA_REGISTRY}
+      security.protocol: SSL
+      basic:
+        auth:
+          credentials.source: USER_INFO
+          user.info: ${KAFKA_SCHEMA_REGISTRY_USER}:${KAFKA_SCHEMA_REGISTRY_PASSWORD}
+      ssl:
+        truststore:
+          type: JKS
+          location: ${KAFKA_TRUSTSTORE_PATH}
+          password: ${KAFKA_CREDSTORE_PASSWORD}
+        keystore:
+          type: PKCS12
+          location: ${KAFKA_KEYSTORE_PATH}
+          password: ${KAFKA_CREDSTORE_PASSWORD}
+        key.password: ${KAFKA_CREDSTORE_PASSWORD}
+
+kafka:
+  topic:
+    aapen-dok-journalfoering: teamdokumenthandtering.aapen-dok-journalfoering
+
+no.nav.security.jwt:
+  issuer:
+    azuread:
+      discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
+      accepted_audience: ${AZURE_APP_CLIENT_ID}
+  client:
+    registration:
+      saf-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${SAF_APP_CLIENT_ID}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
+      pdl-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${PDL_APP_CLIENT_ID}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
+      oppgave-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${OPPGAVE_APP_CLIENT_ID}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
