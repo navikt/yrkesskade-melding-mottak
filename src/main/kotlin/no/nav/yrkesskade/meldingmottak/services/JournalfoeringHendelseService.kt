@@ -26,7 +26,7 @@ class JournalfoeringHendelseService(private val taskRepository: TaskRepository) 
      * Bestemmer om en Kafka-record er relevant for prosessering hos oss.
      * Betingelser:
      * 1. Temaet må tilhøre yrkesskade (YRK)
-     * 2. Mottakskanalen må være en av de vi lytter på (se enum [Kanal]
+     * 2. Mottakskanalen må være en av de vi lytter på (se enum [Kanal])
      *
      * @param record Recorden som kommer fra Kafka-topicet
      */
