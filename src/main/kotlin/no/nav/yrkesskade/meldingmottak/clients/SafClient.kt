@@ -6,7 +6,6 @@ import com.expediagroup.graphql.generated.Journalpost
 import kotlinx.coroutines.runBlocking
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import no.nav.yrkesskade.meldingmottak.util.getLogger
-import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import javax.ws.rs.core.HttpHeaders
@@ -22,7 +21,6 @@ class SafClient(@Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val secureLogger = getSecureLogger()
     }
 
     private val client = GraphQLWebClient(url = safGraphqlUrl)
@@ -30,11 +28,9 @@ class SafClient(@Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
     fun hentOppdatertJournalpost(journalpostId: String): Journalpost.Result? {
         val token = tokenUtil.getAppAccessTokenWithSafScope()
         logger.info("Hentet token for Saf")
-        secureLogger.info("Hentet token for Saf")
         val journalpostQuery = Journalpost(Journalpost.Variables(journalpostId))
 
         logger.info("Henter oppdatert journalpost for id $journalpostId på url $safGraphqlUrl")
-        secureLogger.info("Henter oppdatert journalpost for id $journalpostId på url $safGraphqlUrl")
         val oppdatertJournalpost: Journalpost.Result?
         runBlocking {
             val response: GraphQLClientResponse<Journalpost.Result> = client.execute(journalpostQuery) {
@@ -43,7 +39,6 @@ class SafClient(@Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
             oppdatertJournalpost = response.data
             if (!response.errors.isNullOrEmpty()) {
                 logger.error("SAF response errors: ${response.errors}")
-                secureLogger.error("SAF response errors: ${response.errors}")
                 throw RuntimeException(response.errors.toString())
             }
         }
