@@ -9,8 +9,11 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.listener.ContainerStoppingErrorHandler
 import org.springframework.retry.backoff.ExponentialBackOffPolicy
+import org.springframework.retry.policy.SimpleRetryPolicy
 import org.springframework.retry.support.RetryTemplate
 
+
+private const val ANTALL_RETRIES = 10
 
 @EnableKafka
 @Configuration
@@ -30,6 +33,7 @@ class KafkaConfig {
             this.setRetryTemplate(
                 RetryTemplate().apply {
                     this.setBackOffPolicy(ExponentialBackOffPolicy())
+                    this.setRetryPolicy(SimpleRetryPolicy(ANTALL_RETRIES))
                 }
             )
         }
