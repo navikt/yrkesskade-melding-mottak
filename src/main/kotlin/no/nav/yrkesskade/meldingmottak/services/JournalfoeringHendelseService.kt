@@ -17,11 +17,6 @@ class JournalfoeringHendelseService(private val taskRepository: TaskRepository) 
 
     fun prosesserJournalfoeringHendelse(record: JournalfoeringHendelseRecord) {
         if (hendelseErRelevant(record)) {
-
-            if (record.temaNytt.equals(TEMA_YRKESSKADE)) {
-                log.error("tester feilhaandtering... jpid ${record.journalpostId}")
-                throw RuntimeException("Tester feilhaandtering")
-            }
             log.info("Mottatt journalføringhendelse: $record")
             taskRepository.save(ProsesserJournalfoertSkanningTask.opprettTask(record.journalpostId.toString()))
         }
