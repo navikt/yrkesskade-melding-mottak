@@ -15,6 +15,8 @@ import org.springframework.retry.support.RetryTemplate
 
 private const val ANTALL_RETRIES = 10
 
+private const val ETT_SEKUND = 1000L
+
 @EnableKafka
 @Configuration
 class KafkaConfig {
@@ -32,7 +34,9 @@ class KafkaConfig {
             this.setErrorHandler(ContainerStoppingErrorHandler())
             this.setRetryTemplate(
                 RetryTemplate().apply {
-                    this.setBackOffPolicy(ExponentialBackOffPolicy())
+                    this.setBackOffPolicy(ExponentialBackOffPolicy().apply {
+                        this.initialInterval = ETT_SEKUND
+                    })
                     this.setRetryPolicy(SimpleRetryPolicy(ANTALL_RETRIES))
                 }
             )

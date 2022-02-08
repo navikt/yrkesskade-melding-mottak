@@ -17,10 +17,16 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import org.springframework.kafka.listener.ContainerStoppingErrorHandler
 import org.springframework.retry.backoff.ExponentialBackOffPolicy
+import org.springframework.retry.policy.SimpleRetryPolicy
 import org.springframework.retry.support.RetryTemplate
+
+private const val ANTALL_RETRIES = 10
+
+private const val ETT_SEKUND = 1000L
 
 @TestConfiguration
 class KafkaConfig {
+
     @Bean
     fun schemaRegistryClient(): MockSchemaRegistryClient {
         return MockSchemaRegistryClient()
@@ -47,7 +53,10 @@ class KafkaConfig {
             this.setErrorHandler(ContainerStoppingErrorHandler())
             this.setRetryTemplate(
                 RetryTemplate().apply {
-                    this.setBackOffPolicy(ExponentialBackOffPolicy())
+                    this.setBackOffPolicy(ExponentialBackOffPolicy().apply {
+                        this.initialInterval = ETT_SEKUND
+                    })
+                    this.setRetryPolicy(SimpleRetryPolicy(ANTALL_RETRIES))
                 }
             )
         }
