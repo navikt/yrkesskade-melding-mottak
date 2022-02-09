@@ -1,6 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.services
 
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
+import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgavetype
 import no.nav.yrkesskade.meldingmottak.hendelser.domene.Kanal
 import no.nav.yrkesskade.meldingmottak.task.ProsesserJournalfoertSkanningTask
 import no.nav.yrkesskade.prosessering.domene.TaskRepository
@@ -11,7 +13,10 @@ import java.lang.invoke.MethodHandles
 private const val TEMA_YRKESSKADE = "YRK"
 
 @Service
-class JournalfoeringHendelseService(private val taskRepository: TaskRepository) {
+class JournalfoeringHendelseService(
+    private val taskRepository: TaskRepository,
+    private val oppgaveClient: OppgaveClient
+    ) {
 
     private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
 
@@ -29,8 +34,15 @@ class JournalfoeringHendelseService(private val taskRepository: TaskRepository) 
         }
 
         if (kanalErRelevant(record)) {
-            log.info("Mottatt journalføringhendelse, oppretter journalføringsoppgave: $record")
+            log.info("Mottatt relevant journalføringhendelse: $record")
+
+            val eksisterendeOppgaver = oppgaveClient.finnOppgaver(record.journalpostId.toString(), Oppgavetype.JOURNALFOERING)
+            if (eksisterendeOppgaver.antallTreffTotalt > 0) {
+                log.warn("Det eksisterer allerede en oppgave på journalpostId ${record.journalpostId}; oppretter ikke oppgave.")
+                return
+            }
             taskRepository.save(ProsesserJournalfoertSkanningTask.opprettTask(record.journalpostId.toString()))
+            log.info("Opprettet ProsesserJournalfoertSkanningTask på journalpostId ${record.journalpostId}")
         } else {
             log.warn("Mottatt journalføringhendelse på tema YRK med ukjent kanal: $record")
         }
