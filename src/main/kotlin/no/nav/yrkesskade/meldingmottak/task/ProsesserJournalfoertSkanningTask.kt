@@ -11,6 +11,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.yrkesskade.meldingmottak.clients.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
+import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgavetype
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OpprettJournalfoeringOppgave
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Prioritet
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
@@ -25,7 +26,6 @@ import java.lang.invoke.MethodHandles
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-private const val OPPGAVETYPE_JOURNALFOERING = "JFR"
 
 @TaskStepBeskrivelse(
     taskStepType = ProsesserJournalfoertSkanningTask.TASK_STEP_TYPE,
@@ -63,7 +63,7 @@ class ProsesserJournalfoertSkanningTask(
                 journalpostId = journalpost.journalpostId,
                 aktoerId = aktoerId,
                 tema = journalpost.tema.toString(),
-                oppgavetype = OPPGAVETYPE_JOURNALFOERING,
+                oppgavetype = Oppgavetype.JOURNALFOERING.kortnavn,
                 behandlingstema = null, // skal være null
                 behandlingstype = null, // skal være null
                 prioritet = Prioritet.NORM,

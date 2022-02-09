@@ -62,6 +62,10 @@ data class Ident(
     val gruppe: Gruppe? = null
 )
 
+enum class Oppgavetype(val kortnavn: String) {
+    JOURNALFOERING("JFR")
+}
+
 enum class Gruppe {
     FOLKEREGISTERIDENT, AKTOERID, NPID
 }
