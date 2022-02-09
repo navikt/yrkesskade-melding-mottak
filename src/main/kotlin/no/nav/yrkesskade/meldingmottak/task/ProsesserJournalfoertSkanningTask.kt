@@ -46,6 +46,12 @@ class ProsesserJournalfoertSkanningTask(
         log.info("ProsesserJournalfoertSkanningTask kjoerer med payload ${task.payload}")
         val payloadDto = jacksonObjectMapper().readValue<ProsesserJournalfoertSkanningTaskPayloadDto>(task.payload)
 
+        val eksisterendeOppgaver = oppgaveClient.finnOppgaver(payloadDto.journalpostId, Oppgavetype.JOURNALFOERING)
+        if (eksisterendeOppgaver.antallTreffTotalt > 0) {
+            log.warn("Det eksisterer allerede en oppgave på journalpostId ${payloadDto.journalpostId}, oppretter ikke oppgave.")
+            return
+        }
+
         val journalpost = hentJournalpostFraSaf(payloadDto.journalpostId)
 
         if (!journalpostErRelevant(journalpost)) {

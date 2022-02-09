@@ -43,6 +43,30 @@ class OppgaveClient(
         }
     }
 
+    fun finnOppgaver(journalpostId: String, oppgavetype: Oppgavetype): OppgaveResponse {
+        log.info("Søker etter aktive oppgaver for $journalpostId")
+
+        return logTimingAndWebClientResponseException("finnOppgaver") {
+            oppgaveWebClient.get()
+                .uri { uriBuilder ->
+                    uriBuilder.pathSegment("api")
+                        .pathSegment("v1")
+                        .pathSegment("oppgaver")
+                        .queryParam("statuskategori", Statuskategori.AAPEN.toString())
+                        .queryParam("tema", "YRK")
+                        .queryParam("oppgavetype", oppgavetype.kortnavn)
+                        .queryParam("journalpostId", journalpostId)
+                        .build()
+                }
+                .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithOppgaveScope()}")
+                .header("X-Correlation-ID", MDCConstants.MDC_CALL_ID)
+                .header("Nav-Consumer-Id", applicationName)
+                .retrieve()
+                .bodyToMono<OppgaveResponse>()
+                .block() ?: throw RuntimeException("Kunne ikke hente oppgave")
+        }
+    }
+
     private fun <T> logTimingAndWebClientResponseException(methodName: String, function: () -> T): T {
         val start: Long = System.currentTimeMillis()
         try {
