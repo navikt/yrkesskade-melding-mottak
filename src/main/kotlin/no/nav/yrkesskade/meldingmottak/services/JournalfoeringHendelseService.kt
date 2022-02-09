@@ -25,6 +25,7 @@ class JournalfoeringHendelseService(
      * Betingelser for opprettelse av task:
      * 1. Temaet må tilhøre yrkesskade (YRK)
      * 2. Mottakskanalen må være en av de vi lytter på (se enum [Kanal])
+     * 3. Det må ikke eksistere en journalføringsoppgave på journalposten fra før
      *
      * @param record Recorden som kommer fra Kafka-topicet
      */
