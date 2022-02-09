@@ -7,6 +7,7 @@ import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveResponse
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelOppgave
 import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecord
+import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecordMedJournalpoststatusJOURNALFOERT
 import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecordMedKanalALTINN
 import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecordMedKanalNAVNO
 import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecordMedKanalSKAN_NETS
@@ -62,7 +63,7 @@ class JournalfoeringHendelseServiceMockTest {
 
     @Test
     fun `skal ikke kalle paa taskRepository naar en record med journalpoststatus vi ikke lytter paa kommer inn`() {
-        service.prosesserJournalfoeringHendelse(journalfoeringHendelseRecordMedKanalALTINN())
+        service.prosesserJournalfoeringHendelse(journalfoeringHendelseRecordMedJournalpoststatusJOURNALFOERT())
         verify(exactly = 0) { taskRepository.save(any()) }
     }
 

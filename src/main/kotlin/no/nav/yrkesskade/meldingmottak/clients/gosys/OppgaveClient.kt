@@ -55,7 +55,7 @@ class OppgaveClient(
                     uriBuilder.pathSegment("api")
                         .pathSegment("v1")
                         .pathSegment("oppgaver")
-                        .queryParam("statuskategori", Statuskategori.AAPEN.toString())
+//                        .queryParam("statuskategori", Statuskategori.AAPEN.toString())
                         .queryParam("tema", Tema.YRK.toString())
                         .queryParam("oppgavetype", oppgavetype.kortnavn)
                         .queryParam("journalpostId", journalpostId)
