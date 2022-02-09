@@ -11,7 +11,7 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       group-id: yrkesskade-melding-mottak
-      auto-offset-reset: latest
+      auto-offset-reset: earliest
       enable-auto-commit: false
     listener:
       ack-mode: record
