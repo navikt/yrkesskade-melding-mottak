@@ -3,6 +3,7 @@ package no.nav.yrkesskade.meldingmottak.clients.gosys
 import com.expediagroup.graphql.generated.enums.Tema
 import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
+import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
@@ -21,6 +22,7 @@ class OppgaveClient(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val log = LoggerFactory.getLogger(javaClass.enclosingClass)
+        private val secureLogger = getSecureLogger()
     }
 
     fun opprettOppgave(oppgave: OpprettJournalfoeringOppgave): Oppgave {
@@ -73,7 +75,7 @@ class OppgaveClient(
         try {
             return function.invoke()
         } catch (ex: WebClientResponseException) {
-            log.error(
+            secureLogger.error(
                 "Got a {} error calling Oppgave {} {} with message {}",
                 ex.statusCode,
                 ex.request?.method ?: "-",
