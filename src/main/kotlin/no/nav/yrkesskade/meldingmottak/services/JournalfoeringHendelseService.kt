@@ -3,6 +3,7 @@ package no.nav.yrkesskade.meldingmottak.services
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgavetype
+import no.nav.yrkesskade.meldingmottak.hendelser.domene.Journalpoststatus
 import no.nav.yrkesskade.meldingmottak.hendelser.domene.Kanal
 import no.nav.yrkesskade.meldingmottak.task.ProsesserJournalfoertSkanningTask
 import no.nav.yrkesskade.prosessering.domene.TaskRepository
@@ -24,13 +25,18 @@ class JournalfoeringHendelseService(
      * Tar imot en journalføringhendelse og lager en Task for opprettelse av journalføringsoppgave.
      * Betingelser for opprettelse av task:
      * 1. Temaet må tilhøre yrkesskade (YRK)
-     * 2. Mottakskanalen må være en av de vi lytter på (se enum [Kanal])
-     * 3. Det må ikke eksistere en journalføringsoppgave på journalposten fra før
+     * 2. Journalpoststatus må være en av de vi lytter på (se enum [Journalpoststatus])
+     * 3. Mottakskanalen må være en av de vi lytter på (se enum [Kanal])
+     * 4. Det må ikke eksistere en journalføringsoppgave på journalposten fra før
      *
      * @param record Recorden som kommer fra Kafka-topicet
      */
     fun prosesserJournalfoeringHendelse(record: JournalfoeringHendelseRecord) {
         if (!record.temaNytt.equals(TEMA_YRKESSKADE)) {
+            return
+        }
+
+        if (!journalpoststatusErRelevant(record.journalpostStatus)) {
             return
         }
 
@@ -40,7 +46,6 @@ class JournalfoeringHendelseService(
             val eksisterendeOppgaver = oppgaveClient.finnOppgaver(record.journalpostId.toString(), Oppgavetype.JOURNALFOERING)
             if (eksisterendeOppgaver.antallTreffTotalt > 0) {
                 log.warn("Det eksisterer allerede en oppgave på journalpostId ${record.journalpostId}; oppretter ikke oppgave.")
-                log.warn("Svar fra oppgave: $eksisterendeOppgaver")
                 return
             }
             taskRepository.save(ProsesserJournalfoertSkanningTask.opprettTask(record.journalpostId.toString()))
@@ -49,6 +54,17 @@ class JournalfoeringHendelseService(
             log.warn("Mottatt journalføringhendelse på tema YRK med ukjent kanal: $record")
         }
     }
+
+    /**
+     * Bestemmer om en Kafka-record har relevant journalpoststatus for prosessering hos oss.
+     * Mottakskanalen må med andre ord være en av de vi lytter på (se enum [Journalpoststatus])
+     *
+     * @param record Recorden som kommer fra Kafka-topicet
+     */
+    private fun journalpoststatusErRelevant(journalpostStatus: String) =
+        Journalpoststatus.values()
+            .map { it.toString() }
+            .contains(journalpostStatus)
 
     /**
      * Bestemmer om en Kafka-record er på relevant kanal for prosessering hos oss.

@@ -61,6 +61,12 @@ class JournalfoeringHendelseServiceMockTest {
     }
 
     @Test
+    fun `skal ikke kalle paa taskRepository naar en record med journalpoststatus vi ikke lytter paa kommer inn`() {
+        service.prosesserJournalfoeringHendelse(journalfoeringHendelseRecordMedKanalALTINN())
+        verify(exactly = 0) { taskRepository.save(any()) }
+    }
+
+    @Test
     fun `skal ikke kalle paa taskRepository naar en oppgave finnes fra foer`() {
         every { oppgaveClient.finnOppgaver(any(), any()) } returns OppgaveResponse(1, listOf(enkelOppgave()))
 
