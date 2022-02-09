@@ -26,6 +26,6 @@
         <appender-ref ref="json"/>
     </root>
 
-    <logger name="no.nav.yrkesskade" level="debug"/>
+    <logger name="no.nav.yrkesskade" level="info"/>
 
 </configuration>
