@@ -40,6 +40,7 @@ class JournalfoeringHendelseService(
             val eksisterendeOppgaver = oppgaveClient.finnOppgaver(record.journalpostId.toString(), Oppgavetype.JOURNALFOERING)
             if (eksisterendeOppgaver.antallTreffTotalt > 0) {
                 log.warn("Det eksisterer allerede en oppgave på journalpostId ${record.journalpostId}; oppretter ikke oppgave.")
+                log.warn("Svar fra oppgave: $eksisterendeOppgaver")
                 return
             }
             taskRepository.save(ProsesserJournalfoertSkanningTask.opprettTask(record.journalpostId.toString()))
