@@ -62,6 +62,7 @@ class OppgaveClient(
                         .queryParam("status", Status.AAPNET)
                         .queryParam("status", Status.UNDER_BEHANDLING)
                         .queryParam("status", Status.FERDIGSTILT)
+                        .queryParam("status", Status.FEILREGISTRERT)
                         .build()
                 }
                 .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithOppgaveScope()}")
