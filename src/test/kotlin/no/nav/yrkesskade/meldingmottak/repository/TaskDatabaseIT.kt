@@ -23,18 +23,24 @@ import java.sql.DriverManager
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class TaskDatabaseIT {
 
+    init {
+        PostgresDockerContainer.container
+    }
+
     lateinit var connection: Connection
 
     @Value("\${spring.datasource.url}")
     lateinit var jdbcUrl: String
 
-    init {
-        PostgresDockerContainer.container
-    }
+    @Value("\${spring.datasource.username}")
+    lateinit var username: String
+
+    @Value("\${spring.datasource.password}")
+    lateinit var password: String
 
     @BeforeEach
     fun setUp() {
-        connection = DriverManager.getConnection(jdbcUrl, "test", "test")
+        connection = DriverManager.getConnection(jdbcUrl, username, password)
     }
 
     @Test
