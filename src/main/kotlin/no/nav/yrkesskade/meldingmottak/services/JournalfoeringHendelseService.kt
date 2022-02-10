@@ -6,6 +6,7 @@ import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgavetype
 import no.nav.yrkesskade.meldingmottak.hendelser.domene.Journalpoststatus
 import no.nav.yrkesskade.meldingmottak.hendelser.domene.Kanal
 import no.nav.yrkesskade.meldingmottak.task.ProsesserJournalfoertSkanningTask
+import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -20,6 +21,7 @@ class JournalfoeringHendelseService(
     ) {
 
     private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
+    private val secureLogger = getSecureLogger()
 
     /**
      * Tar imot en journalføringhendelse og lager en Task for opprettelse av journalføringsoppgave.
@@ -41,7 +43,8 @@ class JournalfoeringHendelseService(
         }
 
         if (kanalErRelevant(record)) {
-            log.info("Mottatt relevant journalføringhendelse: $record")
+            log.info("Mottatt relevant journalføringhendelse på journalpostId: ${record.journalpostId}")
+            secureLogger.info("Mottatt relevant journalføringhendelse: $record")
 
             val eksisterendeOppgaver = oppgaveClient.finnOppgaver(record.journalpostId.toString(), Oppgavetype.JOURNALFOERING)
             if (eksisterendeOppgaver.antallTreffTotalt > 0) {
@@ -51,7 +54,7 @@ class JournalfoeringHendelseService(
             taskRepository.save(ProsesserJournalfoertSkanningTask.opprettTask(record.journalpostId.toString()))
             log.info("Opprettet ProsesserJournalfoertSkanningTask på journalpostId ${record.journalpostId}")
         } else {
-            log.warn("Mottatt journalføringhendelse på tema YRK med ukjent kanal: $record")
+            secureLogger.warn("Mottatt journalføringhendelse på tema YRK med ukjent kanal: $record")
         }
     }
 
