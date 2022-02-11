@@ -54,4 +54,8 @@ Det er allerede opprettet en data fil for oneshot, som ligger i ./local-setup ma
 }
 ```
 
+### Tester
 
+Kjør enhetstester med `mvn test`.
+
+Kjør alle tester, både enhetstester og integrasjonstester (*IT), med `mvn verify`.
