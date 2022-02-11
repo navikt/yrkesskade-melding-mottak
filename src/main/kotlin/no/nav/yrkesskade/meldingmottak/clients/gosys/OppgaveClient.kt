@@ -50,7 +50,7 @@ class OppgaveClient(
 
     @Retryable
     fun finnOppgaver(journalpostId: String, oppgavetype: Oppgavetype): OppgaveResponse {
-        log.info("Søker etter aktive oppgaver for $journalpostId")
+        log.info("Søker etter oppgaver for $journalpostId")
 
         return logTimingAndWebClientResponseException("finnOppgaver") {
             oppgaveWebClient.get()
