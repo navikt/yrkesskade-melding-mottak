@@ -1,0 +1,26 @@
+name: Kjør tester for yrkesskade-melding-mottak
+on:
+  push:
+    branches-ignore:
+      - master # Byggeskript på master branchen kjører testene selv
+env:
+  IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: compile and run tests
+        env:
+          GITHUB_USERNAME: navikt
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: mvn verify --settings .m2/maven-settings.xml --file pom.xml
