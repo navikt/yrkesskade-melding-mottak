@@ -1,7 +1,9 @@
 package no.nav.yrkesskade.meldingmottak.clients.gosys
 
+import com.expediagroup.graphql.generated.enums.Tema
 import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
+import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
@@ -21,6 +23,7 @@ class OppgaveClient(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val log = LoggerFactory.getLogger(javaClass.enclosingClass)
+        private val secureLogger = getSecureLogger()
     }
 
     @Retryable
@@ -45,12 +48,41 @@ class OppgaveClient(
         }
     }
 
+    @Retryable
+    fun finnOppgaver(journalpostId: String, oppgavetype: Oppgavetype): OppgaveResponse {
+        log.info("Søker etter aktive oppgaver for $journalpostId")
+
+        return logTimingAndWebClientResponseException("finnOppgaver") {
+            oppgaveWebClient.get()
+                .uri { uriBuilder ->
+                    uriBuilder.pathSegment("api")
+                        .pathSegment("v1")
+                        .pathSegment("oppgaver")
+                        .queryParam("tema", Tema.YRK.toString())
+                        .queryParam("oppgavetype", oppgavetype.kortnavn)
+                        .queryParam("journalpostId", journalpostId)
+                        .queryParam("status", Status.OPPRETTET)
+                        .queryParam("status", Status.AAPNET)
+                        .queryParam("status", Status.UNDER_BEHANDLING)
+                        .queryParam("status", Status.FERDIGSTILT)
+                        .queryParam("status", Status.FEILREGISTRERT)
+                        .build()
+                }
+                .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithOppgaveScope()}")
+                .header("X-Correlation-ID", MDCConstants.MDC_CALL_ID)
+                .header("Nav-Consumer-Id", applicationName)
+                .retrieve()
+                .bodyToMono<OppgaveResponse>()
+                .block() ?: throw RuntimeException("Kunne ikke hente oppgave")
+        }
+    }
+
     private fun <T> logTimingAndWebClientResponseException(methodName: String, function: () -> T): T {
         val start: Long = System.currentTimeMillis()
         try {
             return function.invoke()
         } catch (ex: WebClientResponseException) {
-            log.error(
+            secureLogger.error(
                 "Got a {} error calling Oppgave {} {} with message {}",
                 ex.statusCode,
                 ex.request?.method ?: "-",

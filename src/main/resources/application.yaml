@@ -11,7 +11,7 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       group-id: yrkesskade-melding-mottak
-      auto-offset-reset: latest
+      auto-offset-reset: earliest
       enable-auto-commit: false
     listener:
       ack-mode: record
@@ -66,53 +66,3 @@ SAF_APP_CLIENT_ID: dev-fss.teamdokumenthandtering.saf
 PDL_APP_CLIENT_ID: dev-fss.pdl.pdl-api
 OPPGAVE_APP_CLIENT_ID: bef7cd4d-e65e-41f8-a743-b643e81f2aea
 TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851         # trygdeetaten.no
-
----
-spring:
-  config:
-    activate:
-      on-profile: test
-  datasource:
-    url: jdbc:postgresql://localhost:5432/test
-    username: test
-    password: test
-  kafka:
-    properties:
-      schema.registry.url: denne-maa-bare-ha-en-verdi
-kafka:
-  topic:
-    aapen-dok-journalfoering: test
-
-KAFKA_BROKERS: ${spring.embedded.kafka.brokers}
-
-no.nav.security.jwt:
-  issuer:
-    azuread:
-      discoveryurl: http://localhost:${mock-oauth2-server.port}/azuread/.well-known/openid-configuration
-      accepted_audience: aad-client-id
-  client:
-    registration:
-      saf-maskintilmaskin:
-        token-endpoint-url: http://localhost:${mock-oauth2-server.port}/azuread/token
-        grant-type: client_credentials
-        scope: saf
-        authentication:
-          client-id: dummy-client-id
-          client-secret: dummy-secret
-          client-auth-method: client_secret_basic
-      pdl-maskintilmaskin:
-        token-endpoint-url: http://localhost:${mock-oauth2-server.port}/azuread/token
-        grant-type: client_credentials
-        scope: pdl
-        authentication:
-          client-id: dummy-client-id
-          client-secret: dummy-secret
-          client-auth-method: client_secret_basic
-      oppgave-maskintilmaskin:
-        token-endpoint-url: http://localhost:${mock-oauth2-server.port}/azuread/token
-        grant-type: client_credentials
-        scope: oppgave
-        authentication:
-          client-id: dummy-client-id
-          client-secret: dummy-secret
-          client-auth-method: client_secret_basic

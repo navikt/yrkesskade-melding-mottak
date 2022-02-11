@@ -31,7 +31,7 @@ class PdlClient(
 
     fun hentAktorId(fodselsnummer: String): String? {
         val token = tokenUtil.getAppAccessTokenWithPdlScope()
-        logger.info("Hentet token for Pdl $token")
+        logger.info("Hentet token for Pdl")
         val hentIdenterQuery = HentIdenter(HentIdenter.Variables(fodselsnummer))
 
         val identerResult: HentIdenter.Result?
@@ -47,7 +47,7 @@ class PdlClient(
             if (!response.errors.isNullOrEmpty()) {
                 logger.error("Responsen fra PDL inneholder feil! Se securelogs")
                 secureLogger.error("Responsen fra PDL inneholder feil: ${response.errors}")
-                // TODO: 23/12/2021 Feilhåndtering
+                throw RuntimeException("Responsen fra PDL inneholder feil! Se securelogs")
             }
         }
 
