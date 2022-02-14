@@ -56,7 +56,7 @@ jobs:
       env:
         APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
         CLUSTER: dev-gcp
-        RESOURCE: .nais/nais.yaml
+        RESOURCE: .nais/alerts-dev.yaml
         VARS: .nais/dev.yaml
 #  TODO: Steg med akseptansetester? (se kabal-api).
 #  deployAppToProd:
