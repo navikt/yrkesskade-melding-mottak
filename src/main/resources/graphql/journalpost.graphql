@@ -12,5 +12,6 @@ query($journalpostId: String!) {
       id
       type
     }
+    datoOpprettet
   }
 }
