@@ -15,7 +15,7 @@ spec:
     description: App {{ $labels.app }} er nede i namespace {{ $labels.kubernetes_namespace }}
     expr: kube_deployment_status_replicas_available{deployment="yrkesskade-melding-mottak"} == 0
     for: 2m
-    action: `kubectl describe pod {{ $labels.kubernetes_pod_name }} -n {{ $labels.kubernetes_namespace }}` for events, og `kubectl logs {{ $labels.kubernetes_pod_name }} -n {{ $labels.kubernetes_namespace }}` for logger
+    action: "`kubectl describe pod {{ $labels.kubernetes_pod_name }} -n {{ $labels.kubernetes_namespace }}` for events, og `kubectl logs {{ $labels.kubernetes_pod_name }} -n {{ $labels.kubernetes_namespace }}` for logger"
     documentation: https://confluence.adeo.no/display/MAYYMYFSN/Drift+og+forvaltning
     sla: Responder innen 1 time i kontortid
     severity: danger
