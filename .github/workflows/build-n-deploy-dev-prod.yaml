@@ -58,7 +58,7 @@ jobs:
         CLUSTER: dev-gcp
         RESOURCE: .nais/nais.yaml
         VARS: .nais/dev.yaml
-#  TODO: Steg med akseptansetester? (se kabal-api)
+#  TODO: Steg med akseptansetester? (se kabal-api).
 #  deployAppToProd:
 #    name: Deploy app to prod
 #    needs: build
