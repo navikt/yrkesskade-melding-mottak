@@ -7,6 +7,7 @@ import com.expediagroup.graphql.generated.enums.Journalstatus
 import com.expediagroup.graphql.generated.enums.Tema
 import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.DokumentInfo
+import java.time.LocalDateTime
 
 fun gyldigJournalpostMedAktoerId(): com.expediagroup.graphql.generated.journalpost.Journalpost {
     return com.expediagroup.graphql.generated.journalpost.Journalpost(
@@ -20,7 +21,8 @@ fun gyldigJournalpostMedAktoerId(): com.expediagroup.graphql.generated.journalpo
                 "Melding om yrkesskade eller yrkessykdom som er påført under tjeneste på skip eller under fiske/fangst",
                 "NAV 13-07.08"
             )
-        )
+        ),
+        datoOpprettet = LocalDateTime.of(2022, 1, 1, 1, 1, 1, 1)
     )
 }
 
@@ -41,7 +43,8 @@ fun journalpostResultWithBrukerFnr(): Journalpost.Result {
                     "Melding om yrkesskade eller yrkessykdom som er påført under tjeneste på skip eller under fiske/fangst",
                     "NAV 13-07.08"
                 )
-            )
+            ),
+            datoOpprettet = LocalDateTime.of(2022, 1, 1, 1, 1, 1, 1)
         )
     )
 }

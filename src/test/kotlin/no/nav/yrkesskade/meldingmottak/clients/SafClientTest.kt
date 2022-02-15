@@ -6,6 +6,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.fixtures.errorRespons
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerAktoerid
 import no.nav.yrkesskade.meldingmottak.fixtures.okRespons

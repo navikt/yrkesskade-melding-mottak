@@ -3,9 +3,9 @@ package no.nav.yrkesskade.meldingmottak.task
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.yrkesskade.meldingmottak.clients.PdlClient
-import no.nav.yrkesskade.meldingmottak.clients.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
+import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
+import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalposttypeUtgaaende
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalstatusFeilregistrert
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedTemaSYK

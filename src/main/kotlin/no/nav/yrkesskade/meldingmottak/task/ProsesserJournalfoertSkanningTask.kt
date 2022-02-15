@@ -8,12 +8,12 @@ import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.Journalpost
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.yrkesskade.meldingmottak.clients.PdlClient
-import no.nav.yrkesskade.meldingmottak.clients.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgavetype
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OpprettJournalfoeringOppgave
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Prioritet
+import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
+import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokumentTittel
 import no.nav.yrkesskade.prosessering.AsyncTaskStep

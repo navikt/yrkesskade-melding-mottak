@@ -1,4 +1,4 @@
-package no.nav.yrkesskade.meldingmottak.clients
+package no.nav.yrkesskade.meldingmottak.clients.graphql
 
 import com.expediagroup.graphql.client.spring.GraphQLWebClient
 import com.expediagroup.graphql.client.types.GraphQLClientResponse

@@ -229,6 +229,13 @@
                             <queryFiles>
                                 <queryFile>${project.basedir}/src/main/resources/graphql/journalpost.graphql</queryFile>
                             </queryFiles>
+                            <customScalars>
+                                <customScalar>
+                                    <scalar>DateTime</scalar>
+                                    <type>java.time.LocalDateTime</type>
+                                    <converter>no.nav.yrkesskade.meldingmottak.clients.graphql.converter.DateTimeScalarConverter</converter>
+                                </customScalar>
+                            </customScalars>
                         </configuration>
                     </execution>
                     <execution>

@@ -1,4 +1,4 @@
-package no.nav.yrkesskade.meldingmottak.clients
+package no.nav.yrkesskade.meldingmottak.clients.graphql
 
 import com.expediagroup.graphql.client.spring.GraphQLWebClient
 import com.expediagroup.graphql.client.types.GraphQLClientResponse
@@ -10,6 +10,7 @@ import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import javax.ws.rs.core.HttpHeaders
+
 
 /**
  * Klient for å hente oppdatert journalpost fra saf (Sak og arkiv fasade)
