@@ -54,7 +54,6 @@ class ProsesserJournalfoertSkanningTask(
 
         val aktoerId = hentAktoerId(journalpost.bruker!!)
 
-        // TODO: (YSMOD-31) burde fristFerdigstillelse og aktivDato settes fra tidspunktet tasken ble opprettet, og ikke tidspunktet for vellykket task-kjøring?
         oppgaveClient.opprettOppgave(
             OpprettJournalfoeringOppgave(
                 beskrivelse = journalpost.hentHovedDokumentTittel(),
