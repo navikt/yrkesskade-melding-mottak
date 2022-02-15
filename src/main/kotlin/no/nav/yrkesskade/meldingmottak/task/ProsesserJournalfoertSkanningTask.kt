@@ -23,8 +23,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.lang.invoke.MethodHandles
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 
 @TaskStepBeskrivelse(
@@ -67,8 +65,8 @@ class ProsesserJournalfoertSkanningTask(
                 behandlingstema = null, // skal være null
                 behandlingstype = null, // skal være null
                 prioritet = Prioritet.NORM,
-                fristFerdigstillelse = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(LocalDateTime.now()),
-                aktivDato = LocalDate.now()
+                fristFerdigstillelse = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(journalpost.datoOpprettet),
+                aktivDato = journalpost.datoOpprettet.toLocalDate()
             )
         )
     }
