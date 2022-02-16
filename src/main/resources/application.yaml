@@ -61,6 +61,7 @@ prosessering:
 saf.graphql.url: https://saf.dev-fss-pub.nais.io/graphql
 pdl.graphql.url: https://pdl-api.dev-fss-pub.nais.io/graphql
 oppgave.url: https://oppgave-q1.dev-fss-pub.nais.io
+dokarkiv.url: https://dokarkiv.dev-fss-pub.nais.io
 
 SAF_APP_CLIENT_ID: dev-fss.teamdokumenthandtering.saf
 PDL_APP_CLIENT_ID: dev-fss.pdl.pdl-api
