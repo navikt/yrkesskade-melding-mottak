@@ -6,7 +6,8 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import no.nav.yrkesskade.meldingmottak.fixtures.*
+import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
+import no.nav.yrkesskade.meldingmottak.fixtures.okResponsFraPdl
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach

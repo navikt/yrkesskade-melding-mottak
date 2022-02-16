@@ -8,12 +8,12 @@ import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.Journalpost
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.yrkesskade.meldingmottak.clients.PdlClient
-import no.nav.yrkesskade.meldingmottak.clients.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgavetype
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OpprettJournalfoeringOppgave
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Prioritet
+import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
+import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokumentTittel
 import no.nav.yrkesskade.prosessering.AsyncTaskStep
@@ -23,8 +23,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.lang.invoke.MethodHandles
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 
 @TaskStepBeskrivelse(
@@ -56,7 +54,6 @@ class ProsesserJournalfoertSkanningTask(
 
         val aktoerId = hentAktoerId(journalpost.bruker!!)
 
-        // TODO: (YSMOD-31) burde fristFerdigstillelse og aktivDato settes fra tidspunktet tasken ble opprettet, og ikke tidspunktet for vellykket task-kjøring?
         oppgaveClient.opprettOppgave(
             OpprettJournalfoeringOppgave(
                 beskrivelse = journalpost.hentHovedDokumentTittel(),
@@ -67,8 +64,8 @@ class ProsesserJournalfoertSkanningTask(
                 behandlingstema = null, // skal være null
                 behandlingstype = null, // skal være null
                 prioritet = Prioritet.NORM,
-                fristFerdigstillelse = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(LocalDateTime.now()),
-                aktivDato = LocalDate.now()
+                fristFerdigstillelse = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(journalpost.datoOpprettet),
+                aktivDato = journalpost.datoOpprettet.toLocalDate()
             )
         )
     }
