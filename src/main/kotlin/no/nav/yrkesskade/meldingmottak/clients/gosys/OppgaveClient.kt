@@ -80,7 +80,9 @@ class OppgaveClient(
     private fun <T> logTimingAndWebClientResponseException(methodName: String, function: () -> T): T {
         val start: Long = System.currentTimeMillis()
         try {
-            return function.invoke()
+            val result = function.invoke()
+            log.info("Opprettet journalpostoppgave")
+            return result
         } catch (ex: WebClientResponseException) {
             secureLogger.error(
                 "Got a {} error calling Oppgave {} {} with message {}",
