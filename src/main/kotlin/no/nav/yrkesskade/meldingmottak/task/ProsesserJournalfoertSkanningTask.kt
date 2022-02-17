@@ -51,7 +51,6 @@ class ProsesserJournalfoertSkanningTask(
         }
         validerJournalpost(journalpost)
 
-
         val aktoerId = hentAktoerId(journalpost.bruker!!)
 
         oppgaveClient.opprettOppgave(
@@ -109,8 +108,12 @@ class ProsesserJournalfoertSkanningTask(
         return safResultat.journalpost
     }
 
-    private fun hentAktoerId(bruker: Bruker): String? {
-        return when (bruker.type) {
+    private fun hentAktoerId(bruker: Bruker?): String? {
+        if (bruker?.id.isNullOrEmpty()) {
+            log.warn("Journalposten har ingen brukerId.")
+            return null
+        }
+        return when (bruker!!.type) {
             BrukerIdType.AKTOERID -> bruker.id
             BrukerIdType.FNR -> pdlClient.hentAktorId(bruker.id!!)
             else -> throw RuntimeException("Ugyldig brukerIdType: ${bruker.type}")
@@ -121,8 +124,7 @@ class ProsesserJournalfoertSkanningTask(
      * Avgjør om en journalpost er gyldig (inneholder data som vi kan jobbe med)
      * Kriterier:
      * 1. Det må foreligge dokumenter på journalposten
-     * 2. Det må foreligge en brukerId
-     * 3. BrukerId må være fødselsnummer/D-nummer, eller aktørId (kan ikke være orgnr)
+     * 2. BrukerId må være fødselsnummer/D-nummer, eller aktørId (kan ikke være orgnr)
      *
      * @param journalpost journalposten som skal vurderes
      */
@@ -133,12 +135,8 @@ class ProsesserJournalfoertSkanningTask(
             throw RuntimeException("Journalposten mangler dokumenter.")
         }
 
-        if (journalpost.bruker?.id.isNullOrEmpty()) {
-            throw RuntimeException("Journalposten mangler brukerId.")
-        }
-
         val gyldigeBrukerIdTyper = listOf(BrukerIdType.FNR, BrukerIdType.AKTOERID)
-        if (!gyldigeBrukerIdTyper.contains(journalpost.bruker?.type)) {
+        if (!journalpost.bruker?.id.isNullOrEmpty() && !gyldigeBrukerIdTyper.contains(journalpost.bruker?.type)) {
             throw RuntimeException("BrukerIdType må være en av: $gyldigeBrukerIdTyper, men er: ${journalpost.bruker?.type}")
         }
     }

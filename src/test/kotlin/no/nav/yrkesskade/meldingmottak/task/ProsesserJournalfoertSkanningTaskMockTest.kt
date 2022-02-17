@@ -6,14 +6,7 @@ import io.mockk.verify
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalposttypeUtgaaende
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalstatusFeilregistrert
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedTemaSYK
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedUgyldigBrukerIdType
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBrukerId
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenDokumenter
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerAktoerid
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerFnr
+import no.nav.yrkesskade.meldingmottak.fixtures.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -77,6 +70,14 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     }
 
     @Test
+    fun `skal lage oppgave ogsaa naar journalpost fra SAF mangler brukerId`() {
+        every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultUtenBrukerId()
+        prosesserJournalfoertSkanningTask.doTask(task)
+
+        verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) }
+    }
+
+    @Test
     fun `skal lage oppgave naar SAF returnerer journalpost med foedselsnummer og PDL har aktoerId`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultWithBrukerFnr()
 
@@ -120,17 +121,6 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
         }
 
         assertThat(exception.localizedMessage).isEqualTo("Journalposten mangler dokumenter.")
-        verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
-    }
-
-    @Test
-    fun `skal kaste exception naarjournalpost fra SAF mangler brukerId`() {
-        every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultUtenBrukerId()
-        val exception = assertThrows(RuntimeException::class.java) {
-            prosesserJournalfoertSkanningTask.doTask(task)
-        }
-
-        assertThat(exception.localizedMessage).isEqualTo("Journalposten mangler brukerId.")
         verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
     }
 
