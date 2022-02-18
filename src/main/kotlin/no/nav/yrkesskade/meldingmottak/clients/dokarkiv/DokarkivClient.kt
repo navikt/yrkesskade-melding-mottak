@@ -28,7 +28,7 @@ class DokarkivClient(
     }
 
     @Retryable
-    fun journalfoerSkademelding(opprettJournalpostRequest: OpprettJournalpostRequest) {
+    fun journalfoerSkademelding(opprettJournalpostRequest: OpprettJournalpostRequest): OpprettJournalpostResponse {
         log.info("Journalfører skademelding")
         return logTimingAndWebClientResponseException("journalførSkademelding") {
             dokarkivWebClient.post()
@@ -47,15 +47,15 @@ class DokarkivClient(
                 .retrieve()
                 .bodyToMono<OpprettJournalpostResponse>()
                 .block() ?: throw RuntimeException("Kunne ikke journalføre skademelding")
+        }.also {
+            log.info("Journalført skademelding til journalpostId ${it.journalpostId}")
         }
     }
 
     private fun <T> logTimingAndWebClientResponseException(methodName: String, function: () -> T): T {
         val start: Long = System.currentTimeMillis()
         try {
-            val result = function.invoke()
-            log.info("Opprettet journalpostoppgave")
-            return result
+            return function.invoke()
         } catch (ex: WebClientResponseException) {
             secureLogger.error(
                 "Got a {} error calling Dokarkiv {} {} with message {}",
