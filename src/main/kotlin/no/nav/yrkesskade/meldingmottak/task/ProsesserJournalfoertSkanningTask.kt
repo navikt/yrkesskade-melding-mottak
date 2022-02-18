@@ -51,7 +51,7 @@ class ProsesserJournalfoertSkanningTask(
         }
         validerJournalpost(journalpost)
 
-        val aktoerId = hentAktoerId(journalpost.bruker!!)
+        val aktoerId = hentAktoerId(journalpost.bruker)
 
         oppgaveClient.opprettOppgave(
             OpprettJournalfoeringOppgave(

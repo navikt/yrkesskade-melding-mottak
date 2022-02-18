@@ -6,7 +6,15 @@ import io.mockk.verify
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
-import no.nav.yrkesskade.meldingmottak.fixtures.*
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalposttypeUtgaaende
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalstatusFeilregistrert
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedTemaSYK
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedUgyldigBrukerIdType
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBruker
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBrukerId
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenDokumenter
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerAktoerid
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerFnr
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -72,6 +80,14 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     @Test
     fun `skal lage oppgave ogsaa naar journalpost fra SAF mangler brukerId`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultUtenBrukerId()
+        prosesserJournalfoertSkanningTask.doTask(task)
+
+        verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) }
+    }
+
+    @Test
+    fun `skal lage oppgave naar journalpost fra SAF mangler bruker`() {
+        every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultUtenBruker()
         prosesserJournalfoertSkanningTask.doTask(task)
 
         verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) }
