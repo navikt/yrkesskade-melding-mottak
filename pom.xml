@@ -114,6 +114,11 @@
             <artifactId>nocommons</artifactId>
             <version>0.12.0</version>
         </dependency>
+        <dependency>
+            <groupId>no.finn.unleash</groupId>
+            <artifactId>unleash-client-java</artifactId>
+            <version>4.4.1</version>
+        </dependency>
 
         <!-- Security -->
         <dependency>
