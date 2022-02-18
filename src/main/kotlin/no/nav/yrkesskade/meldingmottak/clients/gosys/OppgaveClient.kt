@@ -45,6 +45,8 @@ class OppgaveClient(
                 .retrieve()
                 .bodyToMono<Oppgave>()
                 .block() ?: throw RuntimeException("Kunne ikke lage oppgave")
+        }.also {
+            log.info("Opprettet journalføringsoppgave for journalpostId ${oppgave.journalpostId}")
         }
     }
 
@@ -80,9 +82,7 @@ class OppgaveClient(
     private fun <T> logTimingAndWebClientResponseException(methodName: String, function: () -> T): T {
         val start: Long = System.currentTimeMillis()
         try {
-            val result = function.invoke()
-            log.info("Opprettet journalpostoppgave")
-            return result
+            return function.invoke()
         } catch (ex: WebClientResponseException) {
             secureLogger.error(
                 "Got a {} error calling Oppgave {} {} with message {}",

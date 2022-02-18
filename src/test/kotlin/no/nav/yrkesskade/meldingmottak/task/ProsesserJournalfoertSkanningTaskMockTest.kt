@@ -10,6 +10,7 @@ import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalpostt
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalstatusFeilregistrert
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedTemaSYK
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedUgyldigBrukerIdType
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBruker
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBrukerId
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenDokumenter
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerAktoerid
@@ -77,6 +78,22 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     }
 
     @Test
+    fun `skal lage oppgave ogsaa naar journalpost fra SAF mangler brukerId`() {
+        every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultUtenBrukerId()
+        prosesserJournalfoertSkanningTask.doTask(task)
+
+        verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) }
+    }
+
+    @Test
+    fun `skal lage oppgave naar journalpost fra SAF mangler bruker`() {
+        every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultUtenBruker()
+        prosesserJournalfoertSkanningTask.doTask(task)
+
+        verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) }
+    }
+
+    @Test
     fun `skal lage oppgave naar SAF returnerer journalpost med foedselsnummer og PDL har aktoerId`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultWithBrukerFnr()
 
@@ -120,17 +137,6 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
         }
 
         assertThat(exception.localizedMessage).isEqualTo("Journalposten mangler dokumenter.")
-        verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
-    }
-
-    @Test
-    fun `skal kaste exception naarjournalpost fra SAF mangler brukerId`() {
-        every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultUtenBrukerId()
-        val exception = assertThrows(RuntimeException::class.java) {
-            prosesserJournalfoertSkanningTask.doTask(task)
-        }
-
-        assertThat(exception.localizedMessage).isEqualTo("Journalposten mangler brukerId.")
         verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
     }
 

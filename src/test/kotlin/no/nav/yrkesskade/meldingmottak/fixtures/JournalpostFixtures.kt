@@ -77,6 +77,13 @@ fun journalpostResultUtenBrukerId(): Journalpost.Result {
     return Journalpost.Result(journalpostUtenBrukerId)
 }
 
+fun journalpostResultUtenBruker(): Journalpost.Result {
+    val journalpostUtenBruker = gyldigJournalpostMedAktoerId().copy(
+        bruker = null
+    )
+    return Journalpost.Result(journalpostUtenBruker)
+}
+
 fun journalpostResultMedUgyldigBrukerIdType(): Journalpost.Result {
     val journalpostMedUgyldigBrukerIdType = gyldigJournalpostMedAktoerId().copy(
         bruker = Bruker("920165931", BrukerIdType.ORGNR)

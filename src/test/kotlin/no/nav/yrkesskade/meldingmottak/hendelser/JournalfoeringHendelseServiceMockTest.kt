@@ -38,9 +38,9 @@ class JournalfoeringHendelseServiceMockTest {
     }
 
     @Test
-    fun `skal kalle paa taskRepository naar en record med tema YRK og kanal NAV_NO kommer inn`() {
+    fun `skal ikke kalle paa taskRepository naar en record med tema YRK og kanal NAV_NO kommer inn`() {
         service.prosesserJournalfoeringHendelse(journalfoeringHendelseRecordMedKanalNAVNO())
-        verify(exactly = 1) { taskRepository.save(any()) }
+        verify(exactly = 0) { taskRepository.save(any()) }
     }
 
     @Test
