@@ -86,7 +86,6 @@ class FeatureToggleConfig(
     }
 
     companion object {
-        const val ERIK_TESTER = "yrkesskade-erik-tester"
         private val logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
     }
 }
