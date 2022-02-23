@@ -10,7 +10,7 @@ spring:
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      group-id: yrkesskade-melding-mottak
+      group-id: yrkesskade-melding-mottak-${random.uuid}
       auto-offset-reset: earliest
       enable-auto-commit: false
     listener:
