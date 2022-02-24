@@ -12,6 +12,7 @@ spring:
 kafka:
   topic:
     aapen-dok-journalfoering: test
+    skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldingInnsendt
 
 KAFKA_BROKERS: ${spring.embedded.kafka.brokers}
 
