@@ -1,6 +1,5 @@
 package no.nav.yrkesskade.meldingmottak.clients.gosys
 
-import com.expediagroup.graphql.generated.enums.Tema
 import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
@@ -60,7 +59,6 @@ class OppgaveClient(
                     uriBuilder.pathSegment("api")
                         .pathSegment("v1")
                         .pathSegment("oppgaver")
-                        .queryParam("tema", Tema.YRK.toString())
                         .queryParam("oppgavetype", oppgavetype.kortnavn)
                         .queryParam("journalpostId", journalpostId)
                         .queryParam("status", Status.OPPRETTET)
