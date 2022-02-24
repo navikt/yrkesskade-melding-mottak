@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToMono
+import java.time.Instant
 
 @Component
 class DokarkivClient(
@@ -93,7 +94,7 @@ data class OpprettJournalpostRequest(
     val tema: String? = "YRK",
     val kanal: String? = "NAV_NO",
 //    val eksternReferanseId: String -- her kan vi evt legge vår egen skademeldingsId.
-//val datoMottatt: LocalDate -- sette til dato fra kafka
+    val datoMottatt: Instant,
     val dokumenter: List<Dokument>
 )
 
