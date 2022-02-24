@@ -4,6 +4,7 @@ import com.expediagroup.graphql.generated.Journalpost
 import com.expediagroup.graphql.generated.enums.BrukerIdType
 import com.expediagroup.graphql.generated.enums.Journalposttype
 import com.expediagroup.graphql.generated.enums.Journalstatus
+import com.expediagroup.graphql.generated.enums.Kanal
 import com.expediagroup.graphql.generated.enums.Tema
 import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.DokumentInfo
@@ -15,6 +16,7 @@ fun gyldigJournalpostMedAktoerId(): com.expediagroup.graphql.generated.journalpo
         journalstatus = Journalstatus.MOTTATT,
         journalposttype = Journalposttype.I,
         tema = Tema.YRK,
+        kanal = Kanal.SKAN_IM,
         bruker = Bruker("2751737180290", BrukerIdType.AKTOERID),
         journalfoerendeEnhet = "4849",
         dokumenter = listOf(
@@ -38,6 +40,7 @@ fun journalpostResultWithBrukerFnr(): Journalpost.Result {
             journalstatus = Journalstatus.MOTTATT,
             journalposttype = Journalposttype.I,
             tema = Tema.YRK,
+            kanal = Kanal.SKAN_IM,
             bruker = Bruker("12345678901", BrukerIdType.FNR),
             journalfoerendeEnhet = "4849",
             dokumenter = listOf(

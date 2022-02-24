@@ -16,6 +16,7 @@ import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokumentTittel
+import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.prosessering.AsyncTaskStep
 import no.nav.yrkesskade.prosessering.TaskStepBeskrivelse
 import no.nav.yrkesskade.prosessering.domene.Task
@@ -39,6 +40,7 @@ class ProsesserJournalfoertSkanningTask(
 ) : AsyncTaskStep {
 
     val log: Logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
+    private val secureLogger = getSecureLogger()
 
     override fun doTask(task: Task) {
         log.info("ProsesserJournalfoertSkanningTask kjoerer med payload ${task.payload}")
@@ -52,6 +54,9 @@ class ProsesserJournalfoertSkanningTask(
         validerJournalpost(journalpost)
 
         val aktoerId = hentAktoerId(journalpost.bruker)
+
+        secureLogger.info("Oppretter oppgave for ${journalpost.journalpostId} " +
+                "med tittel \"${journalpost.hentHovedDokumentTittel()}\" og kanal ${journalpost.kanal}")
 
         oppgaveClient.opprettOppgave(
             OpprettJournalfoeringOppgave(
@@ -106,7 +111,10 @@ class ProsesserJournalfoertSkanningTask(
             throw RuntimeException("Journalpost med journalpostId $journalpostId finnes ikke i SAF")
         }
 
-        return safResultat.journalpost
+        return safResultat.journalpost.also {
+            secureLogger.info("Hentet oppdatert journalpost for id $journalpostId " +
+                    "med tittel \"${it.hentHovedDokumentTittel()}\" og kanal ${it.kanal}")
+        }
     }
 
     private fun hentAktoerId(bruker: Bruker?): String? {
