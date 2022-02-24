@@ -59,6 +59,7 @@ class ProsesserJournalfoertSkanningTask(
                 journalpostId = journalpost.journalpostId,
                 aktoerId = aktoerId,
                 tema = journalpost.tema.toString(),
+                tildeltEnhetsnr = journalpost.journalfoerendeEnhet,
                 oppgavetype = Oppgavetype.JOURNALFOERING.kortnavn,
                 behandlingstema = null, // skal være null
                 behandlingstype = null, // skal være null

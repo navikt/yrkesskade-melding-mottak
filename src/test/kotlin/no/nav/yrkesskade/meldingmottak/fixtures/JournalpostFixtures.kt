@@ -16,6 +16,7 @@ fun gyldigJournalpostMedAktoerId(): com.expediagroup.graphql.generated.journalpo
         journalposttype = Journalposttype.I,
         tema = Tema.YRK,
         bruker = Bruker("2751737180290", BrukerIdType.AKTOERID),
+        journalfoerendeEnhet = "4849",
         dokumenter = listOf(
             DokumentInfo(
                 "Melding om yrkesskade eller yrkessykdom som er påført under tjeneste på skip eller under fiske/fangst",
@@ -38,6 +39,7 @@ fun journalpostResultWithBrukerFnr(): Journalpost.Result {
             journalposttype = Journalposttype.I,
             tema = Tema.YRK,
             bruker = Bruker("12345678901", BrukerIdType.FNR),
+            journalfoerendeEnhet = "4849",
             dokumenter = listOf(
                 DokumentInfo(
                     "Melding om yrkesskade eller yrkessykdom som er påført under tjeneste på skip eller under fiske/fangst",
