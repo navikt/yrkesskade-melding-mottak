@@ -4,6 +4,8 @@ query($journalpostId: String!) {
     journalstatus
     journalposttype
     tema
+    journalfoerendeEnhet
+    kanal
     dokumenter {
       tittel
       brevkode
