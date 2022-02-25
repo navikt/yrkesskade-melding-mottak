@@ -5,37 +5,49 @@ import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.AvsenderMottaker
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
-import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.Dokument
-import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.Dokumentvariant
-import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.Dokumentvariantformat
-import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.Filtype
-import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.Journalposttype
-import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.OpprettJournalpostRequest
+import no.nav.yrkesskade.meldingmottak.hendelser.domene.AvsenderMottaker
+import no.nav.yrkesskade.meldingmottak.hendelser.domene.Dokument
+import no.nav.yrkesskade.meldingmottak.hendelser.domene.Dokumentvariant
+import no.nav.yrkesskade.meldingmottak.hendelser.domene.Dokumentvariantformat
+import no.nav.yrkesskade.meldingmottak.hendelser.domene.Filtype
+import no.nav.yrkesskade.meldingmottak.hendelser.domene.Journalposttype
+import no.nav.yrkesskade.meldingmottak.hendelser.domene.OpprettJournalpostRequest
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.lang.invoke.MethodHandles
+import java.util.Date
+
+private const val TEMA_YRKESSKADE = "YRK"
 
 @Service
 class SkademeldingService(
     private val dokarkivClient: DokarkivClient,
     private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
-    ) {
+) {
     private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
     private val secureLogger = getSecureLogger()
 
     /**
      * lag PDF
      * journalfør i dokarkiv
+     * registrer metrikker?
      */
     fun mottaSkademelding(record: SkademeldingInnsendtHendelse) {
+        val opprettJournalpostRequest = mapSkademeldingTilOpprettJournalpostRequest(record)
+        dokarkivClient.journalfoerSkademelding(opprettJournalpostRequest)
+    }
+
+    private fun mapSkademeldingTilOpprettJournalpostRequest(
+        record: SkademeldingInnsendtHendelse
+    ): OpprettJournalpostRequest {
         val skademelding = record.skademelding
         val skademeldingJson = objectMapper.registerModule(JavaTimeModule()).writeValueAsString(skademelding)
 
-        val opprettJournalpostRequest = OpprettJournalpostRequest(
+        return OpprettJournalpostRequest(
+            tittel = "Melding om yrkesskade eller yrkessykdom",
             journalposttype = Journalposttype.INNGAAENDE,
             avsenderMottaker = AvsenderMottaker(
                 id = skademelding.innmelder!!.norskIdentitetsnummer.toString(),
@@ -45,13 +57,13 @@ class SkademeldingService(
                 id = skademelding.skadelidt!!.norskIdentitetsnummer,
                 type = BrukerIdType.FNR
             ),
-            tema = "YRK",
+            tema = TEMA_YRKESSKADE,
             kanal = "NAV_NO",
-            datoMottatt = record.metadata.tidspunktMottatt, // string???
+            datoMottatt = Date.from(record.metadata.tidspunktMottatt),
             dokumenter = listOf(
                 Dokument(
                     brevkode = null,
-                    tittel = "ORIGINAL_JSON",
+                    tittel = "Melding om yrkesskade eller yrkessykdom",
                     dokumentvarianter = listOf(
                         Dokumentvariant(
                             filtype = Filtype.JSON,
@@ -62,7 +74,5 @@ class SkademeldingService(
                 )
             )
         )
-
-        dokarkivClient.journalfoerSkademelding(opprettJournalpostRequest)
     }
 }
