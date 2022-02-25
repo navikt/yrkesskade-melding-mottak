@@ -3,7 +3,6 @@ package no.nav.yrkesskade.meldingmottak.config
 import no.finn.unleash.DefaultUnleash
 import no.finn.unleash.UnleashContext
 import no.finn.unleash.UnleashContextProvider
-import no.finn.unleash.strategy.Strategy
 import no.finn.unleash.util.UnleashConfig
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -45,7 +44,7 @@ class FeatureToggleConfig(
                 .unleashAPI(unleash.uri)
                 .unleashContextProvider(lagUnleashContextProvider())
                 .build(),
-            ByClusterStrategy(unleash.cluster)
+//            ByClusterStrategy(unleash.cluster)
         )
 
         return object : FeatureToggleService {
@@ -61,16 +60,6 @@ class FeatureToggleConfig(
                 .appName(unleash.applicationName)
                 .build()
         }
-    }
-
-    class ByClusterStrategy(private val clusterName: String) : Strategy {
-
-        override fun isEnabled(parameters: MutableMap<String, String>): Boolean {
-            if (parameters.isEmpty()) return false
-            return parameters["cluster"]?.contains(clusterName) ?: false
-        }
-
-        override fun getName(): String = "byCluster"
     }
 
     private fun lagDummyFeatureToggleService(): FeatureToggleService {
