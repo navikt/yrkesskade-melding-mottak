@@ -12,6 +12,7 @@ import no.nav.yrkesskade.meldingmottak.hendelser.domene.Dokumentvariant
 import no.nav.yrkesskade.meldingmottak.hendelser.domene.Dokumentvariantformat
 import no.nav.yrkesskade.meldingmottak.hendelser.domene.Filtype
 import no.nav.yrkesskade.meldingmottak.hendelser.domene.Journalposttype
+import no.nav.yrkesskade.meldingmottak.hendelser.domene.Kanal
 import no.nav.yrkesskade.meldingmottak.hendelser.domene.OpprettJournalpostRequest
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
@@ -58,7 +59,7 @@ class SkademeldingService(
                 type = BrukerIdType.FNR
             ),
             tema = TEMA_YRKESSKADE,
-            kanal = "NAV_NO",
+            kanal = Kanal.NAV_NO.toString(),
             datoMottatt = Date.from(record.metadata.tidspunktMottatt),
             dokumenter = listOf(
                 Dokument(
