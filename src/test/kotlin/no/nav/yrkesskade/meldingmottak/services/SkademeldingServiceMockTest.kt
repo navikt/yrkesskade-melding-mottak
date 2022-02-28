@@ -4,8 +4,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
+import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostResponse
 import no.nav.yrkesskade.meldingmottak.fixtures.skademeldingInnsendtHendelse
-import no.nav.yrkesskade.meldingmottak.hendelser.domene.OpprettJournalpostResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

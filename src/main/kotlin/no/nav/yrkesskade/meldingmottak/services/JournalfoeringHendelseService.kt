@@ -3,8 +3,8 @@ package no.nav.yrkesskade.meldingmottak.services
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgavetype
-import no.nav.yrkesskade.meldingmottak.hendelser.domene.Journalpoststatus
-import no.nav.yrkesskade.meldingmottak.hendelser.domene.Kanal
+import no.nav.yrkesskade.meldingmottak.domene.Journalpoststatus
+import no.nav.yrkesskade.meldingmottak.domene.Kanal
 import no.nav.yrkesskade.meldingmottak.task.ProsesserJournalfoeringHendelseTask
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.prosessering.domene.TaskRepository

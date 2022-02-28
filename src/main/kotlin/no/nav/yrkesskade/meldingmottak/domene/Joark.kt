@@ -1,4 +1,4 @@
-package no.nav.yrkesskade.meldingmottak.hendelser.domene
+package no.nav.yrkesskade.meldingmottak.domene
 
 enum class Journalpoststatus {
     MOTTATT

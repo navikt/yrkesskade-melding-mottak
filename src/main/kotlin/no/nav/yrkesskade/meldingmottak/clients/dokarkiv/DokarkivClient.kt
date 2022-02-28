@@ -1,8 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.clients.dokarkiv
 
 import no.nav.familie.log.mdc.MDCConstants
-import no.nav.yrkesskade.meldingmottak.hendelser.domene.OpprettJournalpostRequest
-import no.nav.yrkesskade.meldingmottak.hendelser.domene.OpprettJournalpostResponse
+import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostRequest
+import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostResponse
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.slf4j.LoggerFactory
