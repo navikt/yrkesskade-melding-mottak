@@ -15,7 +15,7 @@ class SkademeldingInnsendtHendelseConsumer(
 ) {
 
     @KafkaListener(
-        id = "yrkesskade-melding-mottak",
+        id = "skademelding-innsendt",
         topics = ["\${kafka.topic.skademelding-innsendt}"],
         containerFactory = "skademeldingInnsendtHendelseListenerContainerFactory",
         idIsGroup = false
