@@ -30,8 +30,6 @@ private const val ANTALL_RETRIES = 10
 
 private const val ETT_SEKUND = 1000L
 
-private const val NO_NAV_YRKESSKADE_MODEL = "no.nav.yrkesskade.model"
-
 @TestConfiguration
 class KafkaConfig {
 
@@ -73,7 +71,6 @@ class KafkaConfig {
         val consumerFactory = DefaultKafkaConsumerFactory<String, SkademeldingInnsendtHendelse>(
             kafkaProperties.buildConsumerProperties().apply {
                 this[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java
-                this[JsonDeserializer.TRUSTED_PACKAGES] = NO_NAV_YRKESSKADE_MODEL
             }
         )
 

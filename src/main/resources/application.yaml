@@ -12,6 +12,8 @@ spring:
       group-id: yrkesskade-melding-mottak
       auto-offset-reset: earliest
       enable-auto-commit: false
+      properties:
+        spring.json.trusted.packages: no.nav.yrkesskade.model
     listener:
       ack-mode: record
   datasource:
