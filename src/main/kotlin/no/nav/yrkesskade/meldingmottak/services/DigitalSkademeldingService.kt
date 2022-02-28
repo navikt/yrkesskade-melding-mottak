@@ -1,12 +1,12 @@
 package no.nav.yrkesskade.meldingmottak.services
 
-import com.expediagroup.graphql.generated.enums.BrukerIdType
-import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.hendelser.domene.AvsenderMottaker
+import no.nav.yrkesskade.meldingmottak.hendelser.domene.Bruker
+import no.nav.yrkesskade.meldingmottak.hendelser.domene.BrukerIdType
 import no.nav.yrkesskade.meldingmottak.hendelser.domene.Dokument
 import no.nav.yrkesskade.meldingmottak.hendelser.domene.Dokumentvariant
 import no.nav.yrkesskade.meldingmottak.hendelser.domene.Dokumentvariantformat
@@ -21,6 +21,10 @@ import org.springframework.stereotype.Service
 import java.lang.invoke.MethodHandles
 
 private const val TEMA_YRKESSKADE = "YRK"
+
+private const val DIGITAL_SKADEMELDING_TITTEL = "Melding om yrkesskade eller yrkessykdom"
+
+private const val DIGITAL_SKADEMELDING_BREVKODE = "NAV 13"
 
 @Service
 class SkademeldingService(
@@ -47,7 +51,7 @@ class SkademeldingService(
         val skademeldingJson = objectMapper.writeValueAsString(skademelding)
 
         return OpprettJournalpostRequest(
-            tittel = "Melding om yrkesskade eller yrkessykdom",
+            tittel = DIGITAL_SKADEMELDING_TITTEL,
             journalposttype = Journalposttype.INNGAAENDE,
             avsenderMottaker = AvsenderMottaker(
                 id = skademelding.innmelder!!.norskIdentitetsnummer,
@@ -62,8 +66,8 @@ class SkademeldingService(
             datoMottatt = record.metadata.tidspunktMottatt.toString(),
             dokumenter = listOf(
                 Dokument(
-                    brevkode = "NAV 13",
-                    tittel = "Melding om yrkesskade eller yrkessykdom",
+                    brevkode = DIGITAL_SKADEMELDING_BREVKODE,
+                    tittel = DIGITAL_SKADEMELDING_TITTEL,
                     dokumentvarianter = listOf(
                         Dokumentvariant(
                             filtype = Filtype.JSON,

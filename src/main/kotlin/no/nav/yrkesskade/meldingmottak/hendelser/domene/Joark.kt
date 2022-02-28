@@ -1,8 +1,5 @@
 package no.nav.yrkesskade.meldingmottak.hendelser.domene
 
-import com.expediagroup.graphql.generated.enums.BrukerIdType
-import com.expediagroup.graphql.generated.journalpost.Bruker
-
 enum class Journalpoststatus {
     MOTTATT
 }
@@ -35,6 +32,17 @@ data class AvsenderMottaker(
     val idType: BrukerIdType,
 )
 
+data class Bruker(
+    val id: String?,
+    val type: BrukerIdType?
+)
+
+enum class BrukerIdType {
+    AKTOERID,
+    FNR,
+    ORGNR
+}
+
 enum class Journalposttype {
     INNGAAENDE, UTGAAENDE, NOTAT
 }
@@ -47,6 +55,10 @@ enum class Filtype {
 enum class Dokumentvariantformat {
     ORIGINAL,
     ARKIV
+}
+
+enum class Kanal {
+    SKAN_NETS, SKAN_IM, NAV_NO
 }
 
 data class Dokument(
