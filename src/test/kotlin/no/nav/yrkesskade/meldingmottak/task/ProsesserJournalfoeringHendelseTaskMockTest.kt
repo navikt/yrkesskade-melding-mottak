@@ -19,7 +19,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
-internal class ProsesserJournalfoertSkanningTaskMockTest {
+internal class ProsesserJournalfoeringHendelseTaskMockTest {
 
     private val safClientMock: SafClient = mockk()
 
@@ -28,17 +28,17 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     private val oppgaveClientMock: OppgaveClient = mockk(relaxed = true)
 
     private val journalpostId = "1337"
-    private val task = ProsesserJournalfoertSkanningTask.opprettTask(journalpostId)
+    private val task = ProsesserJournalfoeringHendelseTask.opprettTask(journalpostId)
 
-    private val prosesserJournalfoertSkanningTask: ProsesserJournalfoertSkanningTask =
-        ProsesserJournalfoertSkanningTask(safClientMock, pdlClientMock, oppgaveClientMock)
+    private val prosesserJournalfoeringHendelseTask: ProsesserJournalfoeringHendelseTask =
+        ProsesserJournalfoeringHendelseTask(safClientMock, pdlClientMock, oppgaveClientMock)
 
 
     @Test
     fun `skal kalle paa SAF naar det kommer en kafkarecord`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultWithBrukerAktoerid()
 
-        prosesserJournalfoertSkanningTask.doTask(task)
+        prosesserJournalfoeringHendelseTask.doTask(task)
         verify(exactly = 1) {safClientMock.hentOppdatertJournalpost(any()) }
     }
 
@@ -46,7 +46,7 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     fun `skal hente aktoerId fra PDL naar journalpost har foedselsnummer`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultWithBrukerFnr()
 
-        prosesserJournalfoertSkanningTask.doTask(task)
+        prosesserJournalfoeringHendelseTask.doTask(task)
         verify(exactly = 1) {pdlClientMock.hentAktorId(any()) }
     }
 
@@ -54,7 +54,7 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     fun `skal IKKE kalle paa PDL naar journalpost har aktoerId`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultWithBrukerAktoerid()
 
-        prosesserJournalfoertSkanningTask.doTask(task)
+        prosesserJournalfoeringHendelseTask.doTask(task)
         verify(exactly = 0) { pdlClientMock.hentAktorId(any()) }
     }
 
@@ -63,7 +63,7 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns null
 
         val exception = assertThrows(RuntimeException::class.java) {
-            prosesserJournalfoertSkanningTask.doTask(task)
+            prosesserJournalfoeringHendelseTask.doTask(task)
         }
         assertThat(exception.localizedMessage).isEqualTo("Journalpost med journalpostId $journalpostId finnes ikke i SAF")
         verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
@@ -73,14 +73,14 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     fun `skal lage oppgave naar SAF returnerer journalpost med aktoerId`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultWithBrukerAktoerid()
 
-        prosesserJournalfoertSkanningTask.doTask(task)
+        prosesserJournalfoeringHendelseTask.doTask(task)
         verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) }
     }
 
     @Test
     fun `skal lage oppgave ogsaa naar journalpost fra SAF mangler brukerId`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultUtenBrukerId()
-        prosesserJournalfoertSkanningTask.doTask(task)
+        prosesserJournalfoeringHendelseTask.doTask(task)
 
         verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) }
     }
@@ -88,7 +88,7 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     @Test
     fun `skal lage oppgave naar journalpost fra SAF mangler bruker`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultUtenBruker()
-        prosesserJournalfoertSkanningTask.doTask(task)
+        prosesserJournalfoeringHendelseTask.doTask(task)
 
         verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) }
     }
@@ -97,7 +97,7 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     fun `skal lage oppgave naar SAF returnerer journalpost med foedselsnummer og PDL har aktoerId`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultWithBrukerFnr()
 
-        prosesserJournalfoertSkanningTask.doTask(task)
+        prosesserJournalfoeringHendelseTask.doTask(task)
         verify(exactly = 1) { pdlClientMock.hentAktorId(any()) }
         verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) }
     }
@@ -106,7 +106,7 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     fun `skal ikke opprette oppgave naar journalstatus paa journalpost fra SAF ikke er MOTTATT`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultMedJournalstatusFeilregistrert()
 
-        prosesserJournalfoertSkanningTask.doTask(task)
+        prosesserJournalfoeringHendelseTask.doTask(task)
 
         verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
     }
@@ -115,7 +115,7 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     fun `skal ikke opprette oppgave naar tema paa journalpost fra SAF ikke er YRK`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultMedTemaSYK()
 
-        prosesserJournalfoertSkanningTask.doTask(task)
+        prosesserJournalfoeringHendelseTask.doTask(task)
 
         verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
     }
@@ -124,7 +124,7 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     fun `skal ikke opprette oppgave naar journalpost har journalposttype ulik innkommende`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultMedJournalposttypeUtgaaende()
 
-        prosesserJournalfoertSkanningTask.doTask(task)
+        prosesserJournalfoeringHendelseTask.doTask(task)
 
         verify(exactly = 0) { pdlClientMock.hentAktorId(any()) }
     }
@@ -133,7 +133,7 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     fun `skal kaste exception naar journalpost fra SAF mangler dokumenter`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultUtenDokumenter()
         val exception = assertThrows(RuntimeException::class.java) {
-            prosesserJournalfoertSkanningTask.doTask(task)
+            prosesserJournalfoeringHendelseTask.doTask(task)
         }
 
         assertThat(exception.localizedMessage).isEqualTo("Journalposten mangler dokumenter.")
@@ -144,7 +144,7 @@ internal class ProsesserJournalfoertSkanningTaskMockTest {
     fun `skal kaste exception naar journalpost fra SAF har ugyldig brukerIdType`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultMedUgyldigBrukerIdType()
         val exception = assertThrows(RuntimeException::class.java) {
-            prosesserJournalfoertSkanningTask.doTask(task)
+            prosesserJournalfoeringHendelseTask.doTask(task)
         }
 
         assertThat(exception.localizedMessage).startsWith("BrukerIdType må være en av:")

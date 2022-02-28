@@ -62,7 +62,7 @@ class SkademeldingService(
             datoMottatt = record.metadata.tidspunktMottatt.toString(),
             dokumenter = listOf(
                 Dokument(
-                    brevkode = "NAV 13-07.05",
+                    brevkode = "NAV 13",
                     tittel = "Melding om yrkesskade eller yrkessykdom",
                     dokumentvarianter = listOf(
                         Dokumentvariant(
