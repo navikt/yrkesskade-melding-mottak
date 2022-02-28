@@ -2,8 +2,11 @@ package no.nav.yrkesskade.meldingmottak.config
 
 import io.confluent.kafka.schemaregistry.client.MockSchemaRegistryClient
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
@@ -33,11 +36,14 @@ class KafkaConfig {
     }
 
     @Bean
-    fun kafkaConsumerFactory(properties: KafkaProperties,
-                             schemaRegistryClient: MockSchemaRegistryClient
+    fun kafkaAvroConsumerFactory(properties: KafkaProperties,
+                                 schemaRegistryClient: MockSchemaRegistryClient
     ): ConsumerFactory<String?, Any?>? {
-        val consumerProperties = properties.buildConsumerProperties()
-        consumerProperties["specific.avro.reader"] = "true"
+        val consumerProperties = properties.buildConsumerProperties().apply {
+            this[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = true
+            this[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaAvroDeserializer::class
+        }
+
         return DefaultKafkaConsumerFactory(
             consumerProperties,
             StringDeserializer(),
@@ -46,20 +52,34 @@ class KafkaConfig {
     }
 
     @Bean
-    fun kafkaJournalfoeringHendelseListenerContainerFactory(kafkaConsumerFactory: ConsumerFactory<String?, Any?>):
+    fun kafkaJournalfoeringHendelseListenerContainerFactory(kafkaAvroConsumerFactory: ConsumerFactory<String?, Any?>):
             ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord> {
         return ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
-            this.setConsumerFactory(kafkaConsumerFactory)
+            this.setConsumerFactory(kafkaAvroConsumerFactory)
             this.setErrorHandler(ContainerStoppingErrorHandler())
-            this.setRetryTemplate(
-                RetryTemplate().apply {
-                    this.setBackOffPolicy(ExponentialBackOffPolicy().apply {
-                        this.initialInterval = ETT_SEKUND
-                    })
-                    this.setRetryPolicy(SimpleRetryPolicy(ANTALL_RETRIES))
-                }
-            )
+            this.setRetryTemplate(retryTemplate())
         }
+    }
+
+    @Bean
+    fun skademeldingInnsendtHendelseListenerContainerFactory(kafkaProperties: KafkaProperties):
+            ConcurrentKafkaListenerContainerFactory<String, SkademeldingInnsendtHendelse> {
+        val consumerFactory = DefaultKafkaConsumerFactory<String, SkademeldingInnsendtHendelse>(
+            kafkaProperties.buildConsumerProperties()
+        )
+
+        return ConcurrentKafkaListenerContainerFactory<String, SkademeldingInnsendtHendelse>().apply {
+            this.setConsumerFactory(consumerFactory)
+            this.setErrorHandler(ContainerStoppingErrorHandler())
+            this.setRetryTemplate(retryTemplate())
+        }
+    }
+
+    fun retryTemplate() = RetryTemplate().apply {
+        this.setBackOffPolicy(ExponentialBackOffPolicy().apply {
+            this.initialInterval = ETT_SEKUND
+        })
+        this.setRetryPolicy(SimpleRetryPolicy(ANTALL_RETRIES))
     }
 
     @Bean
