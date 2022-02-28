@@ -19,7 +19,6 @@ import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.lang.invoke.MethodHandles
-import java.util.Date
 
 private const val TEMA_YRKESSKADE = "YRK"
 
@@ -51,7 +50,7 @@ class SkademeldingService(
             tittel = "Melding om yrkesskade eller yrkessykdom",
             journalposttype = Journalposttype.INNGAAENDE,
             avsenderMottaker = AvsenderMottaker(
-                id = skademelding.innmelder!!.norskIdentitetsnummer.toString(),
+                id = skademelding.innmelder!!.norskIdentitetsnummer,
                 idType = BrukerIdType.FNR
             ),
             bruker = Bruker(
@@ -60,10 +59,10 @@ class SkademeldingService(
             ),
             tema = TEMA_YRKESSKADE,
             kanal = Kanal.NAV_NO.toString(),
-            datoMottatt = Date.from(record.metadata.tidspunktMottatt),
+            datoMottatt = record.metadata.tidspunktMottatt.toString(),
             dokumenter = listOf(
                 Dokument(
-                    brevkode = null,
+                    brevkode = "NAV 13-07.05",
                     tittel = "Melding om yrkesskade eller yrkessykdom",
                     dokumentvarianter = listOf(
                         Dokumentvariant(

@@ -2,7 +2,6 @@ package no.nav.yrkesskade.meldingmottak.hendelser.domene
 
 import com.expediagroup.graphql.generated.enums.BrukerIdType
 import com.expediagroup.graphql.generated.journalpost.Bruker
-import java.util.Date
 
 enum class Journalpoststatus {
     MOTTATT
@@ -27,7 +26,7 @@ data class OpprettJournalpostRequest(
     val tema: String? = "YRK",
     val kanal: String? = "NAV_NO",
 //    val eksternReferanseId: String -- her kan vi evt legge vår egen skademeldingsId.
-    val datoMottatt: Date,
+    val datoMottatt: String,
     val dokumenter: List<Dokument>
 )
 

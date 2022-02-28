@@ -25,6 +25,4 @@ class SkademeldingServiceMockTest {
         service.mottaSkademelding(skademeldingInnsendtHendelse())
         verify(exactly = 1) { dokarkivClient.journalfoerSkademelding(any()) }
     }
-
-
 }
