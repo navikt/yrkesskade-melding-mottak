@@ -44,7 +44,7 @@ class SkademeldingService(
         record: SkademeldingInnsendtHendelse
     ): OpprettJournalpostRequest {
         val skademelding = record.skademelding
-        val skademeldingJson = objectMapper.registerModule(JavaTimeModule()).writeValueAsString(skademelding)
+        val skademeldingJson = objectMapper.writeValueAsString(skademelding)
 
         return OpprettJournalpostRequest(
             tittel = "Melding om yrkesskade eller yrkessykdom",
