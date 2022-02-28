@@ -7,6 +7,7 @@ import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
@@ -19,6 +20,8 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import org.springframework.kafka.listener.ContainerStoppingErrorHandler
+import org.springframework.kafka.support.serializer.JsonDeserializer
+import org.springframework.kafka.support.serializer.JsonSerializer
 import org.springframework.retry.backoff.ExponentialBackOffPolicy
 import org.springframework.retry.policy.SimpleRetryPolicy
 import org.springframework.retry.support.RetryTemplate
@@ -26,6 +29,8 @@ import org.springframework.retry.support.RetryTemplate
 private const val ANTALL_RETRIES = 10
 
 private const val ETT_SEKUND = 1000L
+
+private const val NO_NAV_YRKESSKADE_MODEL = "no.nav.yrkesskade.model"
 
 @TestConfiguration
 class KafkaConfig {
@@ -36,8 +41,9 @@ class KafkaConfig {
     }
 
     @Bean
-    fun kafkaAvroConsumerFactory(properties: KafkaProperties,
-                                 schemaRegistryClient: MockSchemaRegistryClient
+    fun kafkaAvroConsumerFactory(
+        properties: KafkaProperties,
+        schemaRegistryClient: MockSchemaRegistryClient
     ): ConsumerFactory<String?, Any?>? {
         val consumerProperties = properties.buildConsumerProperties().apply {
             this[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = true
@@ -65,7 +71,10 @@ class KafkaConfig {
     fun skademeldingInnsendtHendelseListenerContainerFactory(kafkaProperties: KafkaProperties):
             ConcurrentKafkaListenerContainerFactory<String, SkademeldingInnsendtHendelse> {
         val consumerFactory = DefaultKafkaConsumerFactory<String, SkademeldingInnsendtHendelse>(
-            kafkaProperties.buildConsumerProperties()
+            kafkaProperties.buildConsumerProperties().apply {
+                this[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java
+                this[JsonDeserializer.TRUSTED_PACKAGES] = NO_NAV_YRKESSKADE_MODEL
+            }
         )
 
         return ConcurrentKafkaListenerContainerFactory<String, SkademeldingInnsendtHendelse>().apply {
@@ -83,8 +92,9 @@ class KafkaConfig {
     }
 
     @Bean
-    fun kafkaProducerFactory(properties: KafkaProperties,
-                             schemaRegistryClient: MockSchemaRegistryClient
+    fun journalfoeringHendelseProducerFactory(
+        properties: KafkaProperties,
+        schemaRegistryClient: MockSchemaRegistryClient
     ): ProducerFactory<String, Any> {
         val producerProperties = properties.buildProducerProperties()
         return DefaultKafkaProducerFactory(
@@ -95,7 +105,20 @@ class KafkaConfig {
     }
 
     @Bean
-    fun kafkaTemplate(producerFactory: ProducerFactory<String, Any>): KafkaTemplate<String, Any> {
-        return KafkaTemplate(producerFactory)
-    }
+    fun skademeldingProducerFactory(properties: KafkaProperties): DefaultKafkaProducerFactory<String, SkademeldingInnsendtHendelse> =
+        DefaultKafkaProducerFactory(
+            properties.buildProducerProperties().apply {
+                this[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
+            }
+        )
+
+    @Bean
+    fun journalfoeringHendelseKafkaTemplate(
+        journalfoeringHendelseProducerFactory: ProducerFactory<String, Any>
+    ): KafkaTemplate<String, Any> = KafkaTemplate(journalfoeringHendelseProducerFactory)
+
+    @Bean
+    fun skademeldingKafkaTemplate(
+        skademeldingProducerFactory: ProducerFactory<String, SkademeldingInnsendtHendelse>
+    ): KafkaTemplate<String, SkademeldingInnsendtHendelse> = KafkaTemplate(skademeldingProducerFactory)
 }

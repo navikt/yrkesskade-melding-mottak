@@ -1,7 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.hendelser
 
 import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
-import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecord
+import no.nav.yrkesskade.meldingmottak.fixtures.skademeldingInnsendtHendelse
+import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -15,14 +16,14 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.kafka.test.utils.ContainerTestUtils
 
-private const val TOPIC = "test"
+private const val TOPIC = "yrkesskade.privat-yrkesskade-skademeldingInnsendt"
 
 private const val NUM_BROKERS = 1
 
 private const val CONTROLLED_BROKER_SHUTDOWN = true
 
 @EmbeddedKafka(topics = [TOPIC])
-internal class JournalfoeringHendelseConsumerIT : BaseSpringBootTestClass() {
+internal class SkademeldingInnsendtHendelseConsumerIT : BaseSpringBootTestClass() {
 
     @Autowired
     lateinit var kafkaListenerEndpointRegistry: KafkaListenerEndpointRegistry
@@ -30,10 +31,10 @@ internal class JournalfoeringHendelseConsumerIT : BaseSpringBootTestClass() {
     val embeddedKafkaBroker = EmbeddedKafkaBroker(NUM_BROKERS, CONTROLLED_BROKER_SHUTDOWN, TOPIC)
 
     @SpyBean
-    lateinit var consumer: JournalfoeringHendelseConsumer
+    lateinit var consumer: SkademeldingInnsendtHendelseConsumer
 
     @Autowired
-    lateinit var journalfoeringHendelseKafkaTemplate: KafkaTemplate<String, Any>
+    lateinit var skademeldingKafkaTemplate: KafkaTemplate<String, SkademeldingInnsendtHendelse>
 
     @BeforeEach
     fun init() {
@@ -47,8 +48,8 @@ internal class JournalfoeringHendelseConsumerIT : BaseSpringBootTestClass() {
 
     @Test
     fun listen() {
-        val record = journalfoeringHendelseRecord()
-        journalfoeringHendelseKafkaTemplate.send(TOPIC, record).get()
+        val record = skademeldingInnsendtHendelse()
+        skademeldingKafkaTemplate.send(TOPIC, record)
         Mockito.verify(consumer, timeout(20000L).times(1)).listen(any())
     }
 }
