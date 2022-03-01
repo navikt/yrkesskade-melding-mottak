@@ -16,6 +16,7 @@ import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokumentTittel
+import no.nav.yrkesskade.meldingmottak.util.extensions.journalfoerendeEnhetEllerNull
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.prosessering.AsyncTaskStep
 import no.nav.yrkesskade.prosessering.TaskStepBeskrivelse
@@ -64,7 +65,7 @@ class ProsesserJournalfoertSkanningTask(
                 journalpostId = journalpost.journalpostId,
                 aktoerId = aktoerId,
                 tema = journalpost.tema.toString(),
-                tildeltEnhetsnr = journalpost.journalfoerendeEnhet,
+                tildeltEnhetsnr = journalpost.journalfoerendeEnhetEllerNull(),
                 oppgavetype = Oppgavetype.JOURNALFOERING.kortnavn,
                 behandlingstema = null, // skal være null
                 behandlingstype = null, // skal være null
