@@ -29,8 +29,8 @@ private const val DIGITAL_SKADEMELDING_BREVKODE = "NAV 13"
 @Service
 class SkademeldingService(
     private val dokarkivClient: DokarkivClient,
-    private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 ) {
+    private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
     private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
     private val secureLogger = getSecureLogger()
 
