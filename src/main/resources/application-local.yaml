@@ -1,6 +1,10 @@
 AUTH_SERVER: https://fakedings.dev-gcp.nais.io/fake
 KAFKA_BROKERS: http://localhost:9092
 
+NAIS_CLUSTER_NAME: lokal
+funksjonsbrytere:
+  enabled: false
+
 server:
   port: 9080
 spring:

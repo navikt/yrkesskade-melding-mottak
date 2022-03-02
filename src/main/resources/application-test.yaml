@@ -13,6 +13,9 @@ kafka:
   topic:
     aapen-dok-journalfoering: test
 
+funksjonsbrytere:
+  enabled: false
+NAIS_CLUSTER_NAME: lokal
 KAFKA_BROKERS: ${spring.embedded.kafka.brokers}
 
 no.nav.security.jwt:
