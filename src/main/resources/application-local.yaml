@@ -59,3 +59,5 @@ no.nav.security.jwt:
           client-id: dummy-client-id
           client-secret: dummy-secret
           client-auth-method: client_secret_basic
+
+YRKESSKADE_DOKGEN_API_URL: http://localhost:5914

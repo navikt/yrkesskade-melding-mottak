@@ -65,3 +65,5 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-jwk: ${AZURE_APP_JWK}
           client-auth-method: private_key_jwt
+
+YRKESSKADE_DOKGEN_API_URL: https://yrkesskade-dokgen.dev.intern.nav.no
