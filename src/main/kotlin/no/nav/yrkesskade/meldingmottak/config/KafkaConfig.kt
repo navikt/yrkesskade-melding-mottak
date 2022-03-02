@@ -46,11 +46,11 @@ class KafkaConfig {
     @Bean
     fun skademeldingInnsendtHendelseListenerContainerFactory(kafkaProperties: KafkaProperties):
             ConcurrentKafkaListenerContainerFactory<String, SkademeldingInnsendtHendelse> {
-        val consumerFactory = DefaultKafkaConsumerFactory<String, SkademeldingInnsendtHendelse>(
-            kafkaProperties.buildConsumerProperties().apply {
-                this[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java
-            }
-        )
+
+        val consumerProperties = kafkaProperties.buildConsumerProperties().apply {
+            this[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java
+        }
+        val consumerFactory = DefaultKafkaConsumerFactory<String, SkademeldingInnsendtHendelse>(consumerProperties)
 
         return ConcurrentKafkaListenerContainerFactory<String, SkademeldingInnsendtHendelse>().apply {
             this.setConsumerFactory(consumerFactory)
