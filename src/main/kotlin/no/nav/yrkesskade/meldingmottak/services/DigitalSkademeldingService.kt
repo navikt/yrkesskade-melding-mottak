@@ -64,6 +64,7 @@ class SkademeldingService(
             tema = TEMA_YRKESSKADE,
             kanal = Kanal.NAV_NO.toString(),
             datoMottatt = record.metadata.tidspunktMottatt.toString(),
+            eksternReferanseId = record.metadata.navCallId,
             dokumenter = listOf(
                 Dokument(
                     brevkode = DIGITAL_SKADEMELDING_BREVKODE,

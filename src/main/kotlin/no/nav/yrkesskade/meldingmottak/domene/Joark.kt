@@ -22,7 +22,7 @@ data class OpprettJournalpostRequest(
     val bruker: Bruker,
     val tema: String? = "YRK",
     val kanal: String? = "NAV_NO",
-//    val eksternReferanseId: String -- her kan vi evt legge vår egen skademeldingsId.
+    val eksternReferanseId: String,
     val datoMottatt: String,
     val dokumenter: List<Dokument>
 )
