@@ -21,7 +21,7 @@ class SkademeldingServiceMockTest {
     }
 
     @Test
-    fun `skal kalle paa taskRepository naar en record med tema YRK og kanal SKAN_IM kommer inn`() {
+    fun `skal kalle paa dokarkivClient naar en skademelding kommer inn`() {
         service.mottaSkademelding(skademeldingInnsendtHendelse())
         verify(exactly = 1) { dokarkivClient.journalfoerSkademelding(any()) }
     }
