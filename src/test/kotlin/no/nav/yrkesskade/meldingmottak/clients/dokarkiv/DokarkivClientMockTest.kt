@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.ClientResponse
-import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 
@@ -61,11 +60,9 @@ fun createShortCircuitWebClient(jsonResponse: String): WebClient {
         .header("Content-Type", "application/json")
         .body(jsonResponse).build()
 
-    val shortCircuitingExchangeFunction = ExchangeFunction {
-        Mono.just(clientResponse)
-    }
-
-    return WebClient.builder().exchangeFunction(shortCircuitingExchangeFunction).build()
+    return WebClient.builder()
+        .exchangeFunction { Mono.just(clientResponse) }
+        .build()
 }
 
 fun createShortCircuitWebClientWithStatus(jsonResponse: String, status: HttpStatus): WebClient {
@@ -74,9 +71,7 @@ fun createShortCircuitWebClientWithStatus(jsonResponse: String, status: HttpStat
         .header("Content-Type", "application/json")
         .body(jsonResponse).build()
 
-    val shortCircuitingExchangeFunction = ExchangeFunction {
-        Mono.just(clientResponse)
-    }
-
-    return WebClient.builder().exchangeFunction(shortCircuitingExchangeFunction).build()
+    return WebClient.builder()
+        .exchangeFunction { Mono.just(clientResponse) }
+        .build()
 }
