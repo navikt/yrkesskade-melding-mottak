@@ -7,6 +7,7 @@ import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
@@ -28,7 +29,7 @@ class DokarkivClient(
     }
 
     @Retryable
-    fun journalfoerSkademelding(opprettJournalpostRequest: OpprettJournalpostRequest): OpprettJournalpostResponse {
+    fun journalfoerSkademelding(opprettJournalpostRequest: OpprettJournalpostRequest): OpprettJournalpostResponse? {
         log.info("Journalfører skademelding")
         return logTimingAndWebClientResponseException("journalførSkademelding") {
             dokarkivWebClient.post()
@@ -47,12 +48,10 @@ class DokarkivClient(
                 .retrieve()
                 .bodyToMono<OpprettJournalpostResponse>()
                 .block() ?: throw RuntimeException("Kunne ikke journalføre skademelding")
-        }.also {
-            log.info("Journalført skademelding til journalpostId ${it.journalpostId}")
         }
     }
 
-    private fun <T> logTimingAndWebClientResponseException(methodName: String, function: () -> T): T {
+    private fun <T> logTimingAndWebClientResponseException(methodName: String, function: () -> T): T? {
         val start: Long = System.currentTimeMillis()
         try {
             return function.invoke()
@@ -64,6 +63,10 @@ class DokarkivClient(
                 ex.request?.uri ?: "-",
                 ex.responseBodyAsString
             )
+            if (ex.statusCode == HttpStatus.CONFLICT) {
+                log.info("Skademeldingen har allerede blitt journalført.")
+                return null
+            }
             throw ex
         } catch (rtex: RuntimeException) {
             log.warn("Caught RuntimeException", rtex)
