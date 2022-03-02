@@ -7,7 +7,6 @@ import io.mockk.junit5.MockKExtension
 import no.nav.yrkesskade.meldingmottak.fixtures.opprettJournalpostOkRespons
 import no.nav.yrkesskade.meldingmottak.fixtures.opprettJournalpostRequest
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -29,14 +28,13 @@ internal class DokarkivClientMockTest {
         every { tokenUtilMock.getAppAccessTokenWithSafScope() } returns "abc"
     }
 
-    @AfterEach
-    fun tearDown() {
-    }
-
     @Test
     fun `journalfoerSkademelding skal håndtere OK-respons`() {
         dokarkivClient = DokarkivClient(
-            createShortCircuitWebClient(jacksonObjectMapper().writeValueAsString(opprettJournalpostOkRespons())),
+            createShortCircuitWebClientWithStatus(
+                jacksonObjectMapper().writeValueAsString(opprettJournalpostOkRespons()),
+                HttpStatus.OK
+            ),
             tokenUtilMock,
             "mock"
         )
@@ -52,17 +50,6 @@ internal class DokarkivClientMockTest {
         )
         dokarkivClient.journalfoerSkademelding(opprettJournalpostRequest())
     }
-}
-
-fun createShortCircuitWebClient(jsonResponse: String): WebClient {
-    val clientResponse: ClientResponse = ClientResponse
-        .create(HttpStatus.OK)
-        .header("Content-Type", "application/json")
-        .body(jsonResponse).build()
-
-    return WebClient.builder()
-        .exchangeFunction { Mono.just(clientResponse) }
-        .build()
 }
 
 fun createShortCircuitWebClientWithStatus(jsonResponse: String, status: HttpStatus): WebClient {
