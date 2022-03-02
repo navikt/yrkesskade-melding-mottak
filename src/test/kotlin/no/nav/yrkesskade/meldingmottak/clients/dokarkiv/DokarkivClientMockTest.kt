@@ -1,13 +1,11 @@
 package no.nav.yrkesskade.meldingmottak.clients.dokarkiv
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import no.nav.yrkesskade.meldingmottak.fixtures.opprettJournalpostOkRespons
 import no.nav.yrkesskade.meldingmottak.fixtures.opprettJournalpostRequest
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpStatus
@@ -22,11 +20,6 @@ internal class DokarkivClientMockTest {
 
     @MockK(relaxed = true)
     lateinit var tokenUtilMock: TokenUtil
-
-    @BeforeEach
-    fun setUp() {
-        every { tokenUtilMock.getAppAccessTokenWithSafScope() } returns "abc"
-    }
 
     @Test
     fun `journalfoerSkademelding skal håndtere OK-respons`() {
