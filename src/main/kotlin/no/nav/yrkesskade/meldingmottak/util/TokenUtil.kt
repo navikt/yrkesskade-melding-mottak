@@ -30,7 +30,7 @@ class TokenUtil(
     }
 
     fun getAppAccessTokenWithDokarkivScope(): String {
-        val clientProperties = clientConfigurationProperties.registration["oppgave-maskintilmaskin"]
+        val clientProperties = clientConfigurationProperties.registration["dokarkiv-maskintilmaskin"]
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
         return response.accessToken
     }
