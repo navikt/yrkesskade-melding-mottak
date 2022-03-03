@@ -1,8 +1,9 @@
 package no.nav.yrkesskade.meldingmottak.services
 
 import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
-import no.nav.yrkesskade.meldingmottak.fixtures.skademeldingInnsendtHendelse
+import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkademeldingInnsendtHendelse
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry
@@ -21,10 +22,14 @@ private const val CONTROLLED_BROKER_SHUTDOWN = true
  * "Strikk og binders"-test for manuell testing av PDF-generering. Denne testen bør ikke inngå i vanlig testkjøring av
  * integrasjonstester, men kan være nyttig under utvikling og feilretting.
  *
- * <h3>Forutsetninger</h3>
+ * Forutsetninger:
  * Lokal kjøring av <code>yrkesskade-dokgen</code> må være startet.
  *
+ * Kommenter ut @Disabled annoteringer for å kjøre testene.
+ *
+ * OBS! @Disabled annoteringene blir ikke alltid tatt hensyn til i IntelliJ.
  */
+@Disabled("Disabled ved automatisk testkjøring")
 @EmbeddedKafka(topics = [TOPIC])
 internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
 
@@ -47,18 +52,20 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
         }
     }
 
+    @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `skal lage tro-kopi-pdf`() {
-        val byteArray = pdfService.lagPdf(skademeldingInnsendtHendelse(), PdfTemplate.SKADEMELDING)
+        val byteArray = pdfService.lagPdf(enkelSkademeldingInnsendtHendelse(), PdfTemplate.SKADEMELDING)
         println("Pdf-størrelsen er ${byteArray.size} bytes")
 
         File("pdfServiceTest-tro-kopi.pdf").writeBytes(byteArray)
         println("Ferdig med å lage pdf.")
     }
 
+    @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `skal lage saksbehandling-pdf`() {
-        val byteArray = pdfService.lagPdf(skademeldingInnsendtHendelse(), PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
+        val byteArray = pdfService.lagPdf(enkelSkademeldingInnsendtHendelse(), PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
         println("Pdf-størrelsen er ${byteArray.size} bytes")
 
         File("pdfServiceTest-saksbehandling.pdf").writeBytes(byteArray)

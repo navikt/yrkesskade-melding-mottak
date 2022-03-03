@@ -9,7 +9,7 @@ import java.time.Month
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
-fun skademeldingInnsendtHendelse(): SkademeldingInnsendtHendelse {
+fun enkelSkademeldingInnsendtHendelse(): SkademeldingInnsendtHendelse {
     return SkademeldingInnsendtHendelse(
         metadata = metadata(),
         skademelding = enkelSkademelding()

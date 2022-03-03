@@ -3,7 +3,7 @@ package no.nav.yrkesskade.meldingmottak.pdf
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import no.nav.yrkesskade.meldingmottak.fixtures.skademeldingInnsendtHendelse
+import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkademeldingInnsendtHendelse
 import org.junit.jupiter.api.Test
 
 internal class PdfSkademeldingMapperTest {
@@ -13,7 +13,7 @@ internal class PdfSkademeldingMapperTest {
 
     @Test
     fun `skal mappe skademelding til PdfSkademeldig`() {
-        val record = skademeldingInnsendtHendelse()
+        val record = enkelSkademeldingInnsendtHendelse()
         println("skademeldingen er:\n $record")
 
         val pdfSkademelding = PdfSkademeldingMapper.tilPdfSkademelding(record)
@@ -23,6 +23,6 @@ internal class PdfSkademeldingMapperTest {
         println("Og JSON er $pdfSkademeldingJson")
 
         val prettyJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pdfSkademelding)
-        println("Pretty JSON er \n$prettyJson")
+        //println("Pretty JSON er \n$prettyJson") // Kommenter inn ved behov
     }
 }
