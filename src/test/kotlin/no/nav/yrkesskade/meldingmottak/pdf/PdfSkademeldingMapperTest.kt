@@ -21,5 +21,8 @@ internal class PdfSkademeldingMapperTest {
 
         val pdfSkademeldingJson = objectMapper.writeValueAsString(pdfSkademelding)
         println("Og JSON er $pdfSkademeldingJson")
+
+        val prettyJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pdfSkademelding)
+        println("Pretty JSON er \n$prettyJson")
     }
 }

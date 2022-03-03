@@ -48,13 +48,20 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
     }
 
     @Test
-    fun `skal lage pdf`() {
+    fun `skal lage tro-kopi-pdf`() {
         val byteArray = pdfService.lagPdf(skademeldingInnsendtHendelse(), PdfTemplate.SKADEMELDING)
-
         println("Pdf-størrelsen er ${byteArray.size} bytes")
 
-        File("tro-kopi-test.pdf").writeBytes(byteArray)
+        File("pdfServiceTest-tro-kopi.pdf").writeBytes(byteArray)
+        println("Ferdig med å lage pdf.")
+    }
 
+    @Test
+    fun `skal lage saksbehandling-pdf`() {
+        val byteArray = pdfService.lagPdf(skademeldingInnsendtHendelse(), PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
+        println("Pdf-størrelsen er ${byteArray.size} bytes")
+
+        File("pdfServiceTest-saksbehandling.pdf").writeBytes(byteArray)
         println("Ferdig med å lage pdf.")
     }
 

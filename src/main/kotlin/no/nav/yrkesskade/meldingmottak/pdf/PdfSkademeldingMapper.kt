@@ -2,9 +2,11 @@ package no.nav.yrkesskade.meldingmottak.pdf
 
 import no.nav.yrkesskade.meldingmottak.pdf.domene.*
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
+import no.nav.yrkesskade.model.SkademeldingMetadata
 import no.nav.yrkesskade.skademelding.model.*
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 object PdfSkademeldingMapper {
@@ -18,8 +20,9 @@ object PdfSkademeldingMapper {
         val skadelidt: PdfSkadelidt? = tilPdfSkadelidt(skademelding.skadelidt)
         val skade: PdfSkade? = tilPdfSkade(skademelding.skade)
         val hendelsesfakta: PdfHendelsesfakta? = tilPdfHendelsesfakta(skademelding.hendelsesfakta)
+        val dokumentInfo: PdfDokumentInfo = lagPdfDokumentInfo(record.metadata)
 
-        return PdfSkademelding(innmelder, skadelidt, skade, hendelsesfakta)
+        return PdfSkademelding(innmelder, skadelidt, skade, hendelsesfakta, dokumentInfo)
     }
 
 
@@ -30,6 +33,7 @@ object PdfSkademeldingMapper {
 
         return PdfInnmelder(
             norskIdentitetsnummer = Soknadsfelt("Fødselsnummer", innmelder.norskIdentitetsnummer),
+            navn = Soknadsfelt("Navn", ""), // TODO: 03/03/2022 Navn på innmelder må hentes for PDFen som skal brukes til saksbehandling
             paaVegneAv = Soknadsfelt("TODO", innmelder.paaVegneAv),
             innmelderrolle = Soknadsfelt("TODO", innmelder.innmelderrolle.value),
             altinnrolleIDer = Soknadsfelt("Rolle hentet fra Altinn", innmelder.altinnrolleIDer)
@@ -43,6 +47,15 @@ object PdfSkademeldingMapper {
 
         return PdfSkadelidt(
             Soknadsfelt("Fødselsnummer", skadelidt.norskIdentitetsnummer),
+            Soknadsfelt("Navn", ""), // TODO: 03/03/2022 Navn og bostedsadresse på skadelidt må hentes for PDFen som skal brukes til saksbehandling
+            Soknadsfelt(
+                "Bosted", PdfAdresse(
+                    adresselinje1 = "",
+                    adresselinje2 = null,
+                    adresselinje3 = null,
+                    land = null
+                )
+            ),
             tilPdfDekningsforhold(skadelidt.dekningsforhold)
         )
     }
@@ -124,6 +137,27 @@ object PdfSkademeldingMapper {
             adresselinje2 = adresse.adresselinje2,
             adresselinje3 = adresse.adresselinje3,
             land = adresse.land
+        )
+    }
+
+    private fun lagPdfDokumentInfo(metadata: SkademeldingMetadata): PdfDokumentInfo {
+        return PdfDokumentInfo(
+            dokumentnavn = "Melding om yrkesskade eller yrkessykdom påført under arbeid på norsk eller utenlandsk landterritorium",
+            dokumentnummer = "NAV 13-05.07",
+            dokumentDatoPrefix = "Innsendt digitalt ",
+            dokumentDato = datoFormatert(LocalDate.ofInstant(metadata.tidspunktMottatt, ZoneId.of("Europe/Oslo"))),
+            tekster = lagPdfTekster()
+        )
+    }
+
+    private fun lagPdfTekster(): PdfTekster {
+        return PdfTekster(
+            innmelderSeksjonstittel = "Om innmelder",
+            tidOgStedSeksjonstittel = "Tid og sted",
+            skadelidtSeksjonstittel = "Den skadelidte",
+            omUlykkenSeksjonstittel = "Om ulykken",
+            omSkadenSeksjonstittel = "Om skaden",
+            omSkadenFlereSkader = "Denne skademeldingen inneholder flere skader"
         )
     }
 

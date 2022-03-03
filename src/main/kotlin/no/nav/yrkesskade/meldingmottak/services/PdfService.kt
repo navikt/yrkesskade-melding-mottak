@@ -15,8 +15,7 @@ class PdfService(
 
         val pdfSkademelding: PdfSkademelding = PdfSkademeldingMapper.tilPdfSkademelding(record)
 
-        // TODO: 02/03/2022 Få med overskrifter
-        return pdfClient.lagPdf(pdfSkademelding, PdfTemplate.SKADEMELDING)
+        return pdfClient.lagPdf(pdfSkademelding, template)
     }
 
 }

@@ -11,13 +11,14 @@ data class PdfSkademelding(
     val skadelidt: PdfSkadelidt?,
     val skade: PdfSkade?,
     val hendelsesfakta: PdfHendelsesfakta?,
-//    val littMereGreierKommerHer: String
+    val dokumentInfo: PdfDokumentInfo
 )
 
 
 
 data class PdfInnmelder(
     val norskIdentitetsnummer: Soknadsfelt<String>,
+    val navn: Soknadsfelt<String>,
     val paaVegneAv: Soknadsfelt<String>,
     val innmelderrolle: Soknadsfelt<String>, // ikke i bruk?
     val altinnrolleIDer: Soknadsfelt<List<String>?>
@@ -25,7 +26,8 @@ data class PdfInnmelder(
 
 data class PdfSkadelidt(
     val norskIdentitetsnummer: Soknadsfelt<String>,
-    // TODO: navn, bostedsadresse
+    val navn: Soknadsfelt<String>,
+    val bostedsadresse: Soknadsfelt<PdfAdresse>,
     val dekningsforhold: PdfDekningsforhold
 )
 
@@ -85,4 +87,21 @@ data class PdfAdresse(
     val adresselinje2: String?,
     val adresselinje3: String?,
     val land: String?
+)
+
+data class PdfDokumentInfo(
+    val dokumentnavn: String,
+    val dokumentnummer: String,
+    val dokumentDatoPrefix: String,
+    val dokumentDato: String,
+    val tekster: PdfTekster
+)
+
+data class PdfTekster(
+    val innmelderSeksjonstittel: String,
+    val tidOgStedSeksjonstittel: String,
+    val skadelidtSeksjonstittel: String,
+    val omUlykkenSeksjonstittel: String,
+    val omSkadenSeksjonstittel: String,
+    val omSkadenFlereSkader: String
 )

@@ -4,7 +4,7 @@ import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import no.nav.yrkesskade.model.SkademeldingMetadata
 import no.nav.yrkesskade.model.Spraak
 import no.nav.yrkesskade.skademelding.model.*
-import java.time.Instant
+import java.time.LocalDateTime
 import java.time.Month
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -96,7 +96,7 @@ private fun hendelsesfakta(): Hendelsesfakta? {
 private fun metadata(): SkademeldingMetadata {
     return SkademeldingMetadata(
         kilde = "web",
-        tidspunktMottatt = Instant.now(),
+        tidspunktMottatt = LocalDateTime.of(2022, Month.FEBRUARY, 28, 7, 30, 0).toInstant(ZoneOffset.ofHours(1)),
         spraak = Spraak.NB,
         navCallId = "ABC-123456789"
     )
