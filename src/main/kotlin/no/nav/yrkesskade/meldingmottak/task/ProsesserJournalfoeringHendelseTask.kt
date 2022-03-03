@@ -28,13 +28,13 @@ import java.lang.invoke.MethodHandles
 
 
 @TaskStepBeskrivelse(
-    taskStepType = ProsesserJournalfoertSkanningTask.TASK_STEP_TYPE,
+    taskStepType = ProsesserJournalfoeringHendelseTask.TASK_STEP_TYPE,
     beskrivelse = "Prosessering av skannet og journalført skademelding",
     maxAntallFeil = 10,
     triggerTidVedFeilISekunder = 60 * 30
 )
 @Component
-class ProsesserJournalfoertSkanningTask(
+class ProsesserJournalfoeringHendelseTask(
     private val safClient: SafClient,
     private val pdlClient: PdlClient,
     private val oppgaveClient: OppgaveClient,
@@ -44,8 +44,8 @@ class ProsesserJournalfoertSkanningTask(
     private val secureLogger = getSecureLogger()
 
     override fun doTask(task: Task) {
-        log.info("ProsesserJournalfoertSkanningTask kjoerer med payload ${task.payload}")
-        val payloadDto = jacksonObjectMapper().readValue<ProsesserJournalfoertSkanningTaskPayloadDto>(task.payload)
+        log.info("ProsesserJournalfoeringHendelseTask kjoerer med payload ${task.payload}")
+        val payloadDto = jacksonObjectMapper().readValue<ProsesserJournalfoeringHendelseTaskPayloadDto>(task.payload)
 
         val journalpost = hentJournalpostFraSaf(payloadDto.journalpostId)
 
@@ -156,13 +156,13 @@ class ProsesserJournalfoertSkanningTask(
             return Task(
                 type = TASK_STEP_TYPE,
                 payload = jacksonObjectMapper().writeValueAsString(
-                    ProsesserJournalfoertSkanningTaskPayloadDto(journalpostId)
+                    ProsesserJournalfoeringHendelseTaskPayloadDto(journalpostId)
                 )
             )
         }
 
-        const val TASK_STEP_TYPE = "prosesserJournalfoertSkanning"
+        const val TASK_STEP_TYPE = "ProsesserJournalfoeringHendelse"
     }
 }
 
-data class ProsesserJournalfoertSkanningTaskPayloadDto(val journalpostId: String)
+data class ProsesserJournalfoeringHendelseTaskPayloadDto(val journalpostId: String)

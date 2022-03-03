@@ -26,6 +26,7 @@ spring:
 kafka:
   topic:
     aapen-dok-journalfoering: aapen-dok-journalfoering
+    skademelding-innsendt: privat-yrkesskade-skademeldinginnsendt
 
 no.nav.security.jwt:
   issuer:

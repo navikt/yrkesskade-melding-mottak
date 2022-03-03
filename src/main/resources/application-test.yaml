@@ -12,6 +12,7 @@ spring:
 kafka:
   topic:
     aapen-dok-journalfoering: test
+    skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldinginnsendt
 
 funksjonsbrytere:
   enabled: false

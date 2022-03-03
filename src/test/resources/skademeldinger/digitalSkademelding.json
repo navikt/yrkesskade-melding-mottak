@@ -1,0 +1,63 @@
+{
+  "innmelder": {
+    "norskIdentitetsnummer": "12345699999",
+    "paaVegneAv": "123456789",
+    "innmelderrolle": "Virksomhetsrepresentant",
+    "altinnrolleIDer": [
+      987645,
+      59647
+    ]
+  },
+  "skadelidt": {
+    "norskIdentitetsnummer": "12345699999",
+    "dekningsforhold": {
+      "organisasjonsnummer": "123456789",
+      "navnPaaVirksomheten": "Forretningsfabrikken AS",
+      "stillingstittelTilDenSkadelidte": [
+        "Politikere"
+      ],
+      "rolletype": "Arbeidstaker"
+    }
+  },
+  "skade": {
+    "alvorlighetsgrad": "Alvorlig kreftsykdom",
+    "skadedeDeler": [
+      {
+        "skadeartTabellC": "Varmeskade",
+        "kroppsdelTabellD": "Tenner"
+      }
+    ],
+    "antattSykefravaerTabellH": "Kjent fravær mindre enn 3 dager"
+  },
+  "hendelsesfakta": {
+    "tid": {
+      "tidspunkt": "2022-02-25T14:24:02.880Z",
+      "periode": {
+        "fra": "2022-02-25",
+        "til": "2022-02-25"
+      },
+      "ukjent": false,
+      "tidstype": "Tidspunkt"
+    },
+    "naarSkjeddeUlykken": "I avtalt arbeidstid",
+    "hvorSkjeddeUlykken": "Avtalt hjemmekontor",
+    "ulykkessted": {
+      "sammeSomVirksomhetensAdresse": false,
+      "adresse": {
+        "adresselinje1": "Storgaten 12",
+        "adresselinje2": "1234 Plassen",
+        "adresselinje3": null,
+        "land": "DENMARK"
+      }
+    },
+    "aarsakUlykkeTabellAogE": [
+      "Fall av person"
+    ],
+    "bakgrunnsaarsakTabellBogG": [
+      "Utilstrekkelig sikring",
+      "Verneutstyr fjernet"
+    ],
+    "utfyllendeBeskrivelse": "Fabrikklokalet var mørkt og rotete. 1000 tegn",
+    "stedsbeskrivelseTabellF": "Plass for industriell virksomhet"
+  }
+}

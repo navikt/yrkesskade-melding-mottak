@@ -9,10 +9,11 @@ spring:
     client-id: yrkesskade-melding-mottak
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       group-id: yrkesskade-melding-mottak
       auto-offset-reset: earliest
       enable-auto-commit: false
+      properties:
+        spring.json.trusted.packages: no.nav.yrkesskade.model
     listener:
       ack-mode: record
   datasource:
@@ -68,8 +69,10 @@ prosessering:
 saf.graphql.url: https://saf.dev-fss-pub.nais.io/graphql
 pdl.graphql.url: https://pdl-api.dev-fss-pub.nais.io/graphql
 oppgave.url: https://oppgave-q1.dev-fss-pub.nais.io
+dokarkiv.url: https://dokarkiv.dev-fss-pub.nais.io
 
 SAF_APP_CLIENT_ID: dev-fss.teamdokumenthandtering.saf
 PDL_APP_CLIENT_ID: dev-fss.pdl.pdl-api
+DOKARKIV_CLIENT_ID: 972814f3-8bdf-44f8-a191-c2ed00020b54
 OPPGAVE_APP_CLIENT_ID: bef7cd4d-e65e-41f8-a743-b643e81f2aea
 TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851         # trygdeetaten.no

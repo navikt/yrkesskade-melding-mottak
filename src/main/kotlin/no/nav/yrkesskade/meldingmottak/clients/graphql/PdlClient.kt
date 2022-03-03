@@ -51,9 +51,7 @@ class PdlClient(
             }
         }
 
-        val aktorId = extractAktorId(identerResult)
-        logger.info("Hentet aktørId $aktorId fra PDL")
-        return aktorId
+        return extractAktorId(identerResult)
     }
 
     private fun extractAktorId(identerResult: HentIdenter.Result?): String? {

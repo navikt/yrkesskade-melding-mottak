@@ -1,6 +1,17 @@
 package no.nav.yrkesskade.meldingmottak.fixtures
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
+import no.nav.yrkesskade.model.SkademeldingMetadata
+import no.nav.yrkesskade.model.Spraak
+import no.nav.yrkesskade.skademelding.model.Skademelding
+import java.nio.file.Files
+import java.nio.file.Path
+import java.time.Instant
+import java.util.UUID
 
 fun journalfoeringHendelseRecord(): JournalfoeringHendelseRecord? {
     return JournalfoeringHendelseRecord.newBuilder()
@@ -90,4 +101,19 @@ fun journalfoeringHendelseRecordMedKanalSKAN_NETS(): JournalfoeringHendelseRecor
         .setKanalReferanseId("P1")
         .setBehandlingstema("YRK")
         .build()
+}
+
+fun skademeldingInnsendtHendelse(): SkademeldingInnsendtHendelse {
+    val skademelding: Skademelding = jacksonObjectMapper().registerModule(JavaTimeModule()).readValue(
+        Files.readString(Path.of("src/test/resources/skademeldinger/digitalSkademelding.json"))
+    )
+    return SkademeldingInnsendtHendelse(
+        skademelding = skademelding,
+        metadata = SkademeldingMetadata(
+            kilde = "Webskjema",
+            tidspunktMottatt = Instant.now(),
+            spraak = Spraak.NB,
+            navCallId = UUID.randomUUID().toString()
+        )
+    )
 }

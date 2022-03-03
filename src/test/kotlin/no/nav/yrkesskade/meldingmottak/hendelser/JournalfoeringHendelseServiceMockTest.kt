@@ -5,9 +5,15 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveResponse
-import no.nav.yrkesskade.meldingmottak.fixtures.*
+import no.nav.yrkesskade.meldingmottak.fixtures.enkelOppgave
+import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecord
+import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecordMedJournalpoststatusJOURNALFOERT
+import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecordMedKanalALTINN
+import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecordMedKanalNAVNO
+import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecordMedKanalSKAN_NETS
+import no.nav.yrkesskade.meldingmottak.fixtures.journalfoeringHendelseRecordMedTemaSYK
 import no.nav.yrkesskade.meldingmottak.services.JournalfoeringHendelseService
-import no.nav.yrkesskade.meldingmottak.task.ProsesserJournalfoertSkanningTask
+import no.nav.yrkesskade.meldingmottak.task.ProsesserJournalfoeringHendelseTask
 import no.nav.yrkesskade.prosessering.domene.TaskRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -21,7 +27,7 @@ class JournalfoeringHendelseServiceMockTest {
 
     @BeforeEach
     fun setup() {
-        every { taskRepository.save(any()) } returns ProsesserJournalfoertSkanningTask.opprettTask("123")
+        every { taskRepository.save(any()) } returns ProsesserJournalfoeringHendelseTask.opprettTask("123")
         every { oppgaveClient.finnOppgaver(any(), any()) } returns OppgaveResponse(0, emptyList())
     }
 
