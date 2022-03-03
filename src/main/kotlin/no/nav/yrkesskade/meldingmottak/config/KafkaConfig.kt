@@ -32,7 +32,7 @@ class KafkaConfig {
 
         val consumerProperties = kafkaProperties.buildConsumerProperties().apply {
             this[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = true
-            this[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaAvroDeserializer::class
+            this[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaAvroDeserializer::class.java
         }
         val consumerFactory = DefaultKafkaConsumerFactory<String, JournalfoeringHendelseRecord>(consumerProperties)
 
