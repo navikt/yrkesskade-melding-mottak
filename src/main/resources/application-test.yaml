@@ -14,6 +14,9 @@ kafka:
     aapen-dok-journalfoering: test
     skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldinginnsendt
 
+funksjonsbrytere:
+  enabled: false
+NAIS_CLUSTER_NAME: lokal
 KAFKA_BROKERS: ${spring.embedded.kafka.brokers}
 
 no.nav.security.jwt:

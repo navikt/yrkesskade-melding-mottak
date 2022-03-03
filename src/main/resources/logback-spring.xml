@@ -1,31 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <appender name="secureJson" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/secure-logs/secure.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>/secure-logs/secure.log.%i</fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>1</maxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>50MB</maxFileSize>
-        </triggeringPolicy>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
-    </appender>
+    <springProfile name="local">
+        <appender name="text" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+                <charset>UTF-8</charset>
+            </encoder>
+        </appender>
 
-    <logger name="secure" level="debug" additivity="false">
-        <appender-ref ref="secureJson"/>
-    </logger>
+        <logger name="secure" level="debug" additivity="false">
+            <appender-ref ref="text"/>
+        </logger>
 
-    <appender name="json" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
-    </appender>
+        <root level="info">
+            <appender-ref ref="text"/>
+        </root>
+        <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="debug"/>
+        <logger name="org.hibernate.type" level="trace"/>
+    </springProfile>
 
-    <root level="info">
-        <appender-ref ref="json"/>
-    </root>
+    <springProfile name="!local">
+        <appender name="secureJson" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>/secure-logs/secure.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                <fileNamePattern>/secure-logs/secure.log.%i</fileNamePattern>
+                <minIndex>1</minIndex>
+                <maxIndex>1</maxIndex>
+            </rollingPolicy>
+            <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                <maxFileSize>50MB</maxFileSize>
+            </triggeringPolicy>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        </appender>
 
-    <logger name="no.nav.yrkesskade" level="info"/>
+        <logger name="secure" level="debug" additivity="false">
+            <appender-ref ref="secureJson"/>
+        </logger>
+
+        <appender name="json" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        </appender>
+
+        <root level="info">
+            <appender-ref ref="json"/>
+        </root>
+
+        <logger name="no.nav.yrkesskade" level="info"/>
+    </springProfile>
 
 </configuration>

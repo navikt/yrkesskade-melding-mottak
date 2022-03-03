@@ -130,6 +130,16 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jdk8</artifactId>
         </dependency>
+        <dependency>
+            <groupId>no.finn.unleash</groupId>
+            <artifactId>unleash-client-java</artifactId>
+            <version>4.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.yrkesskade</groupId>
+            <artifactId>featureflag</artifactId>
+            <version>d7e23a97_202203011059</version>
+        </dependency>
 
         <!-- Security -->
         <dependency>
