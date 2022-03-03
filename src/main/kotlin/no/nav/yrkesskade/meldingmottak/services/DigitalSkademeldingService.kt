@@ -4,16 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
-import no.nav.yrkesskade.meldingmottak.domene.AvsenderMottaker
-import no.nav.yrkesskade.meldingmottak.domene.Bruker
-import no.nav.yrkesskade.meldingmottak.domene.BrukerIdType
-import no.nav.yrkesskade.meldingmottak.domene.Dokument
-import no.nav.yrkesskade.meldingmottak.domene.Dokumentvariant
-import no.nav.yrkesskade.meldingmottak.domene.Dokumentvariantformat
-import no.nav.yrkesskade.meldingmottak.domene.Filtype
-import no.nav.yrkesskade.meldingmottak.domene.Journalposttype
-import no.nav.yrkesskade.meldingmottak.domene.Kanal
-import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostRequest
+import no.nav.yrkesskade.meldingmottak.domene.*
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.slf4j.LoggerFactory
@@ -28,6 +19,7 @@ private const val DIGITAL_SKADEMELDING_BREVKODE = "NAV 13"
 
 @Service
 class SkademeldingService(
+    private val pdfService: PdfService,
     private val dokarkivClient: DokarkivClient,
 ) {
     private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
@@ -40,12 +32,16 @@ class SkademeldingService(
      * registrer metrikker?
      */
     fun mottaSkademelding(record: SkademeldingInnsendtHendelse) {
-        val opprettJournalpostRequest = mapSkademeldingTilOpprettJournalpostRequest(record)
+        val pdf = pdfService.lagPdf(record, PdfTemplate.SKADEMELDING)
+        val beriketPdf = pdfService.lagPdf(record, PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
+        val opprettJournalpostRequest = mapSkademeldingTilOpprettJournalpostRequest(record, pdf, beriketPdf)
         dokarkivClient.journalfoerSkademelding(opprettJournalpostRequest)
     }
 
     private fun mapSkademeldingTilOpprettJournalpostRequest(
-        record: SkademeldingInnsendtHendelse
+        record: SkademeldingInnsendtHendelse,
+        pdf: ByteArray,
+        beriketPdf: ByteArray
     ): OpprettJournalpostRequest {
         val skademelding = record.skademelding
         val skademeldingJson = objectMapper.writeValueAsString(skademelding)
@@ -74,6 +70,16 @@ class SkademeldingService(
                             filtype = Filtype.JSON,
                             variantformat = Dokumentvariantformat.ORIGINAL,
                             fysiskDokument = skademeldingJson.encodeToByteArray()
+                        ),
+                        Dokumentvariant(
+                            filtype = Filtype.PDFA,
+                            variantformat = Dokumentvariantformat.ARKIV,
+                            fysiskDokument = pdf
+                        ),
+                        Dokumentvariant(
+                            filtype = Filtype.PDFA,
+                            variantformat = Dokumentvariantformat.ARKIV,
+                            fysiskDokument = beriketPdf
                         )
                     )
                 )
