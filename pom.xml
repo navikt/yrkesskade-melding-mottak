@@ -21,7 +21,7 @@
         <token-validation.version>1.3.9</token-validation.version>
         <kotlin.code.style>official</kotlin.code.style>
         <okhttp3.version>4.9.3</okhttp3.version>
-        <yrkesskade-felles-backend.version>d4247692_202202280919</yrkesskade-felles-backend.version>
+        <yrkesskade-felles-backend.version>c1310ef1_202203031223</yrkesskade-felles-backend.version>
     </properties>
 
     <dependencies>
