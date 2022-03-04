@@ -35,9 +35,6 @@ class PdfClient(
                         .build()
                 }
                 .contentType(MediaType.APPLICATION_JSON)
-//                .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithOppgaveScope()}")
-                .header("X-Correlation-ID", MDCConstants.MDC_CALL_ID)
-//                .header("Nav-Consumer-Id", applicationName)
                 .bodyValue(pdfSkademelding)
                 .retrieve()
                 .bodyToMono<ByteArray>()
