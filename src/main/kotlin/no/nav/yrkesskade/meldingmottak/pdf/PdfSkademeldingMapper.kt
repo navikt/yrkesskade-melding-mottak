@@ -142,8 +142,8 @@ object PdfSkademeldingMapper {
 
     private fun lagPdfDokumentInfo(metadata: SkademeldingMetadata): PdfDokumentInfo {
         return PdfDokumentInfo(
-            dokumentnavn = "Melding om yrkesskade eller yrkessykdom påført under arbeid på norsk eller utenlandsk landterritorium",
-            dokumentnummer = "NAV 13-05.07",
+            dokumentnavn = "Melding om yrkesskade eller yrkessykdom",
+            dokumentnummer = "NAV 13",
             dokumentDatoPrefix = "Innsendt digitalt ",
             dokumentDato = datoFormatert(LocalDate.ofInstant(metadata.tidspunktMottatt, ZoneId.of("Europe/Oslo"))),
             tekster = lagPdfTekster()
