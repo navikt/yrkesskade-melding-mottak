@@ -4,7 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
-import no.nav.yrkesskade.meldingmottak.domene.*
+import no.nav.yrkesskade.meldingmottak.domene.AvsenderMottaker
+import no.nav.yrkesskade.meldingmottak.domene.Bruker
+import no.nav.yrkesskade.meldingmottak.domene.BrukerIdType
+import no.nav.yrkesskade.meldingmottak.domene.Dokument
+import no.nav.yrkesskade.meldingmottak.domene.Dokumentvariant
+import no.nav.yrkesskade.meldingmottak.domene.Dokumentvariantformat
+import no.nav.yrkesskade.meldingmottak.domene.Filtype
+import no.nav.yrkesskade.meldingmottak.domene.Journalposttype
+import no.nav.yrkesskade.meldingmottak.domene.Kanal
+import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostRequest
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.slf4j.LoggerFactory
@@ -14,6 +23,8 @@ import java.lang.invoke.MethodHandles
 private const val TEMA_YRKESSKADE = "YRK"
 
 private const val DIGITAL_SKADEMELDING_TITTEL = "Melding om yrkesskade eller yrkessykdom"
+
+private const val DIGITAL_SKADEMELDING_BERIKET_TITTEL = "Melding om yrkesskade eller yrkessykdom - beriket"
 
 private const val DIGITAL_SKADEMELDING_BREVKODE = "NAV 13"
 
@@ -76,6 +87,12 @@ class SkademeldingService(
                             variantformat = Dokumentvariantformat.ARKIV,
                             fysiskDokument = pdf
                         ),
+                    )
+                ),
+                Dokument(
+                    brevkode = DIGITAL_SKADEMELDING_BREVKODE,
+                    tittel = DIGITAL_SKADEMELDING_BERIKET_TITTEL,
+                    dokumentvarianter = listOf(
                         Dokumentvariant(
                             filtype = Filtype.PDFA,
                             variantformat = Dokumentvariantformat.ARKIV,
