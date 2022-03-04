@@ -58,7 +58,7 @@ no.nav.security.jwt:
           client-jwk: ${AZURE_APP_JWK}
           client-auth-method: private_key_jwt
 
-YRKESSKADE_DOKGEN_API_URL: https://yrkesskade-dokgen.intern.nav.no
+YRKESSKADE_DOKGEN_API_URL: http://yrkesskade-dokgen
 saf.graphql.url: https://saf.prod-fss-pub.nais.io/graphql
 pdl.graphql.url: https://pdl-api.prod-fss-pub.nais.io/graphql
 oppgave.url: https://oppgave.prod-fss-pub.nais.io
