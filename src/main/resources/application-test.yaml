@@ -12,7 +12,8 @@ spring:
 kafka:
   topic:
     aapen-dok-journalfoering: test
-    skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldinginnsendt
+    skademelding-innsendt:
+      name: yrkesskade.privat-yrkesskade-skademeldinginnsendt
 
 funksjonsbrytere:
   enabled: false
@@ -50,3 +51,5 @@ no.nav.security.jwt:
           client-id: dummy-client-id
           client-secret: dummy-secret
           client-auth-method: client_secret_basic
+
+YRKESSKADE_DOKGEN_API_URL: http://localhost:5914

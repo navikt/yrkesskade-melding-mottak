@@ -4,7 +4,6 @@ import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
 import no.nav.yrkesskade.meldingmottak.fixtures.skademeldingInnsendtHendelse
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
@@ -23,7 +22,6 @@ private const val NUM_BROKERS = 1
 
 private const val CONTROLLED_BROKER_SHUTDOWN = true
 
-@Disabled
 @EmbeddedKafka(topics = [TOPIC])
 internal class SkademeldingInnsendtHendelseConsumerIT : BaseSpringBootTestClass() {
 

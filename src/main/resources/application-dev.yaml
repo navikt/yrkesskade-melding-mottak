@@ -24,7 +24,8 @@ spring:
 kafka:
   topic:
     aapen-dok-journalfoering: teamdokumenthandtering.aapen-dok-journalfoering-q1
-    skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldinginnsendt
+    skademelding-innsendt:
+      name: yrkesskade.privat-yrkesskade-skademeldinginnsendt
 
 no.nav.security.jwt:
   issuer:
@@ -65,3 +66,5 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-jwk: ${AZURE_APP_JWK}
           client-auth-method: private_key_jwt
+
+YRKESSKADE_DOKGEN_API_URL: http://yrkesskade-dokgen

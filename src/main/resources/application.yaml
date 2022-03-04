@@ -66,6 +66,7 @@ prosessering:
     after:
       weeks: 4
 
+YRKESSKADE_DOKGEN_API_URL: http://yrkesskade-dokgen.default
 saf.graphql.url: https://saf.dev-fss-pub.nais.io/graphql
 pdl.graphql.url: https://pdl-api.dev-fss-pub.nais.io/graphql
 oppgave.url: https://oppgave-q1.dev-fss-pub.nais.io

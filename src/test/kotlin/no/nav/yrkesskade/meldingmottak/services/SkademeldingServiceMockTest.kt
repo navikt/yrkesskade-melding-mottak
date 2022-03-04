@@ -11,13 +11,21 @@ import org.junit.jupiter.api.Test
 
 class SkademeldingServiceMockTest {
 
+    private val pdfService: PdfService = mockk()
     private val dokarkivClient: DokarkivClient = mockk()
 
-    private val service: SkademeldingService = SkademeldingService(dokarkivClient)
+    private val service: SkademeldingService = SkademeldingService(pdfService, dokarkivClient)
 
     @BeforeEach
     fun setup() {
+        every { pdfService.lagPdf(any(), any()) } answers { ByteArray(10) }
         every { dokarkivClient.journalfoerSkademelding(any()) } answers { OpprettJournalpostResponse(false, "123", emptyList()) }
+    }
+
+    @Test
+    fun `skal kalle 2 ganger paa pdfService naar en skademelding kommer inn`() {
+        service.mottaSkademelding(skademeldingInnsendtHendelse())
+        verify(exactly = 2) { pdfService.lagPdf(any(), any()) }
     }
 
     @Test

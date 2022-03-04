@@ -24,10 +24,13 @@ private const val TEMA_YRKESSKADE = "YRK"
 
 private const val DIGITAL_SKADEMELDING_TITTEL = "Melding om yrkesskade eller yrkessykdom"
 
+private const val DIGITAL_SKADEMELDING_BERIKET_TITTEL = "Melding om yrkesskade eller yrkessykdom - beriket"
+
 private const val DIGITAL_SKADEMELDING_BREVKODE = "NAV 13"
 
 @Service
 class SkademeldingService(
+    private val pdfService: PdfService,
     private val dokarkivClient: DokarkivClient,
 ) {
     private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
@@ -40,12 +43,16 @@ class SkademeldingService(
      * registrer metrikker?
      */
     fun mottaSkademelding(record: SkademeldingInnsendtHendelse) {
-        val opprettJournalpostRequest = mapSkademeldingTilOpprettJournalpostRequest(record)
+        val pdf = pdfService.lagPdf(record, PdfTemplate.SKADEMELDING)
+        val beriketPdf = pdfService.lagPdf(record, PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
+        val opprettJournalpostRequest = mapSkademeldingTilOpprettJournalpostRequest(record, pdf, beriketPdf)
         dokarkivClient.journalfoerSkademelding(opprettJournalpostRequest)
     }
 
     private fun mapSkademeldingTilOpprettJournalpostRequest(
-        record: SkademeldingInnsendtHendelse
+        record: SkademeldingInnsendtHendelse,
+        pdf: ByteArray,
+        beriketPdf: ByteArray
     ): OpprettJournalpostRequest {
         val skademelding = record.skademelding
         val skademeldingJson = objectMapper.writeValueAsString(skademelding)
@@ -74,6 +81,22 @@ class SkademeldingService(
                             filtype = Filtype.JSON,
                             variantformat = Dokumentvariantformat.ORIGINAL,
                             fysiskDokument = skademeldingJson.encodeToByteArray()
+                        ),
+                        Dokumentvariant(
+                            filtype = Filtype.PDFA,
+                            variantformat = Dokumentvariantformat.ARKIV,
+                            fysiskDokument = pdf
+                        ),
+                    )
+                ),
+                Dokument(
+                    brevkode = DIGITAL_SKADEMELDING_BREVKODE,
+                    tittel = DIGITAL_SKADEMELDING_BERIKET_TITTEL,
+                    dokumentvarianter = listOf(
+                        Dokumentvariant(
+                            filtype = Filtype.PDFA,
+                            variantformat = Dokumentvariantformat.ARKIV,
+                            fysiskDokument = beriketPdf
                         )
                     )
                 )
