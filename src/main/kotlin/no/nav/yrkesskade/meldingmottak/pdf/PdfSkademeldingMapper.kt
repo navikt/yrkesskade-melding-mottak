@@ -33,7 +33,7 @@ object PdfSkademeldingMapper {
 
         return PdfInnmelder(
             norskIdentitetsnummer = Soknadsfelt("Fødselsnummer", innmelder.norskIdentitetsnummer),
-            navn = Soknadsfelt("Navn", ""), // TODO: 03/03/2022 Navn på innmelder må hentes for PDFen som skal brukes til saksbehandling
+            navn = Soknadsfelt("Navn", ""), // TODO: (YSMOD-98) 03/03/2022 Navn på innmelder må hentes for PDFen som skal brukes til saksbehandling
             paaVegneAv = Soknadsfelt("TODO", innmelder.paaVegneAv),
             innmelderrolle = Soknadsfelt("TODO", innmelder.innmelderrolle.value),
             altinnrolleIDer = Soknadsfelt("Rolle hentet fra Altinn", innmelder.altinnrolleIDer)
@@ -47,7 +47,7 @@ object PdfSkademeldingMapper {
 
         return PdfSkadelidt(
             Soknadsfelt("Fødselsnummer", skadelidt.norskIdentitetsnummer),
-            Soknadsfelt("Navn", ""), // TODO: 03/03/2022 Navn og bostedsadresse på skadelidt må hentes for PDFen som skal brukes til saksbehandling
+            Soknadsfelt("Navn", ""), // TODO: (YSMOD-98) 03/03/2022 Navn og bostedsadresse på skadelidt må hentes for PDFen som skal brukes til saksbehandling
             Soknadsfelt(
                 "Bosted", PdfAdresse(
                     adresselinje1 = "",
