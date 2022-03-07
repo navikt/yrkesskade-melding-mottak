@@ -42,7 +42,7 @@ class DokarkivClient(
                 }
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithDokarkivScope()}")
-                .header("X-Correlation-ID", MDCConstants.MDC_CALL_ID)
+                .header("Nav-Callid", MDCConstants.MDC_CALL_ID)
                 .header("Nav-Consumer-Id", applicationName)
                 .bodyValue(opprettJournalpostRequest)
                 .retrieve()
