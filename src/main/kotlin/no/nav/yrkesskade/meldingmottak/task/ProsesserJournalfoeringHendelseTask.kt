@@ -56,8 +56,10 @@ class ProsesserJournalfoeringHendelseTask(
 
         val aktoerId = hentAktoerId(journalpost.bruker)
 
-        secureLogger.info("Oppretter oppgave for ${journalpost.journalpostId} " +
-                "med tittel \"${journalpost.hentHovedDokumentTittel()}\" og kanal ${journalpost.kanal}")
+        secureLogger.info(
+            "Oppretter oppgave for ${journalpost.journalpostId} " +
+                    "med tittel \"${journalpost.hentHovedDokumentTittel()}\" og kanal ${journalpost.kanal}"
+        )
 
         oppgaveClient.opprettOppgave(
             OpprettJournalfoeringOppgave(
@@ -113,8 +115,17 @@ class ProsesserJournalfoeringHendelseTask(
         }
 
         return safResultat.journalpost.also {
-            secureLogger.info("Hentet oppdatert journalpost for id $journalpostId " +
-                    "med tittel \"${it.hentHovedDokumentTittel()}\" og kanal ${it.kanal}")
+            secureLogger.info(
+                "Hentet oppdatert journalpost med id $journalpostId" +
+                        ", kanal ${it.kanal}" +
+                        ", tittel \"${it.hentHovedDokumentTittel()}\"" +
+                        ", journalstatus ${it.journalstatus}" +
+                        ", journalposttype ${it.journalposttype}" +
+                        ", tema ${it.tema}" +
+                        ", journalfoerendeEnhet ${it.journalfoerendeEnhet}" +
+                        ", behandlingstema ${it.behandlingstema}" +
+                        ", datoOpprettet ${it.datoOpprettet}"
+            )
         }
     }
 
