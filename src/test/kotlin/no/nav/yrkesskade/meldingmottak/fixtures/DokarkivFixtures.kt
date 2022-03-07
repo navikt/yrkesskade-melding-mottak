@@ -30,7 +30,7 @@ fun opprettJournalpostRequest() = OpprettJournalpostRequest(
     ),
     bruker = Bruker(
         id = "12345699999",
-        type = BrukerIdType.FNR
+        idType = BrukerIdType.FNR
     ),
     tema = "YRK",
     kanal = Kanal.NAV_NO.toString(),

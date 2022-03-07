@@ -68,7 +68,7 @@ class SkademeldingService(
             ),
             bruker = Bruker(
                 id = skademelding.skadelidt!!.norskIdentitetsnummer,
-                type = BrukerIdType.FNR
+                idType = BrukerIdType.FNR
             ),
             tema = TEMA_YRKESSKADE,
             kanal = Kanal.NAV_NO.toString(),

@@ -34,7 +34,7 @@ data class AvsenderMottaker(
 
 data class Bruker(
     val id: String?,
-    val type: BrukerIdType?
+    val idType: BrukerIdType?
 )
 
 enum class BrukerIdType {
