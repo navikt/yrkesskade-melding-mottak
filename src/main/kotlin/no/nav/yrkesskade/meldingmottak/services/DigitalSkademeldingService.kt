@@ -22,9 +22,9 @@ import java.lang.invoke.MethodHandles
 
 private const val TEMA_YRKESSKADE = "YRK"
 
-private const val DIGITAL_SKADEMELDING_TITTEL = "Melding om yrkesskade eller yrkessykdom"
+private const val DIGITAL_SKADEMELDING_TITTEL = "Melding om yrkesskade eller yrkessykdom - arkiv"
 
-private const val DIGITAL_SKADEMELDING_BERIKET_TITTEL = "Melding om yrkesskade eller yrkessykdom - beriket"
+private const val DIGITAL_SKADEMELDING_BERIKET_TITTEL = "Melding om yrkesskade eller yrkessykdom"
 
 private const val DIGITAL_SKADEMELDING_BREVKODE = "NAV 13"
 
@@ -77,6 +77,17 @@ class SkademeldingService(
             dokumenter = listOf(
                 Dokument(
                     brevkode = DIGITAL_SKADEMELDING_BREVKODE,
+                    tittel = DIGITAL_SKADEMELDING_BERIKET_TITTEL,
+                    dokumentvarianter = listOf(
+                        Dokumentvariant(
+                            filtype = Filtype.PDFA,
+                            variantformat = Dokumentvariantformat.ARKIV,
+                            fysiskDokument = beriketPdf
+                        )
+                    )
+                ),
+                Dokument(
+                    brevkode = DIGITAL_SKADEMELDING_BREVKODE,
                     tittel = DIGITAL_SKADEMELDING_TITTEL,
                     dokumentvarianter = listOf(
                         Dokumentvariant(
@@ -89,17 +100,6 @@ class SkademeldingService(
                             variantformat = Dokumentvariantformat.ARKIV,
                             fysiskDokument = pdf
                         ),
-                    )
-                ),
-                Dokument(
-                    brevkode = DIGITAL_SKADEMELDING_BREVKODE,
-                    tittel = DIGITAL_SKADEMELDING_BERIKET_TITTEL,
-                    dokumentvarianter = listOf(
-                        Dokumentvariant(
-                            filtype = Filtype.PDFA,
-                            variantformat = Dokumentvariantformat.ARKIV,
-                            fysiskDokument = beriketPdf
-                        )
                     )
                 )
             )
