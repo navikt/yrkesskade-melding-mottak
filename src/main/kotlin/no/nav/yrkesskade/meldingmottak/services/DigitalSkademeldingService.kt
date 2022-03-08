@@ -38,7 +38,7 @@ class SkademeldingService(
     fun mottaSkademelding(record: SkademeldingInnsendtHendelse) {
         log.info("Mottatt ny skademelding")
         secureLogger.info("Mottatt ny skademelding: $record")
-        val pdf = pdfService.lagPdf(record, PdfTemplate.SKADEMELDING)
+        val pdf = pdfService.lagPdf(record, PdfTemplate.SKADEMELDING_TRO_KOPI)
         val beriketPdf = lagBeriketPdf(record)
         val opprettJournalpostRequest = mapSkademeldingTilOpprettJournalpostRequest(record, pdf, beriketPdf)
         dokarkivClient.journalfoerSkademelding(opprettJournalpostRequest)

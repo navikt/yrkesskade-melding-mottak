@@ -25,6 +25,6 @@ class PdfService(
 }
 
 enum class PdfTemplate(val templatenavn: String) {
-    SKADEMELDING("skademelding-tro-kopi"),
+    SKADEMELDING_TRO_KOPI("skademelding-tro-kopi"),
     SKADEMELDING_SAKSBEHANDLING("skademelding-saksbehandling")
 }

@@ -10,11 +10,13 @@ import com.expediagroup.graphql.generated.enums.AdressebeskyttelseGradering
 import com.expediagroup.graphql.generated.enums.IdentGruppe
 import com.expediagroup.graphql.generated.hentperson.Adressebeskyttelse
 import kotlinx.coroutines.runBlocking
+import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.domene.Adresse
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import no.nav.yrkesskade.meldingmottak.util.getLogger
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import javax.ws.rs.core.HttpHeaders
@@ -50,7 +52,10 @@ class PdlClient(
             logger.info("Henter aktørId fra PDL på url $pdlGraphqlUrl")
             secureLogger.info("Henter aktørId fra PDL for person med fnr $fodselsnummer på url $pdlGraphqlUrl")
             val response: GraphQLClientResponse<HentIdenter.Result> = client.execute(hentIdenterQuery) {
-                header(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                headers {
+                    it.add(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                    it.add("Nav-Call-Id", MDC.get(MDCConstants.MDC_CALL_ID))
+                }
             }
             identerResult = response.data
             logger.info("Returnerte fra PDL, se securelogs for detaljer")
@@ -123,8 +128,7 @@ class PdlClient(
     }
 
     private fun kanHenteAdresse(personResult: HentPerson.Result): Boolean {
-        val strengtFortrolig = personResult.hentPerson?.adressebeskyttelse?.any { erStrengtFortrolig(it) }
-        return strengtFortrolig == false
+        return personResult.hentPerson?.adressebeskyttelse?.none { erStrengtFortrolig(it) } ?: true
     }
 
     private fun erStrengtFortrolig(adressebeskyttelse: Adressebeskyttelse): Boolean {
@@ -146,7 +150,10 @@ class PdlClient(
             logger.info("Henter person fra PDL på url $pdlGraphqlUrl")
             secureLogger.info("Henter person fra PDL for person med fnr $fodselsnummer på url $pdlGraphqlUrl")
             val response: GraphQLClientResponse<HentPerson.Result> = client.execute(hentPersonQuery) {
-                header(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                headers {
+                    it.add(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                    it.add("Nav-Call-Id", MDC.get(MDCConstants.MDC_CALL_ID))
+                }
             }
             personResult = response.data
             logger.info("Returnerte fra PDL, se securelogs for detaljer")
@@ -171,7 +178,10 @@ class PdlClient(
             logger.info("Henter adresse fra PDL på url $pdlGraphqlUrl")
             secureLogger.info("Henter adresse fra PDL for matrikkelId $matrikkelId på url $pdlGraphqlUrl")
             val response: GraphQLClientResponse<HentAdresse.Result> = client.execute(hentAdresseQuery) {
-                header(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                headers {
+                    it.add(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                    it.add("Nav-Call-Id", MDC.get(MDCConstants.MDC_CALL_ID))
+                }
             }
             adresseResult = response.data
             logger.info("Returnerte fra PDL, se securelogs for detaljer")
