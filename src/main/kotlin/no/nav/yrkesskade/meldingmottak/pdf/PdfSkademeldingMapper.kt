@@ -50,15 +50,8 @@ object PdfSkademeldingMapper {
 
         return PdfSkadelidt(
             Soknadsfelt("Fødselsnummer", skadelidt.norskIdentitetsnummer),
-            Soknadsfelt("Navn", tilString(skadelidtsNavn)), // TODO: (YSMOD-98) 03/03/2022 Navn og bostedsadresse på skadelidt må hentes for PDFen som skal brukes til saksbehandling
-            Soknadsfelt(
-                "Bosted", PdfAdresse(
-                    adresselinje1 = "",
-                    adresselinje2 = null,
-                    adresselinje3 = null,
-                    land = null
-                )
-            ),
+            Soknadsfelt("Navn", tilString(skadelidtsNavn)),
+            Soknadsfelt("Bosted", tilPdfAdresse2(skadelidtsBostedsadresse)),
             tilPdfDekningsforhold(skadelidt.dekningsforhold)
         )
     }
@@ -121,7 +114,7 @@ object PdfSkademeldingMapper {
             hvorSkjeddeUlykken = Soknadsfelt("Hvor skjedde ulykken", hendelsesfakta.hvorSkjeddeUlykken.value),
             ulykkessted = PdfUlykkessted(
                 sammeSomVirksomhetensAdresse = Soknadsfelt("Skjedde ulykken på samme adresse", jaNei(hendelsesfakta.ulykkessted.sammeSomVirksomhetensAdresse)),
-                adresse = Soknadsfelt("Adressse", tilPdfAdresse(hendelsesfakta.ulykkessted.adresse))
+                adresse = Soknadsfelt("Adresse", tilPdfAdresse(hendelsesfakta.ulykkessted.adresse))
             ),
             aarsakUlykkeTabellAogE = Soknadsfelt("Hva var årsaken til hendelsen og bakgrunn for årsaken", hendelsesfakta.aarsakUlykkeTabellAogE.map { it.value }),
             bakgrunnsaarsakTabellBogG = Soknadsfelt("Hva var bakgrunnen til hendelsen", hendelsesfakta.bakgrunnsaarsakTabellBogG.map { it.value }),
@@ -140,6 +133,15 @@ object PdfSkademeldingMapper {
             adresselinje2 = adresse.adresselinje2,
             adresselinje3 = adresse.adresselinje3,
             land = adresse.land
+        )
+    }
+
+    private fun tilPdfAdresse2(adresse: no.nav.yrkesskade.meldingmottak.domene.Adresse?): PdfAdresse {
+        return PdfAdresse(
+            adresselinje1 = adresse?.adresselinje1 ?: "",
+            adresselinje2 = adresse?.adresselinje2,
+            adresselinje3 = adresse?.adresselinje3,
+            land = adresse?.land
         )
     }
 
@@ -194,4 +196,5 @@ object PdfSkademeldingMapper {
             append(navn.etternavn)
         }
     }
+
 }
