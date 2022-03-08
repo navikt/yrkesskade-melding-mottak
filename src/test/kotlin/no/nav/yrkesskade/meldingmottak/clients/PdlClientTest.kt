@@ -1,7 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.clients
 
 import com.expediagroup.graphql.client.spring.GraphQLWebClient
-import com.expediagroup.graphql.client.types.GraphQLClientRequest
 import com.expediagroup.graphql.generated.HentAdresse
 import com.expediagroup.graphql.generated.HentIdenter
 import com.expediagroup.graphql.generated.HentPerson
@@ -15,9 +14,7 @@ import no.nav.yrkesskade.meldingmottak.fixtures.okResponsIdenterFraPdl
 import no.nav.yrkesskade.meldingmottak.fixtures.okResponsPersonFraPdl
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.util.ReflectionTestUtils
@@ -59,11 +56,10 @@ internal class PdlClientTest {
         assertThat(navn?.etternavn).isEqualTo("Normann")
     }
 
-    @Disabled
     @Test
     fun `skal hente navn og bostedsadresse på person`() {
-        coEvery { graphQLWebClient.execute<HentPerson.Result>(any(), any()) } returns okResponsPersonFraPdl()
-//        coEvery { graphQLWebClient.execute<HentAdresse.Result>(eq(adresseRequest()), any()) } returns okResponsAdresseFraPdl()
+        coEvery { graphQLWebClient.execute<HentPerson.Result>(ofType(HentPerson::class), any()) } returns okResponsPersonFraPdl()
+        coEvery { graphQLWebClient.execute<HentAdresse.Result>(ofType(HentAdresse::class), any()) } returns okResponsAdresseFraPdl()
         val navnOgAdresse = client.hentNavnOgAdresse("12345678901", true)
 
         val navn = navnOgAdresse.first
@@ -71,15 +67,11 @@ internal class PdlClientTest {
         assertThat(navn?.mellomnavn).isNull()
         assertThat(navn?.etternavn).isEqualTo("Normann")
 
-//        val adresse = navnOgAdresse.second
-//        assertThat(adresse?.adresselinje1).isEqualTo("Veien 123F")
-//        assertThat(adresse?.adresselinje2).isEqualTo("4460 Nes")
-//        assertThat(adresse?.adresselinje3).isEqualTo("Litt mer")
-//        assertThat(adresse?.land).isEqualTo("Sverige")
+        val adresse = navnOgAdresse.second
+        assertThat(adresse?.adresselinje1).isEqualTo("Storgata 123B")
+        assertThat(adresse?.adresselinje2).isEqualTo("2250 Plassen")
+        assertThat(adresse?.adresselinje3).isNull()
+        assertThat(adresse?.land).isEqualTo("")
     }
-
-//    private fun adresseRequest(): GraphQLClientRequest<HentAdresse.Result> {
-//        return GraphQLClientRequest()
-//    }
 
 }
