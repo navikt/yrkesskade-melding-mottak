@@ -16,7 +16,39 @@ fun okResponsIdenterFraPdl(): GraphQLClientResponse<HentIdenter.Result> {
 
 fun okResponsPersonFraPdl(): GraphQLClientResponse<HentPerson.Result> {
     return JacksonGraphQLResponse(
-        data = HentPerson.Result(gyldigPersonMedNavn()),
+        data = HentPerson.Result(gyldigPersonMedNavnOgVegadresse()),
+        errors = null,
+        extensions = emptyMap()
+    )
+}
+
+fun okResponsPersonMedMatrikkeladresseFraPdl(): GraphQLClientResponse<HentPerson.Result> {
+    return JacksonGraphQLResponse(
+        data = HentPerson.Result(gyldigPersonMedNavnOgMatrikkeladresse()),
+        errors = null,
+        extensions = emptyMap()
+    )
+}
+
+fun okResponsPersonMedUkjentBostedFraPdl(): GraphQLClientResponse<HentPerson.Result> {
+    return JacksonGraphQLResponse(
+        data = HentPerson.Result(gyldigPersonMedUkjentBosted()),
+        errors = null,
+        extensions = emptyMap()
+    )
+}
+
+fun okResponsPersonMedEnkelUtenlandskAdresseFraPdl(): GraphQLClientResponse<HentPerson.Result> {
+    return JacksonGraphQLResponse(
+        data = HentPerson.Result(gyldigPersonMedEnkelUtenlandskAdresse()),
+        errors = null,
+        extensions = emptyMap()
+    )
+}
+
+fun okResponsPersonMedUtenlandskAdresseFraPdl(): GraphQLClientResponse<HentPerson.Result> {
+    return JacksonGraphQLResponse(
+        data = HentPerson.Result(gyldigPersonMedUtenlandskAdresse()),
         errors = null,
         extensions = emptyMap()
     )
@@ -24,8 +56,17 @@ fun okResponsPersonFraPdl(): GraphQLClientResponse<HentPerson.Result> {
 
 fun okResponsAdresseFraPdl(): GraphQLClientResponse<HentAdresse.Result> {
     return JacksonGraphQLResponse(
-        data = HentAdresse.Result(gyldigAdresseMedVeg()),
+        data = HentAdresse.Result(gyldigVegadresse()),
         errors = null,
         extensions = emptyMap()
     )
+}
+
+fun okResponsMatrikkeladresseFraPdl(): GraphQLClientResponse<HentAdresse.Result> {
+    return JacksonGraphQLResponse(
+        data = HentAdresse.Result(gyldigMatrikkeladresse()),
+        errors = null,
+        extensions = emptyMap()
+    )
+
 }

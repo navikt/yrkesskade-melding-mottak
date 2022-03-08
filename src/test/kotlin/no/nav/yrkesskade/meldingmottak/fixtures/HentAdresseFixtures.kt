@@ -1,19 +1,27 @@
 package no.nav.yrkesskade.meldingmottak.fixtures
 
-import com.expediagroup.graphql.generated.hentadresse.KartverketAdresse
-import com.expediagroup.graphql.generated.hentadresse.KartverketPostnummeromraade
-import com.expediagroup.graphql.generated.hentadresse.KartverketVeg
-import com.expediagroup.graphql.generated.hentadresse.KartverketVegadresse
+import com.expediagroup.graphql.generated.hentadresse.*
 
-fun gyldigAdresseMedVeg(): KartverketAdresse {
+fun gyldigVegadresse(): KartverketAdresse {
     return KartverketAdresse(
         vegadresse = KartverketVegadresse(
             veg = KartverketVeg("Storgata"),
             nummer = 123,
             bokstav = "B",
             postnummeromraade = KartverketPostnummeromraade("2250", "Plassen"),
-            adressetilleggsnavn = null
+            adressetilleggsnavn = "Tillegg"
         ),
         matrikkeladresse = null
     )
 }
+
+fun gyldigMatrikkeladresse(): KartverketAdresse {
+    return KartverketAdresse(
+        null,
+        matrikkeladresse = KartverketMatrikkeladresse(
+            adressetilleggsnavn = "Tilleggsnavn",
+            postnummeromraade = KartverketPostnummeromraade("5700", "Kollen")
+        )
+    )
+}
+

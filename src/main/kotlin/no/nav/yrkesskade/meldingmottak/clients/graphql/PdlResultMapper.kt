@@ -58,9 +58,15 @@ fun tilAdresse(ukjentBosted: UkjentBosted): Adresse? {
 
 fun tilAdresse(utlAdr: UtenlandskAdresse): Adresse? {
     val linje1 = buildString {
-        if (utlAdr.adressenavnNummer != null) append("${utlAdr.adressenavnNummer} ")
-        if (utlAdr.bygningEtasjeLeilighet != null) append("${utlAdr.bygningEtasjeLeilighet} ")
-        if (utlAdr.postboksNummerNavn != null) append("${utlAdr.postboksNummerNavn}")
+        if (utlAdr.adressenavnNummer != null) append("${utlAdr.adressenavnNummer}")
+        if (utlAdr.bygningEtasjeLeilighet != null) {
+            if (this.isNotEmpty()) append(", ")
+            append("${utlAdr.bygningEtasjeLeilighet}")
+        }
+        if (utlAdr.postboksNummerNavn != null) {
+            if (this.isNotEmpty()) append(", ")
+            append("${utlAdr.postboksNummerNavn}")
+        }
     }
     val linje2 = buildString {
         if (utlAdr.postkode != null) append("${utlAdr.postkode} ")

@@ -70,7 +70,7 @@ internal class PdlClientTest {
         val adresse = navnOgAdresse.second
         assertThat(adresse?.adresselinje1).isEqualTo("Storgata 123B")
         assertThat(adresse?.adresselinje2).isEqualTo("2250 Plassen")
-        assertThat(adresse?.adresselinje3).isNull()
+        assertThat(adresse?.adresselinje3).isEqualTo("Tillegg")
         assertThat(adresse?.land).isEqualTo("")
     }
 
