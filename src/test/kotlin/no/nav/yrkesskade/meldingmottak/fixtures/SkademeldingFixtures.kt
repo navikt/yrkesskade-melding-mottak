@@ -1,5 +1,7 @@
 package no.nav.yrkesskade.meldingmottak.fixtures
 
+import no.nav.yrkesskade.meldingmottak.domene.BeriketData
+import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import no.nav.yrkesskade.model.SkademeldingMetadata
 import no.nav.yrkesskade.model.Spraak
@@ -99,5 +101,18 @@ private fun metadata(): SkademeldingMetadata {
         tidspunktMottatt = LocalDateTime.of(2022, Month.FEBRUARY, 28, 7, 30, 0).toInstant(ZoneOffset.ofHours(1)),
         spraak = Spraak.NB,
         navCallId = "ABC-123456789"
+    )
+}
+
+fun beriketData(): BeriketData {
+    return BeriketData(
+        innmeldersNavn = Navn("Inn", null, "Melder"),
+        skadelidtsNavn = Navn("Ska", "De", "Lidt"),
+        skadelidtsBostedsadresse = no.nav.yrkesskade.meldingmottak.domene.Adresse(
+            adresselinje1 = "Stigen 7A",
+            adresselinje2 = "7730 Småby",
+            adresselinje3 = null,
+            land = ""
+        )
     )
 }
