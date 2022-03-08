@@ -1,0 +1,24 @@
+query($matrikkelId: ID!) {
+
+    hentAdresse(matrikkelId: $matrikkelId) {
+        vegadresse {
+            veg {
+                adressenavn
+            },
+            nummer,
+            bokstav,
+            postnummeromraade {
+                postnummer,
+                poststed
+            },
+            adressetilleggsnavn,
+        },
+    	matrikkeladresse {
+            adressetilleggsnavn,
+            postnummeromraade {
+                postnummer,
+                poststed
+            }
+        }
+    }
+}

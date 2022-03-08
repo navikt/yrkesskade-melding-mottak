@@ -55,7 +55,7 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
     @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `skal lage tro-kopi-pdf`() {
-        val byteArray = pdfService.lagPdf(enkelSkademeldingInnsendtHendelse(), PdfTemplate.SKADEMELDING)
+        val byteArray = pdfService.lagPdf(enkelSkademeldingInnsendtHendelse(), PdfTemplate.SKADEMELDING_TRO_KOPI)
         println("Pdf-størrelsen er ${byteArray.size} bytes")
 
         File("pdfServiceTest-tro-kopi.pdf").writeBytes(byteArray)

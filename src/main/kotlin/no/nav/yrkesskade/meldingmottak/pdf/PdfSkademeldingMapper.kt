@@ -1,5 +1,7 @@
 package no.nav.yrkesskade.meldingmottak.pdf
 
+import no.nav.yrkesskade.meldingmottak.domene.BeriketData
+import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.pdf.domene.*
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import no.nav.yrkesskade.model.SkademeldingMetadata
@@ -12,12 +14,13 @@ import java.time.format.DateTimeFormatter
 object PdfSkademeldingMapper {
 
     fun tilPdfSkademelding(
-        record: SkademeldingInnsendtHendelse
+        record: SkademeldingInnsendtHendelse,
+        beriketData: BeriketData? = null
     ) : PdfSkademelding {
 
         val skademelding = record.skademelding
-        val innmelder: PdfInnmelder? = tilPdfInnmelder(skademelding.innmelder)
-        val skadelidt: PdfSkadelidt? = tilPdfSkadelidt(skademelding.skadelidt)
+        val innmelder: PdfInnmelder? = tilPdfInnmelder(skademelding.innmelder, beriketData?.innmeldersNavn)
+        val skadelidt: PdfSkadelidt? = tilPdfSkadelidt(skademelding.skadelidt, beriketData?.skadelidtsNavn, beriketData?.skadelidtsBostedsadresse)
         val skade: PdfSkade? = tilPdfSkade(skademelding.skade)
         val hendelsesfakta: PdfHendelsesfakta? = tilPdfHendelsesfakta(skademelding.hendelsesfakta)
         val dokumentInfo: PdfDokumentInfo = lagPdfDokumentInfo(record.metadata)
@@ -26,36 +29,29 @@ object PdfSkademeldingMapper {
     }
 
 
-    private fun tilPdfInnmelder(innmelder: Innmelder?): PdfInnmelder? {
+    private fun tilPdfInnmelder(innmelder: Innmelder?, innmeldersNavn: Navn?): PdfInnmelder? {
         if (innmelder == null) {
             return null
         }
 
         return PdfInnmelder(
             norskIdentitetsnummer = Soknadsfelt("Fødselsnummer", innmelder.norskIdentitetsnummer),
-            navn = Soknadsfelt("Navn", ""), // TODO: (YSMOD-98) 03/03/2022 Navn på innmelder må hentes for PDFen som skal brukes til saksbehandling
+            navn = Soknadsfelt("Navn", tilString(innmeldersNavn)),
             paaVegneAv = Soknadsfelt("TODO", innmelder.paaVegneAv),
             innmelderrolle = Soknadsfelt("TODO", innmelder.innmelderrolle.value),
             altinnrolleIDer = Soknadsfelt("Rolle hentet fra Altinn", innmelder.altinnrolleIDer)
         )
     }
 
-    private fun tilPdfSkadelidt(skadelidt: Skadelidt?): PdfSkadelidt? {
+    private fun tilPdfSkadelidt(skadelidt: Skadelidt?, skadelidtsNavn: Navn?, skadelidtsBostedsadresse: no.nav.yrkesskade.meldingmottak.domene.Adresse?): PdfSkadelidt? {
         if (skadelidt == null) {
             return null
         }
 
         return PdfSkadelidt(
             Soknadsfelt("Fødselsnummer", skadelidt.norskIdentitetsnummer),
-            Soknadsfelt("Navn", ""), // TODO: (YSMOD-98) 03/03/2022 Navn og bostedsadresse på skadelidt må hentes for PDFen som skal brukes til saksbehandling
-            Soknadsfelt(
-                "Bosted", PdfAdresse(
-                    adresselinje1 = "",
-                    adresselinje2 = null,
-                    adresselinje3 = null,
-                    land = null
-                )
-            ),
+            Soknadsfelt("Navn", tilString(skadelidtsNavn)),
+            Soknadsfelt("Bosted", tilPdfAdresse2(skadelidtsBostedsadresse)),
             tilPdfDekningsforhold(skadelidt.dekningsforhold)
         )
     }
@@ -118,7 +114,7 @@ object PdfSkademeldingMapper {
             hvorSkjeddeUlykken = Soknadsfelt("Hvor skjedde ulykken", hendelsesfakta.hvorSkjeddeUlykken.value),
             ulykkessted = PdfUlykkessted(
                 sammeSomVirksomhetensAdresse = Soknadsfelt("Skjedde ulykken på samme adresse", jaNei(hendelsesfakta.ulykkessted.sammeSomVirksomhetensAdresse)),
-                adresse = Soknadsfelt("Adressse", tilPdfAdresse(hendelsesfakta.ulykkessted.adresse))
+                adresse = Soknadsfelt("Adresse", tilPdfAdresse(hendelsesfakta.ulykkessted.adresse))
             ),
             aarsakUlykkeTabellAogE = Soknadsfelt("Hva var årsaken til hendelsen og bakgrunn for årsaken", hendelsesfakta.aarsakUlykkeTabellAogE.map { it.value }),
             bakgrunnsaarsakTabellBogG = Soknadsfelt("Hva var bakgrunnen til hendelsen", hendelsesfakta.bakgrunnsaarsakTabellBogG.map { it.value }),
@@ -137,6 +133,15 @@ object PdfSkademeldingMapper {
             adresselinje2 = adresse.adresselinje2,
             adresselinje3 = adresse.adresselinje3,
             land = adresse.land
+        )
+    }
+
+    private fun tilPdfAdresse2(adresse: no.nav.yrkesskade.meldingmottak.domene.Adresse?): PdfAdresse {
+        return PdfAdresse(
+            adresselinje1 = adresse?.adresselinje1 ?: "",
+            adresselinje2 = adresse?.adresselinje2,
+            adresselinje3 = adresse?.adresselinje3,
+            land = adresse?.land
         )
     }
 
@@ -179,4 +184,17 @@ object PdfSkademeldingMapper {
             false -> "Nei"
         }
     }
+
+    private fun tilString(navn: Navn?): String {
+        if (navn == null) {
+            return ""
+        }
+
+        return buildString {
+            append("${navn.fornavn} ")
+            if (navn.mellomnavn != null) append("${navn.mellomnavn} ")
+            append(navn.etternavn)
+        }
+    }
+
 }
