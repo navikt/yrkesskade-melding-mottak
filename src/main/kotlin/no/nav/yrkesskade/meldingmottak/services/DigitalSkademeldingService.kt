@@ -22,7 +22,7 @@ import java.lang.invoke.MethodHandles
 
 private const val TEMA_YRKESSKADE = "YRK"
 
-private const val DIGITAL_SKADEMELDING_ARKIV_TITTEL = "Melding om yrkesskade eller yrkessykdom - arkiv"
+private const val DIGITAL_SKADEMELDING_ARKIV_TITTEL = "Arkivlogg fra innsending"
 
 private const val DIGITAL_SKADEMELDING_TITTEL = "Melding om yrkesskade eller yrkessykdom"
 
