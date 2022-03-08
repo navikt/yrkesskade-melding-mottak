@@ -1,16 +1,23 @@
 package no.nav.yrkesskade.meldingmottak.clients
 
 import com.expediagroup.graphql.client.spring.GraphQLWebClient
+import com.expediagroup.graphql.client.types.GraphQLClientRequest
+import com.expediagroup.graphql.generated.HentAdresse
 import com.expediagroup.graphql.generated.HentIdenter
+import com.expediagroup.graphql.generated.HentPerson
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
-import no.nav.yrkesskade.meldingmottak.fixtures.okResponsFraPdl
+import no.nav.yrkesskade.meldingmottak.fixtures.okResponsAdresseFraPdl
+import no.nav.yrkesskade.meldingmottak.fixtures.okResponsIdenterFraPdl
+import no.nav.yrkesskade.meldingmottak.fixtures.okResponsPersonFraPdl
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.test.util.ReflectionTestUtils
@@ -38,9 +45,41 @@ internal class PdlClientTest {
 
     @Test
     fun `skal hente aktorId`() {
-        coEvery { graphQLWebClient.execute<HentIdenter.Result>(any(), any()) } returns okResponsFraPdl()
+        coEvery { graphQLWebClient.execute<HentIdenter.Result>(any(), any()) } returns okResponsIdenterFraPdl()
         val aktorId = client.hentAktorId("12345678901")
         assertThat(aktorId).isEqualTo("12345")
     }
+
+    @Test
+    fun `skal hente navn på person`() {
+        coEvery { graphQLWebClient.execute<HentPerson.Result>(any(), any()) } returns okResponsPersonFraPdl()
+        val navn = client.hentNavn("12345678901")
+        assertThat(navn?.fornavn).isEqualTo("Ola")
+        assertThat(navn?.mellomnavn).isNull()
+        assertThat(navn?.etternavn).isEqualTo("Normann")
+    }
+
+    @Disabled
+    @Test
+    fun `skal hente navn og bostedsadresse på person`() {
+        coEvery { graphQLWebClient.execute<HentPerson.Result>(any(), any()) } returns okResponsPersonFraPdl()
+//        coEvery { graphQLWebClient.execute<HentAdresse.Result>(eq(adresseRequest()), any()) } returns okResponsAdresseFraPdl()
+        val navnOgAdresse = client.hentNavnOgAdresse("12345678901", true)
+
+        val navn = navnOgAdresse.first
+        assertThat(navn?.fornavn).isEqualTo("Ola")
+        assertThat(navn?.mellomnavn).isNull()
+        assertThat(navn?.etternavn).isEqualTo("Normann")
+
+//        val adresse = navnOgAdresse.second
+//        assertThat(adresse?.adresselinje1).isEqualTo("Veien 123F")
+//        assertThat(adresse?.adresselinje2).isEqualTo("4460 Nes")
+//        assertThat(adresse?.adresselinje3).isEqualTo("Litt mer")
+//        assertThat(adresse?.land).isEqualTo("Sverige")
+    }
+
+//    private fun adresseRequest(): GraphQLClientRequest<HentAdresse.Result> {
+//        return GraphQLClientRequest()
+//    }
 
 }

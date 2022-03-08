@@ -4,16 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
-import no.nav.yrkesskade.meldingmottak.domene.AvsenderMottaker
-import no.nav.yrkesskade.meldingmottak.domene.Bruker
-import no.nav.yrkesskade.meldingmottak.domene.BrukerIdType
-import no.nav.yrkesskade.meldingmottak.domene.Dokument
-import no.nav.yrkesskade.meldingmottak.domene.Dokumentvariant
-import no.nav.yrkesskade.meldingmottak.domene.Dokumentvariantformat
-import no.nav.yrkesskade.meldingmottak.domene.Filtype
-import no.nav.yrkesskade.meldingmottak.domene.Journalposttype
-import no.nav.yrkesskade.meldingmottak.domene.Kanal
-import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostRequest
+import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
+import no.nav.yrkesskade.meldingmottak.domene.*
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.slf4j.LoggerFactory
@@ -31,6 +23,7 @@ private const val DIGITAL_SKADEMELDING_BREVKODE = "NAV 13"
 @Service
 class SkademeldingService(
     private val pdfService: PdfService,
+    private val pdlClient: PdlClient,
     private val dokarkivClient: DokarkivClient,
 ) {
     private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
@@ -46,9 +39,34 @@ class SkademeldingService(
         log.info("Mottatt ny skademelding")
         secureLogger.info("Mottatt ny skademelding: $record")
         val pdf = pdfService.lagPdf(record, PdfTemplate.SKADEMELDING)
-        val beriketPdf = pdfService.lagPdf(record, PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
+        val beriketPdf = lagBeriketPdf(record)
         val opprettJournalpostRequest = mapSkademeldingTilOpprettJournalpostRequest(record, pdf, beriketPdf)
         dokarkivClient.journalfoerSkademelding(opprettJournalpostRequest)
+    }
+
+    private fun lagBeriketPdf(record: SkademeldingInnsendtHendelse): ByteArray {
+        val innmeldersFnr = record.skademelding.innmelder?.norskIdentitetsnummer
+        val skadelidtsFnr = record.skademelding.skadelidt?.norskIdentitetsnummer
+
+        val innmeldersNavn: Navn? = hentNavn(innmeldersFnr)
+        val skadelidtsNavnOgAdresse: Pair<Navn?, Adresse?> = hentNavnOgAdresse(skadelidtsFnr)
+        val beriketData = BeriketData(innmeldersNavn, skadelidtsNavnOgAdresse.first, skadelidtsNavnOgAdresse.second)
+
+        return pdfService.lagBeriketPdf(record, beriketData, PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
+    }
+
+    private fun hentNavn(fodselsnummer: String?): Navn? {
+        if (fodselsnummer == null) {
+            return null
+        }
+        return pdlClient.hentNavn(fodselsnummer)
+    }
+
+    private fun hentNavnOgAdresse(fodselsnummer: String?): Pair<Navn?, Adresse?> {
+        if (fodselsnummer == null) {
+            return Pair(null, null)
+        }
+        return pdlClient.hentNavnOgAdresse(fodselsnummer)
     }
 
     private fun mapSkademeldingTilOpprettJournalpostRequest(
