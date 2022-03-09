@@ -46,7 +46,7 @@ internal class PdlClientTest {
     }
 
     @Test
-    fun `skal hente navn på person`() {
+    fun `skal hente navn paa person`() {
         coEvery { graphQLWebClient.execute<HentPerson.Result>(any(), any()) } returns okResponsPersonFraPdl()
         val navn = client.hentNavn("12345678901")
         assertThat(navn?.fornavn).isEqualTo("Ola")
@@ -55,7 +55,7 @@ internal class PdlClientTest {
     }
 
     @Test
-    fun `skal hente navn og bostedsadresse på person`() {
+    fun `skal hente navn og bostedsadresse paa person`() {
         coEvery { graphQLWebClient.execute<HentPerson.Result>(ofType(HentPerson::class), any()) } returns okResponsPersonFraPdl()
         coEvery { graphQLWebClient.execute<HentAdresse.Result>(ofType(HentAdresse::class), any()) } returns okResponsAdresseFraPdl()
         val navnOgAdresse = client.hentNavnOgAdresse("12345678901", true)
@@ -86,13 +86,16 @@ internal class PdlClientTest {
     }
 
     @Test
-    fun `skal ikke hente adresse for kode6-personer`() {
+    fun `skal hente adresse for kode6-personer`() {
         coEvery { graphQLWebClient.execute<HentPerson.Result>(ofType(HentPerson::class), any()) } returns okResponsStrengtFortroligPersonFraPdl()
         coEvery { graphQLWebClient.execute<HentAdresse.Result>(ofType(HentAdresse::class), any()) } returns okResponsAdresseFraPdl()
         val navnOgAdresse = client.hentNavnOgAdresse("12345678901", true)
 
         val adresse = navnOgAdresse.second
-        assertThat(adresse?.adresselinje1).isNull()
+        assertThat(adresse?.adresselinje1).isEqualTo("Storgata 123B")
+        assertThat(adresse?.adresselinje2).isEqualTo("2250 Plassen")
+        assertThat(adresse?.adresselinje3).isEqualTo("Tillegg")
+        assertThat(adresse?.land).isEqualTo("")
     }
 
 }
