@@ -143,6 +143,7 @@ class PdlClient(
             val response: GraphQLClientResponse<HentPerson.Result> = client.execute(hentPersonQuery) {
                 headers {
                     it.add(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                    it.add("Tema", "YRK")
                     it.add("Nav-Call-Id", MDC.get(MDCConstants.MDC_CALL_ID))
                 }
             }
