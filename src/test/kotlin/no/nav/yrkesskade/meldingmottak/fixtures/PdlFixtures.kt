@@ -54,6 +54,28 @@ fun okResponsPersonMedUtenlandskAdresseFraPdl(): GraphQLClientResponse<HentPerso
     )
 }
 
+/**
+ * Response med fortrolig person (kode 7)
+ */
+fun okResponsFortroligPersonFraPdl(): GraphQLClientResponse<HentPerson.Result> {
+    return JacksonGraphQLResponse(
+        data = HentPerson.Result(gyldigFortroligPersonMedNavnOgVegadresse()),
+        errors = null,
+        extensions = emptyMap()
+    )
+}
+
+/**
+ * Response med strengt fortrolig person (kode 6)
+ */
+fun okResponsStrengtFortroligPersonFraPdl(): GraphQLClientResponse<HentPerson.Result> {
+    return JacksonGraphQLResponse(
+        data = HentPerson.Result(gyldigStrengtFortroligPersonMedNavnOgVegadresse()),
+        errors = null,
+        extensions = emptyMap()
+    )
+}
+
 fun okResponsAdresseFraPdl(): GraphQLClientResponse<HentAdresse.Result> {
     return JacksonGraphQLResponse(
         data = HentAdresse.Result(gyldigVegadresse()),

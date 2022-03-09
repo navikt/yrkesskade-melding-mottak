@@ -43,6 +43,22 @@ fun gyldigPersonMedUtenlandskAdresse(): Person {
     )
 }
 
+fun gyldigFortroligPersonMedNavnOgVegadresse(): Person {
+    return Person(
+        listOf(Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG)),
+        listOf(Navn("Fortrolig", null, "Person", "Fortrolig Person")),
+        listOf(bostedVegadresse())
+    )
+}
+
+fun gyldigStrengtFortroligPersonMedNavnOgVegadresse(): Person {
+    return Person(
+        listOf(Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG)),
+        listOf(Navn("Strengt", "Fortrolig", "Person", "Strengt Fortrolig Person")),
+        listOf(bostedVegadresse())
+    )
+}
+
 fun bostedVegadresse(): Bostedsadresse {
     return Bostedsadresse(
         vegadresse = Vegadresse(matrikkelId = "12345"),
