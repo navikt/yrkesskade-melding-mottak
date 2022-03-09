@@ -61,7 +61,7 @@ spec:
           - name: yrkesskade-mottak
             envVarPrefix: YRKESSKADE_MOTTAK_DB
     bigQueryDatasets:
-      - name: yrkesskade-metrikker
+      - name: yrkesskade_metrikker
         permission: READWRITE
   azure:
     application:
