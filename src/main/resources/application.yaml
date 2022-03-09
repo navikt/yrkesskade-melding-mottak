@@ -34,6 +34,11 @@ spring:
       hibernate:
         enable_lazy_load_no_trans: true
         ddl-auto: none
+  cloud:
+    gcp:
+      bigquery:
+        dataset-name: yrkesskade-metrikker
+        project-id: ${GCP_TEAM_PROJECT_ID}
 management:
   endpoint:
     health:
