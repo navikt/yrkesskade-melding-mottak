@@ -9,9 +9,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
-import no.nav.yrkesskade.meldingmottak.fixtures.okResponsAdresseFraPdl
-import no.nav.yrkesskade.meldingmottak.fixtures.okResponsIdenterFraPdl
-import no.nav.yrkesskade.meldingmottak.fixtures.okResponsPersonFraPdl
+import no.nav.yrkesskade.meldingmottak.fixtures.*
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -72,6 +70,29 @@ internal class PdlClientTest {
         assertThat(adresse?.adresselinje2).isEqualTo("2250 Plassen")
         assertThat(adresse?.adresselinje3).isEqualTo("Tillegg")
         assertThat(adresse?.land).isEqualTo("")
+    }
+
+    @Test
+    fun `skal hente adresse for kode7-personer`() {
+        coEvery { graphQLWebClient.execute<HentPerson.Result>(ofType(HentPerson::class), any()) } returns okResponsFortroligPersonFraPdl()
+        coEvery { graphQLWebClient.execute<HentAdresse.Result>(ofType(HentAdresse::class), any()) } returns okResponsAdresseFraPdl()
+        val navnOgAdresse = client.hentNavnOgAdresse("12345678901", true)
+
+        val adresse = navnOgAdresse.second
+        assertThat(adresse?.adresselinje1).isEqualTo("Storgata 123B")
+        assertThat(adresse?.adresselinje2).isEqualTo("2250 Plassen")
+        assertThat(adresse?.adresselinje3).isEqualTo("Tillegg")
+        assertThat(adresse?.land).isEqualTo("")
+    }
+
+    @Test
+    fun `skal ikke hente adresse for kode6-personer`() {
+        coEvery { graphQLWebClient.execute<HentPerson.Result>(ofType(HentPerson::class), any()) } returns okResponsStrengtFortroligPersonFraPdl()
+        coEvery { graphQLWebClient.execute<HentAdresse.Result>(ofType(HentAdresse::class), any()) } returns okResponsAdresseFraPdl()
+        val navnOgAdresse = client.hentNavnOgAdresse("12345678901", true)
+
+        val adresse = navnOgAdresse.second
+        assertThat(adresse?.adresselinje1).isNull()
     }
 
 }
