@@ -59,6 +59,14 @@ no.nav.security.jwt:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-jwk: ${AZURE_APP_JWK}
           client-auth-method: private_key_jwt
+      dokarkiv-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${DOKARKIV_CLIENT_ID}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
 
 YRKESSKADE_DOKGEN_API_URL: https://yrkesskade-dokgen.intern.nav.no
 saf.graphql.url: https://saf.prod-fss-pub.nais.io/graphql
@@ -68,4 +76,5 @@ oppgave.url: https://oppgave.prod-fss-pub.nais.io
 SAF_APP_CLIENT_ID: prod-fss.teamdokumenthandtering.saf
 PDL_APP_CLIENT_ID: prod-fss.pdl.pdl-api
 OPPGAVE_APP_CLIENT_ID: 50346823-61a0-49e7-ad89-ea2b1a0e90f8
+DOKARKIV_CLIENT_ID: prod-fss.teamdokumenthandtering.dokarkiv
 TENANT_ID: 62366534-1ec3-4962-8869-9b5535279d0b         # nav.no
