@@ -9,6 +9,10 @@ spring:
   kafka:
     properties:
       schema.registry.url: denne-maa-bare-ha-en-verdi
+  cloud:
+    gcp:
+      bigquery:
+        enabled: false
 kafka:
   topic:
     aapen-dok-journalfoering: test
@@ -19,6 +23,7 @@ funksjonsbrytere:
   enabled: false
 NAIS_CLUSTER_NAME: lokal
 KAFKA_BROKERS: ${spring.embedded.kafka.brokers}
+GCP_TEAM_PROJECT_ID: stub
 
 no.nav.security.jwt:
   issuer:
