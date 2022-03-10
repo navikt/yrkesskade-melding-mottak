@@ -108,7 +108,7 @@ object PdfSkademeldingMapper {
                         til = datoFormatert(hendelsesfakta.tid.periode?.til)
                     )
                 ),
-                ukjent = hendelsesfakta.tid.ukjent
+                ukjent = Soknadsfelt("Når skjedde ulykken som skal meldes?", hendelsesfakta.tid.ukjent)
             ),
             naarSkjeddeUlykken = Soknadsfelt("Innenfor hvilket tidsrom inntraff ulykken?", hendelsesfakta.naarSkjeddeUlykken.value),
             hvorSkjeddeUlykken = Soknadsfelt("Hvor skjedde ulykken", hendelsesfakta.hvorSkjeddeUlykken.value),

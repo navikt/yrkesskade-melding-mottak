@@ -64,7 +64,7 @@ data class PdfTid(
     val tidstype: String,
     val tidspunkt: Soknadsfelt<PdfTidspunkt>,
     val periode: Soknadsfelt<PdfPeriode>,
-    val ukjent: Boolean?
+    val ukjent: Soknadsfelt<Boolean?>
 )
 
 data class PdfTidspunkt(
