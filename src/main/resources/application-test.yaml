@@ -9,10 +9,6 @@ spring:
   kafka:
     properties:
       schema.registry.url: denne-maa-bare-ha-en-verdi
-  cloud:
-    gcp:
-      bigquery:
-        enabled: false
 kafka:
   topic:
     aapen-dok-journalfoering: test
