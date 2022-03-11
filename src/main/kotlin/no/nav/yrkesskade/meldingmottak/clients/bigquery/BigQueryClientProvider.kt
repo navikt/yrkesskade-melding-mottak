@@ -23,7 +23,7 @@ class BigQueryClientProvider(
         value = ["spring.cloud.gcp.bigquery.enabled"],
         havingValue = "true"
     )
-    fun defaultBigQueryClient(): BigQueryClient {
+    fun bigQueryClient(): BigQueryClient {
         return DefaultBigQueryClient(DatasetId.of(bigQueryProjectId, bigQueryDatasetName))
     }
 
@@ -40,7 +40,7 @@ class BigQueryClientProvider(
 interface BigQueryClient {
     fun tablePresent(tableId: TableId): Boolean
     fun create(tableInfo: TableInfo): TableInfo
-    fun insert(tableId: TableId, row: InsertAllRequest.RowToInsert)
+    fun insert(schemaDefinition: SchemaDefinition, row: InsertAllRequest.RowToInsert)
     fun migrate()
 
     class BigQueryClientException(message: String) : RuntimeException(message)
@@ -70,20 +70,20 @@ class DefaultBigQueryClient(private val datasetId: DatasetId) : BigQueryClient {
         }
     }
 
-    override fun insert(tableId: TableId, row: InsertAllRequest.RowToInsert) {
-        val tableName = tableId.table
+    override fun insert(schemaDefinition: SchemaDefinition, row: InsertAllRequest.RowToInsert) {
+        val tableId = schemaDefinition.toTableInfo(datasetId).tableId
         val table = requireNotNull(bigQuery.getTable(tableId)) {
-            "Mangler tabell: '$tableName' i BigQuery"
+            "Mangler tabell: '${tableId.table}' i BigQuery"
         }
         val rows = listOf(row)
-        logger.debug("Setter inn rader i tabell: '$tableName', rader: '$rows'")
+        logger.debug("Setter inn rader i tabell: '${tableId.table}', rader: '$rows'")
         val response = table.insert(rows)
         if (response.hasErrors()) {
             throw BigQueryClient.BigQueryClientException(
                 "Lagring i BigQuery feilet: '${response.insertErrors}'"
             )
         }
-        logger.info("Rader ble lagret i tabell: '$tableName'")
+        logger.info("Rader ble lagret i tabell: '${tableId.table}'")
     }
 
     override fun migrate() {
@@ -111,8 +111,8 @@ class BigQueryClientStub : BigQueryClient {
         return tableInfo
     }
 
-    override fun insert(tableId: TableId, row: InsertAllRequest.RowToInsert) {
-        log.info("insert(tableId, row) called with tableId: '$tableId', row: '$row'")
+    override fun insert(schemaDefinition: SchemaDefinition, row: InsertAllRequest.RowToInsert) {
+        log.info("insert(schemaDefinition, row) called with schemaId: '${schemaDefinition.schemaId}', row: '$row'")
     }
 
     override fun migrate() {
