@@ -32,6 +32,7 @@ internal class SchemaTest {
             tittel = "skademelding",
             kanal = Kanal.NAV_NO.toString(),
             brevkode = "NAV 13",
+            behandlingstema = "",
             enhetFraJournalpost = "",
             tildeltEnhetsnr = "4849",
             callId = "callId"
@@ -41,6 +42,7 @@ internal class SchemaTest {
         assertThat(content["tittel"]).isEqualTo(payload.tittel)
         assertThat(content["kanal"]).isEqualTo(payload.kanal)
         assertThat(content["brevkode"]).isEqualTo(payload.brevkode)
+        assertThat(content["behandlingstema"]).isEqualTo(payload.behandlingstema)
         assertThat(content["enhetFraJournalpost"]).isEqualTo(payload.enhetFraJournalpost)
         assertThat(content["tildeltEnhetsnr"]).isEqualTo(payload.tildeltEnhetsnr)
         assertThat(content["callId"]).isEqualTo(payload.callId)

@@ -12,27 +12,31 @@ val journalfoeringhendelse_oppgave_v1 = object : SchemaDefinition {
     override fun define(): Schema = schema {
         string("journalpostId") {
             required()
-            description("Systemet som sendte skademeldingen")
+            description("journalpostId")
         }
         string("tittel") {
             required()
-            description("Tidspunkt da skademeldingen ble mottatt")
+            description("Tittelen på hoveddokumentet i journalposten")
         }
         string("kanal") {
             required()
-            description("Skademeldingens språk")
+            description("Innmeldingskanalen")
         }
         string("brevkode") {
             required()
-            description("Unik ID for innmeldingens systemtransaksjon")
+            description("brevkode")
+        }
+        string("behandlingstema") {
+            required()
+            description("Behandlingstema fra journalposten")
         }
         string("enhetFraJournalpost") {
             required()
-            description("Unik ID for innmeldingens systemtransaksjon")
+            description("Overstyrende enhet fra journalposten")
         }
         string("tildeltEnhetsnr") {
             required()
-            description("Unik ID for innmeldingens systemtransaksjon")
+            description("Enheten som oppgaven faktisk ble rutet til")
         }
         string("callId") {
             required()
@@ -54,6 +58,7 @@ val journalfoeringhendelse_oppgave_v1 = object : SchemaDefinition {
                 "tittel" to journalfoeringHendelseOppgavePayload.tittel,
                 "kanal" to journalfoeringHendelseOppgavePayload.kanal,
                 "brevkode" to journalfoeringHendelseOppgavePayload.brevkode,
+                "behandlingstema" to journalfoeringHendelseOppgavePayload.behandlingstema,
                 "enhetFraJournalpost" to journalfoeringHendelseOppgavePayload.enhetFraJournalpost,
                 "tildeltEnhetsnr" to journalfoeringHendelseOppgavePayload.tildeltEnhetsnr,
                 "callId" to journalfoeringHendelseOppgavePayload.callId,
@@ -68,6 +73,7 @@ data class JournalfoeringHendelseOppgavePayload(
     val tittel: String,
     val kanal: String,
     val brevkode: String,
+    val behandlingstema: String,
     val enhetFraJournalpost: String,
     val tildeltEnhetsnr: String,
     val callId: String
