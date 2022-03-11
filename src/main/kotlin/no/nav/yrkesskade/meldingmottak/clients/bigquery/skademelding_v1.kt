@@ -35,7 +35,7 @@ val skademelding_v1 = object : SchemaDefinition {
             mapOf(
                 "kilde" to payload.metadata.kilde,
                 "tidspunktMottatt" to payload.metadata.tidspunktMottatt.toString(),
-                "spraak" to payload.metadata.spraak,
+                "spraak" to payload.metadata.spraak.toString(),
                 "callId" to payload.metadata.navCallId,
                 "opprettet" to "AUTO"
             )
