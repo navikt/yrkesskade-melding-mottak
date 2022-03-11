@@ -37,7 +37,7 @@ spring:
   cloud:
     gcp:
       bigquery:
-        dataset-name: yrkesskade-metrikker
+        dataset-name: yrkesskade_metrikker
         project-id: ${GCP_TEAM_PROJECT_ID}
         enabled: true
 management:
