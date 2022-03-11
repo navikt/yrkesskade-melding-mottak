@@ -72,6 +72,7 @@ YRKESSKADE_DOKGEN_API_URL: https://yrkesskade-dokgen.intern.nav.no
 saf.graphql.url: https://saf.prod-fss-pub.nais.io/graphql
 pdl.graphql.url: https://pdl-api.prod-fss-pub.nais.io/graphql
 oppgave.url: https://oppgave.prod-fss-pub.nais.io
+dokarkiv.url: https://dokarkiv.prod-fss-pub.nais.io
 
 SAF_APP_CLIENT_ID: prod-fss.teamdokumenthandtering.saf
 PDL_APP_CLIENT_ID: prod-fss.pdl.pdl-api
