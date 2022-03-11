@@ -1,6 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.clients
 
-import no.nav.familie.log.mdc.MDCConstants
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfSkademelding
 import no.nav.yrkesskade.meldingmottak.services.PdfTemplate
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
@@ -21,16 +23,19 @@ class PdfClient(
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val log = LoggerFactory.getLogger(javaClass.enclosingClass)
         private val secureLogger = getSecureLogger()
+        private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
     }
 
     @Retryable
     fun lagPdf(pdfSkademelding: PdfSkademelding, template: PdfTemplate): ByteArray {
         log.info("Lager pdf av typen ${template.templatenavn}")
+        val prettyJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pdfSkademelding)
+        secureLogger.info("Lager pdf med data:\n\r$prettyJson")
         return logTimingAndWebClientResponseException("lagPdf") {
             pdfWebClient.post()
                 .uri { uriBuilder ->
                     uriBuilder.pathSegment("template")
-                        .pathSegment("${template.templatenavn}")
+                        .pathSegment(template.templatenavn)
                         .pathSegment("download-pdf")
                         .build()
                 }
@@ -44,6 +49,7 @@ class PdfClient(
         }
     }
 
+    @Suppress("SameParameterValue")
     private fun <T> logTimingAndWebClientResponseException(methodName: String, function: () -> T): T {
         val start: Long = System.currentTimeMillis()
         try {
