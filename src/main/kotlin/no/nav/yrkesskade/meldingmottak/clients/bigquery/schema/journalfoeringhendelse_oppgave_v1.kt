@@ -50,6 +50,7 @@ val journalfoeringhendelse_oppgave_v1 = object : SchemaDefinition {
                 "tittel" to journalfoeringHendelseOppgavePayload.tittel,
                 "kanal" to journalfoeringHendelseOppgavePayload.kanal,
                 "brevkode" to journalfoeringHendelseOppgavePayload.brevkode,
+                "enhetFraJournalpost" to journalfoeringHendelseOppgavePayload.enhetFraJournalpost,
                 "tildeltEnhetsnr" to journalfoeringHendelseOppgavePayload.tildeltEnhetsnr,
                 "callId" to journalfoeringHendelseOppgavePayload.callId,
                 "opprettet" to "AUTO"
@@ -63,6 +64,7 @@ data class JournalfoeringHendelseOppgavePayload(
     val tittel: String,
     val kanal: String,
     val brevkode: String,
+    val enhetFraJournalpost: String,
     val tildeltEnhetsnr: String,
     val callId: String
 )

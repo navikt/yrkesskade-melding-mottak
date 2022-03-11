@@ -85,6 +85,7 @@ class ProsesserJournalfoeringHendelseTask(
             tittel = journalpost.hentHovedDokumentTittel(),
             kanal = journalpost.kanal.toString(),
             brevkode = journalpost.hentBrevkode(),
+            enhetFraJournalpost = journalpost.journalfoerendeEnhet.orEmpty(),
             tildeltEnhetsnr = oppgave.tildeltEnhetsnr,
             callId = MDC.get(MDCConstants.MDC_CALL_ID)
         )
