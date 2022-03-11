@@ -39,6 +39,7 @@ spring:
       bigquery:
         dataset-name: yrkesskade-metrikker
         project-id: ${GCP_TEAM_PROJECT_ID}
+        enabled: true
 management:
   endpoint:
     health:
