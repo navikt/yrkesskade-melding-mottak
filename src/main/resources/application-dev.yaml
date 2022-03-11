@@ -3,6 +3,8 @@ spring:
     activate:
       on-profile: dev
   kafka:
+    consumer:
+      group-id: yrkesskade-melding-mottak-leser-fra-start
     properties:
       schema.registry.url: ${KAFKA_SCHEMA_REGISTRY}
       security.protocol: SSL
