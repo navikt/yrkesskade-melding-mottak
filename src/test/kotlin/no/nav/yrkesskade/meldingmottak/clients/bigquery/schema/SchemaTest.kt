@@ -5,6 +5,7 @@ import no.nav.yrkesskade.meldingmottak.domene.Kanal
 import no.nav.yrkesskade.model.Spraak
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.reflect.full.memberProperties
 
 internal class SchemaTest {
 
@@ -43,6 +44,17 @@ internal class SchemaTest {
         assertThat(content["enhetFraJournalpost"]).isEqualTo(payload.enhetFraJournalpost)
         assertThat(content["tildeltEnhetsnr"]).isEqualTo(payload.tildeltEnhetsnr)
         assertThat(content["callId"]).isEqualTo(payload.callId)
+    }
 
+    @Test
+    internal fun `journalfoeringhendelse_oppgave_v1 schema has same number of fields as payload (except opprettet field)`() {
+        assertThat(JournalfoeringHendelseOppgavePayload::class.memberProperties.size)
+            .isEqualTo(journalfoeringhendelse_oppgave_v1.define().fields.size - 1)
+    }
+
+    @Test
+    internal fun `schema has same number of fields as payload (except opprettet field)`() {
+        assertThat(SkademeldingPayload::class.memberProperties.size)
+            .isEqualTo(skademelding_v1.define().fields.size - 1)
     }
 }
