@@ -95,7 +95,7 @@ internal class PdfSkademeldingMapperTest {
             "Når skjedde ulykken som skal meldes?",
             PdfPeriode("", "")
         ))
-        assertThat(hendelsesfakta?.tid?.ukjent).isFalse
+        assertThat(hendelsesfakta?.tid?.ukjent?.verdi).isFalse
         assertThat(hendelsesfakta?.naarSkjeddeUlykken?.verdi).isEqualTo(NaarSkjeddeUlykken.iAvtaltArbeidstid.value)
         assertThat(hendelsesfakta?.hvorSkjeddeUlykken?.verdi).isEqualTo(HvorSkjeddeUlykken.pArbeidsstedetUte.value)
         assertThat(hendelsesfakta?.ulykkessted?.sammeSomVirksomhetensAdresse?.verdi).isEqualTo("Ja")

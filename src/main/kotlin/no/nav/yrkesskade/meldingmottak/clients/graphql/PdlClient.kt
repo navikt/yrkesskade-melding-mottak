@@ -6,9 +6,7 @@ import com.expediagroup.graphql.generated.HentAdresse
 import com.expediagroup.graphql.generated.HentIdenter
 import com.expediagroup.graphql.generated.HentPerson
 import com.expediagroup.graphql.generated.Long
-import com.expediagroup.graphql.generated.enums.AdressebeskyttelseGradering
 import com.expediagroup.graphql.generated.enums.IdentGruppe
-import com.expediagroup.graphql.generated.hentperson.Adressebeskyttelse
 import kotlinx.coroutines.runBlocking
 import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.domene.Adresse
@@ -34,10 +32,6 @@ class PdlClient(
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
         private val secureLogger = getSecureLogger()
-        private val strengtFortroligListe = listOf<AdressebeskyttelseGradering>(
-            AdressebeskyttelseGradering.STRENGT_FORTROLIG,
-            AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND
-        )
     }
 
     private val client = GraphQLWebClient(url = pdlGraphqlUrl)
@@ -82,13 +76,13 @@ class PdlClient(
         if (personResult == null) {
             logger.info("Fant ikke navn på person")
             secureLogger.info("Fant ikke navn på person med fnr $fodselsnummer")
-            return Pair(null, null);
+            return Pair(null, null)
         }
 
         val navn: Navn? = tilNavn(personResult)
         var adresse: Adresse? = null
 
-        val kanHenteAdresse = kanHenteAdresse(personResult)
+        val kanHenteAdresse = kanHenteAdresse()
         if (!kanHenteAdresse) {
             secureLogger.info("Skal ikke hente bostedsadresse for denne personen")
         }
@@ -127,12 +121,9 @@ class PdlClient(
         return null
     }
 
-    private fun kanHenteAdresse(personResult: HentPerson.Result): Boolean {
-        return personResult.hentPerson?.adressebeskyttelse?.none { erStrengtFortrolig(it) } ?: true
-    }
-
-    private fun erStrengtFortrolig(adressebeskyttelse: Adressebeskyttelse): Boolean {
-        return strengtFortroligListe.contains(adressebeskyttelse.gradering)
+    private fun kanHenteAdresse(): Boolean {
+        // Tidligere skulle ikke bostedsadresse hentes for kode6-personer, men nå kan adresse vises for alle
+        return true
     }
 
     private fun extractAktorId(identerResult: HentIdenter.Result?): String? {
@@ -152,6 +143,7 @@ class PdlClient(
             val response: GraphQLClientResponse<HentPerson.Result> = client.execute(hentPersonQuery) {
                 headers {
                     it.add(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                    it.add("Tema", "YRK")
                     it.add("Nav-Call-Id", MDC.get(MDCConstants.MDC_CALL_ID))
                 }
             }
@@ -171,7 +163,7 @@ class PdlClient(
     private fun hentAdresse(matrikkelId: Long): HentAdresse.Result? {
         val token = tokenUtil.getAppAccessTokenWithPdlScope()
         logger.info("Hentet token for Pdl")
-        val hentAdresseQuery = HentAdresse(HentAdresse.Variables(matrikkelId.toString()))
+        val hentAdresseQuery = HentAdresse(HentAdresse.Variables(matrikkelId))
 
         val adresseResult: HentAdresse.Result?
         runBlocking {
