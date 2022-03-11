@@ -42,4 +42,5 @@ interface SchemaDefinition {
 
 val schemaRegistry: Map<SchemaId, SchemaDefinition> = mapOf(
     skademelding_v1.entry(),
+    journalfoeringhendelse_oppgave_v1.entry()
 )
