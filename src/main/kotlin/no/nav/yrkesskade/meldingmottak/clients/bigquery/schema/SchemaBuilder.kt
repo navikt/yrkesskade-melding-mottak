@@ -1,4 +1,4 @@
-package no.nav.yrkesskade.meldingmottak.clients.bigquery
+package no.nav.yrkesskade.meldingmottak.clients.bigquery.schema
 
 import com.google.cloud.bigquery.Field
 import com.google.cloud.bigquery.FieldList

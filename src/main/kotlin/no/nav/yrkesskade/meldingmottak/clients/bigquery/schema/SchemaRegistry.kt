@@ -1,12 +1,12 @@
-package no.nav.yrkesskade.meldingmottak.clients.bigquery
+package no.nav.yrkesskade.meldingmottak.clients.bigquery.schema
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.google.cloud.bigquery.DatasetId
 import com.google.cloud.bigquery.InsertAllRequest
 import com.google.cloud.bigquery.Schema
 import com.google.cloud.bigquery.StandardTableDefinition
 import com.google.cloud.bigquery.TableId
 import com.google.cloud.bigquery.TableInfo
-import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 
 data class SchemaId(val name: String, val version: Int) {
 
@@ -32,7 +32,7 @@ interface SchemaDefinition {
 
     fun define(): Schema
 
-    fun transform(payload: SkademeldingInnsendtHendelse): InsertAllRequest.RowToInsert
+    fun transform(payload: JsonNode): InsertAllRequest.RowToInsert
 
     fun toTableInfo(datasetId: DatasetId): TableInfo {
         val tableDefinition = StandardTableDefinition.of(define())

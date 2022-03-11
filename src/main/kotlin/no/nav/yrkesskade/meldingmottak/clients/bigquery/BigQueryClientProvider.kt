@@ -5,6 +5,8 @@ import com.google.cloud.bigquery.DatasetId
 import com.google.cloud.bigquery.InsertAllRequest
 import com.google.cloud.bigquery.TableId
 import com.google.cloud.bigquery.TableInfo
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.SchemaDefinition
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.schemaRegistry
 import no.nav.yrkesskade.meldingmottak.util.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty

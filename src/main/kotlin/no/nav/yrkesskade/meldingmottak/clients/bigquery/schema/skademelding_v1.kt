@@ -1,8 +1,10 @@
-package no.nav.yrkesskade.meldingmottak.clients.bigquery
+package no.nav.yrkesskade.meldingmottak.clients.bigquery.schema
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.google.cloud.bigquery.InsertAllRequest
 import com.google.cloud.bigquery.Schema
-import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 
 val skademelding_v1 = object : SchemaDefinition {
     override val schemaId: SchemaId = SchemaId(name = "skademelding", version = 1)
@@ -30,14 +32,23 @@ val skademelding_v1 = object : SchemaDefinition {
         }
     }
 
-    override fun transform(payload: SkademeldingInnsendtHendelse): InsertAllRequest.RowToInsert =
-        InsertAllRequest.RowToInsert.of(
+    override fun transform(payload: JsonNode): InsertAllRequest.RowToInsert {
+        val skademeldingPayload = jacksonObjectMapper().treeToValue<SkademeldingPayload>(payload)
+        return InsertAllRequest.RowToInsert.of(
             mapOf(
-                "kilde" to payload.metadata.kilde,
-                "tidspunktMottatt" to payload.metadata.tidspunktMottatt.toString(),
-                "spraak" to payload.metadata.spraak.toString(),
-                "callId" to payload.metadata.navCallId,
+                "kilde" to skademeldingPayload.kilde,
+                "tidspunktMottatt" to skademeldingPayload.tidspunktMottatt,
+                "spraak" to skademeldingPayload.spraak,
+                "callId" to skademeldingPayload.callId,
                 "opprettet" to "AUTO"
             )
         )
+    }
 }
+
+data class SkademeldingPayload(
+    val kilde: String,
+    val tidspunktMottatt: String,
+    val spraak: String,
+    val callId: String
+)

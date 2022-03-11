@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClient
-import no.nav.yrkesskade.meldingmottak.clients.bigquery.skademelding_v1
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.SkademeldingPayload
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.skademelding_v1
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.domene.Adresse
@@ -53,11 +54,24 @@ class SkademeldingService(
     fun mottaSkademelding(record: SkademeldingInnsendtHendelse) {
         log.info("Mottatt ny skademelding")
         secureLogger.info("Mottatt ny skademelding: $record")
-        bigQueryClient.insert(skademelding_v1, skademelding_v1.transform(record))
+        foerMetrikkIBigQuery(record)
         val pdf = pdfService.lagPdf(record, PdfTemplate.SKADEMELDING_TRO_KOPI)
         val beriketPdf = lagBeriketPdf(record)
         val opprettJournalpostRequest = mapSkademeldingTilOpprettJournalpostRequest(record, pdf, beriketPdf)
         dokarkivClient.journalfoerSkademelding(opprettJournalpostRequest)
+    }
+
+    private fun foerMetrikkIBigQuery(record: SkademeldingInnsendtHendelse) {
+        val skademeldingPayload = SkademeldingPayload(
+            kilde = record.metadata.kilde,
+            tidspunktMottatt = record.metadata.tidspunktMottatt.toString(),
+            spraak = record.metadata.spraak.toString(),
+            callId = record.metadata.navCallId
+        )
+        bigQueryClient.insert(
+            skademelding_v1,
+            skademelding_v1.transform(jacksonObjectMapper().valueToTree(skademeldingPayload))
+        )
     }
 
     private fun lagBeriketPdf(record: SkademeldingInnsendtHendelse): ByteArray {
