@@ -26,6 +26,10 @@ val journalfoeringhendelse_oppgave_v1 = object : SchemaDefinition {
             required()
             description("Unik ID for innmeldingens systemtransaksjon")
         }
+        string("enhetFraJournalpost") {
+            required()
+            description("Unik ID for innmeldingens systemtransaksjon")
+        }
         string("tildeltEnhetsnr") {
             required()
             description("Unik ID for innmeldingens systemtransaksjon")
