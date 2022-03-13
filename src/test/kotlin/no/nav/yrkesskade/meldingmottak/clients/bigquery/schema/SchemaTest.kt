@@ -57,7 +57,7 @@ internal class SchemaTest {
     }
 
     @Test
-    internal fun `schema has same number of fields as payload (except opprettet field)`() {
+    internal fun `skademelding_v1 schema has same number of fields as payload (except opprettet field)`() {
         assertThat(SkademeldingPayload::class.memberProperties.size)
             .isEqualTo(skademelding_v1.define().fields.size - 1)
     }
