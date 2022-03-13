@@ -62,6 +62,11 @@ class SchemaBuilder {
         block: FieldBuilder.() -> Unit = {},
     ): Field = field(name, StandardSQLTypeName.STRING, block)
 
+    fun boolean(
+        name: String,
+        block: FieldBuilder.() -> Unit,
+    ): Field = field(name, StandardSQLTypeName.BOOL, block)
+
     fun struct(
         name: String,
         block: FieldBuilder.() -> Unit = {},

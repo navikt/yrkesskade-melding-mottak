@@ -38,6 +38,10 @@ val journalfoeringhendelse_oppgave_v1 = object : SchemaDefinition {
             required()
             description("Enheten som oppgaven faktisk ble rutet til")
         }
+        boolean("manglerNorskIdentitetsnummer") {
+            required()
+            description("Om journalposten ikke er knyttet til et spesifikt identitetsnummer")
+        }
         string("callId") {
             required()
             description("Unik ID for innmeldingens systemtransaksjon")
@@ -61,6 +65,7 @@ val journalfoeringhendelse_oppgave_v1 = object : SchemaDefinition {
                 "behandlingstema" to journalfoeringHendelseOppgavePayload.behandlingstema,
                 "enhetFraJournalpost" to journalfoeringHendelseOppgavePayload.enhetFraJournalpost,
                 "tildeltEnhetsnr" to journalfoeringHendelseOppgavePayload.tildeltEnhetsnr,
+                "manglerNorskIdentitetsnummer" to journalfoeringHendelseOppgavePayload.manglerNorskIdentitetsnummer,
                 "callId" to journalfoeringHendelseOppgavePayload.callId,
                 "opprettet" to "AUTO"
             )
@@ -76,5 +81,6 @@ data class JournalfoeringHendelseOppgavePayload(
     val behandlingstema: String,
     val enhetFraJournalpost: String,
     val tildeltEnhetsnr: String,
+    val manglerNorskIdentitetsnummer: Boolean,
     val callId: String
 )

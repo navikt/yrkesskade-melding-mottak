@@ -88,6 +88,7 @@ class ProsesserJournalfoeringHendelseTask(
             behandlingstema = journalpost.behandlingstema.orEmpty(),
             enhetFraJournalpost = journalpost.journalfoerendeEnhet.orEmpty(),
             tildeltEnhetsnr = oppgave.tildeltEnhetsnr,
+            manglerNorskIdentitetsnummer = journalpost.bruker?.id.isNullOrEmpty(),
             callId = MDC.get(MDCConstants.MDC_CALL_ID)
         )
         bigQueryClient.insert(

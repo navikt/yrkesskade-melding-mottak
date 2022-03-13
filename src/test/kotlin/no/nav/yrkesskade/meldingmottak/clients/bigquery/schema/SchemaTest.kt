@@ -35,6 +35,7 @@ internal class SchemaTest {
             behandlingstema = "",
             enhetFraJournalpost = "",
             tildeltEnhetsnr = "4849",
+            manglerNorskIdentitetsnummer = false,
             callId = "callId"
         )
         val content = journalfoeringhendelse_oppgave_v1.transform(jacksonObjectMapper().valueToTree(payload)).content
@@ -45,6 +46,7 @@ internal class SchemaTest {
         assertThat(content["behandlingstema"]).isEqualTo(payload.behandlingstema)
         assertThat(content["enhetFraJournalpost"]).isEqualTo(payload.enhetFraJournalpost)
         assertThat(content["tildeltEnhetsnr"]).isEqualTo(payload.tildeltEnhetsnr)
+        assertThat(content["manglerNorskIdentitetsnummer"]).isEqualTo(payload.manglerNorskIdentitetsnummer)
         assertThat(content["callId"]).isEqualTo(payload.callId)
     }
 
