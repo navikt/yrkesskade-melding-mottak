@@ -93,7 +93,7 @@ class SkademeldingService(
             tittel = DIGITAL_SKADEMELDING_TITTEL,
             journalposttype = Journalposttype.INNGAAENDE,
             avsenderMottaker = AvsenderMottaker(
-                id = "923609016",
+                id = skademelding.innmelder?.paaVegneAv.orEmpty(),
                 idType = BrukerIdType.ORGNR
             ),
             bruker = Bruker(
