@@ -1,24 +1,28 @@
 package no.nav.yrkesskade.meldingmottak.clients.bigquery.schema
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.domene.Kanal
 import no.nav.yrkesskade.model.Spraak
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.Instant
 import kotlin.reflect.full.memberProperties
 
 internal class SchemaTest {
+
+    val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
     @Test
     internal fun `payload mappes riktig til en skademelding_v1 row`() {
         val payload = SkademeldingPayload(
             kilde = "digital",
-            tidspunktMottatt = "tidspunkt",
+            tidspunktMottatt = Instant.now(),
             spraak = Spraak.NB.toString(),
             callId = "callId"
         )
 
-        val content = skademelding_v1.transform(jacksonObjectMapper().valueToTree(payload)).content
+        val content = skademelding_v1.transform(objectMapper.valueToTree(payload)).content
         assertThat(content["kilde"]).isEqualTo(payload.kilde)
         assertThat(content["tidspunktMottatt"]).isEqualTo(payload.tidspunktMottatt)
         assertThat(content["spraak"]).isEqualTo(payload.spraak)

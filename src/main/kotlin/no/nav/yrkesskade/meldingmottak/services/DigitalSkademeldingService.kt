@@ -64,13 +64,13 @@ class SkademeldingService(
     private fun foerMetrikkIBigQuery(record: SkademeldingInnsendtHendelse) {
         val skademeldingPayload = SkademeldingPayload(
             kilde = record.metadata.kilde,
-            tidspunktMottatt = record.metadata.tidspunktMottatt.toString(),
+            tidspunktMottatt = record.metadata.tidspunktMottatt,
             spraak = record.metadata.spraak.toString(),
             callId = record.metadata.navCallId
         )
         bigQueryClient.insert(
             skademelding_v1,
-            skademelding_v1.transform(jacksonObjectMapper().valueToTree(skademeldingPayload))
+            skademelding_v1.transform(objectMapper.valueToTree(skademeldingPayload))
         )
     }
 
