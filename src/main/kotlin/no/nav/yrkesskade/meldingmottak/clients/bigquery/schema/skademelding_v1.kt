@@ -40,7 +40,7 @@ val skademelding_v1 = object : SchemaDefinition {
         return InsertAllRequest.RowToInsert.of(
             mapOf(
                 "kilde" to skademeldingPayload.kilde,
-                "tidspunktMottatt" to skademeldingPayload.tidspunktMottatt,
+                "tidspunktMottatt" to skademeldingPayload.tidspunktMottatt.toString(),
                 "spraak" to skademeldingPayload.spraak,
                 "callId" to skademeldingPayload.callId,
                 "opprettet" to "AUTO"
