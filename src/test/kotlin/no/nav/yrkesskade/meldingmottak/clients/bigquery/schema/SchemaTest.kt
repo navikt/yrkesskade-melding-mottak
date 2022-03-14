@@ -24,7 +24,7 @@ internal class SchemaTest {
 
         val content = skademelding_v1.transform(objectMapper.valueToTree(payload)).content
         assertThat(content["kilde"]).isEqualTo(payload.kilde)
-        assertThat(content["tidspunktMottatt"]).isEqualTo(payload.tidspunktMottatt)
+        assertThat(content["tidspunktMottatt"]).isEqualTo(payload.tidspunktMottatt.toString())
         assertThat(content["spraak"]).isEqualTo(payload.spraak)
         assertThat(content["callId"]).isEqualTo(payload.callId)
     }
