@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 internal class SchemaIdTest {
 
     @Test
-    internal fun `should create valid SchemaId from String`() {
+    internal fun `skal lage gyldig SchemaId ut fra String`() {
         val schemaId = SchemaId.of("foobar_v1")
 
         assertThat(schemaId.name).isEqualTo("foobar")
@@ -15,7 +15,7 @@ internal class SchemaIdTest {
     }
 
     @Test
-    internal fun `should create valid TableId from SchemaId`() {
+    internal fun `skal lage gyldig TableId ut fra SchemaId`() {
         val tableName = "foobar_v1"
         val datasetId = DatasetId.of("foo", "bar")
         val schemaId = SchemaId.of(tableName)

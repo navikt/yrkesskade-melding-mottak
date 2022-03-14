@@ -10,7 +10,7 @@ import kotlin.reflect.full.memberProperties
 internal class SchemaTest {
 
     @Test
-    internal fun `payload transformed to skademelding_v1 row`() {
+    internal fun `payload mappes riktig til en skademelding_v1 row`() {
         val payload = SkademeldingPayload(
             kilde = "digital",
             tidspunktMottatt = "tidspunkt",
@@ -26,7 +26,7 @@ internal class SchemaTest {
     }
 
     @Test
-    internal fun `payload transformed to journalfoeringhendelse_oppgave_v1 row`() {
+    internal fun `payload mappes riktig til en journalfoeringhendelse_oppgave_v1 row`() {
         val payload = JournalfoeringHendelseOppgavePayload(
             journalpostId = "1234",
             tittel = "skademelding",
@@ -51,13 +51,13 @@ internal class SchemaTest {
     }
 
     @Test
-    internal fun `journalfoeringhendelse_oppgave_v1 schema has same number of fields as payload (except opprettet field)`() {
+    internal fun `journalfoeringhendelse_oppgave_v1 schema skal ha samme antall felter som payload (unntatt opprettet-feltet)`() {
         assertThat(JournalfoeringHendelseOppgavePayload::class.memberProperties.size)
             .isEqualTo(journalfoeringhendelse_oppgave_v1.define().fields.size - 1)
     }
 
     @Test
-    internal fun `skademelding_v1 schema has same number of fields as payload (except opprettet field)`() {
+    internal fun `skademelding_v1 schema skal ha samme antall felter som payload (unntatt opprettet-feltet)`() {
         assertThat(SkademeldingPayload::class.memberProperties.size)
             .isEqualTo(skademelding_v1.define().fields.size - 1)
     }
