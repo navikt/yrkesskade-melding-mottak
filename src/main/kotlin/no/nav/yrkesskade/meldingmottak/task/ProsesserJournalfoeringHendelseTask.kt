@@ -63,12 +63,7 @@ class ProsesserJournalfoeringHendelseTask(
         validerJournalpost(journalpost)
 
         opprettOppgave(journalpost).also { oppgave ->
-            log.info(
-                "Opprettet oppgave for journalpostId ${journalpost.journalpostId} " +
-                        ", kanal ${journalpost.kanal}" +
-                        ", brevkode ${journalpost.hentBrevkode()} " +
-                        ", tittel \"${journalpost.hentHovedDokumentTittel()}\""
-            )
+            log.info("Opprettet oppgave for journalpostId ${journalpost.journalpostId}")
             foerMetrikkIBigQuery(journalpost, oppgave)
         }
     }
@@ -93,9 +88,7 @@ class ProsesserJournalfoeringHendelseTask(
         )
         bigQueryClient.insert(
             journalfoeringhendelse_oppgave_v1,
-            journalfoeringhendelse_oppgave_v1.transform(
-                jacksonObjectMapper().valueToTree(payload)
-            )
+            journalfoeringhendelse_oppgave_v1.transform(jacksonObjectMapper().valueToTree(payload))
         )
     }
 
