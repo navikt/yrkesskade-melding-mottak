@@ -3,6 +3,9 @@ package no.nav.yrkesskade.meldingmottak.task
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.familie.log.mdc.MDCConstants
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClient
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClientStub
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
@@ -17,7 +20,9 @@ import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerAktoe
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerFnr
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.slf4j.MDC
 
 internal class ProsesserJournalfoeringHendelseTaskMockTest {
 
@@ -27,12 +32,18 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
 
     private val oppgaveClientMock: OppgaveClient = mockk(relaxed = true)
 
+    private val bigQueryClientStub: BigQueryClient = BigQueryClientStub()
+
     private val journalpostId = "1337"
     private val task = ProsesserJournalfoeringHendelseTask.opprettTask(journalpostId)
 
     private val prosesserJournalfoeringHendelseTask: ProsesserJournalfoeringHendelseTask =
-        ProsesserJournalfoeringHendelseTask(safClientMock, pdlClientMock, oppgaveClientMock)
+        ProsesserJournalfoeringHendelseTask(safClientMock, pdlClientMock, oppgaveClientMock, bigQueryClientStub)
 
+    @BeforeEach
+    fun init() {
+        MDC.put(MDCConstants.MDC_CALL_ID, "mock")
+    }
 
     @Test
     fun `skal kalle paa SAF naar det kommer en kafkarecord`() {

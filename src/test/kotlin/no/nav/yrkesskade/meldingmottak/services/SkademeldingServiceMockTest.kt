@@ -3,6 +3,7 @@ package no.nav.yrkesskade.meldingmottak.services
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClientStub
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.domene.Adresse
@@ -17,8 +18,9 @@ class SkademeldingServiceMockTest {
     private val pdfService: PdfService = mockk()
     private val pdlClient: PdlClient = mockk()
     private val dokarkivClient: DokarkivClient = mockk()
+    private val bigQueryClient = BigQueryClientStub()
 
-    private val service: SkademeldingService = SkademeldingService(pdfService, pdlClient, dokarkivClient)
+    private val service: SkademeldingService = SkademeldingService(pdfService, pdlClient, dokarkivClient, bigQueryClient)
 
     @BeforeEach
     fun setup() {

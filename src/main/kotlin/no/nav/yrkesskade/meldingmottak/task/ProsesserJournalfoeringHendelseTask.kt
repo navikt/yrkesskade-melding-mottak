@@ -8,6 +8,11 @@ import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.Journalpost
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.familie.log.mdc.MDCConstants
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClient
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.JournalfoeringHendelseOppgavePayload
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.journalfoeringhendelse_oppgave_v1
+import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgave
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgavetype
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OpprettJournalfoeringOppgave
@@ -15,6 +20,7 @@ import no.nav.yrkesskade.meldingmottak.clients.gosys.Prioritet
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
+import no.nav.yrkesskade.meldingmottak.util.extensions.hentBrevkode
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokumentTittel
 import no.nav.yrkesskade.meldingmottak.util.extensions.journalfoerendeEnhetEllerNull
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
@@ -23,6 +29,7 @@ import no.nav.yrkesskade.prosessering.TaskStepBeskrivelse
 import no.nav.yrkesskade.prosessering.domene.Task
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.stereotype.Component
 import java.lang.invoke.MethodHandles
 
@@ -38,6 +45,7 @@ class ProsesserJournalfoeringHendelseTask(
     private val safClient: SafClient,
     private val pdlClient: PdlClient,
     private val oppgaveClient: OppgaveClient,
+    private val bigQueryClient: BigQueryClient
 ) : AsyncTaskStep {
 
     val log: Logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
@@ -54,27 +62,33 @@ class ProsesserJournalfoeringHendelseTask(
         }
         validerJournalpost(journalpost)
 
-        val aktoerId = hentAktoerId(journalpost.bruker)
+        opprettOppgave(journalpost).also { oppgave ->
+            log.info("Opprettet oppgave for journalpostId ${journalpost.journalpostId}")
+            foerMetrikkIBigQuery(journalpost, oppgave)
+        }
+    }
 
-        secureLogger.info(
-            "Oppretter oppgave for ${journalpost.journalpostId} " +
-                    "med tittel \"${journalpost.hentHovedDokumentTittel()}\" og kanal ${journalpost.kanal}"
+    /**
+     * Legger til en rad i BigQuery-metrikkene om at en journalfoeringsoppgave er opprettet.
+     *
+     * @param journalpost journalposten det gjelder
+     * @param oppgave oppgaven som ble opprettet
+     */
+    private fun foerMetrikkIBigQuery(journalpost: Journalpost, oppgave: Oppgave) {
+        val payload = JournalfoeringHendelseOppgavePayload(
+            journalpostId = journalpost.journalpostId,
+            tittel = journalpost.hentHovedDokumentTittel(),
+            kanal = journalpost.kanal.toString(),
+            brevkode = journalpost.hentBrevkode(),
+            behandlingstema = journalpost.behandlingstema.orEmpty(),
+            enhetFraJournalpost = journalpost.journalfoerendeEnhet.orEmpty(),
+            tildeltEnhetsnr = oppgave.tildeltEnhetsnr,
+            manglerNorskIdentitetsnummer = journalpost.bruker?.id.isNullOrEmpty(),
+            callId = MDC.get(MDCConstants.MDC_CALL_ID)
         )
-
-        oppgaveClient.opprettOppgave(
-            OpprettJournalfoeringOppgave(
-                beskrivelse = journalpost.hentHovedDokumentTittel(),
-                journalpostId = journalpost.journalpostId,
-                aktoerId = aktoerId,
-                tema = journalpost.tema.toString(),
-                tildeltEnhetsnr = journalpost.journalfoerendeEnhetEllerNull(),
-                oppgavetype = Oppgavetype.JOURNALFOERING.kortnavn,
-                behandlingstema = null, // skal være null
-                behandlingstype = null, // skal være null
-                prioritet = Prioritet.NORM,
-                fristFerdigstillelse = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(journalpost.datoOpprettet),
-                aktivDato = journalpost.datoOpprettet.toLocalDate()
-            )
+        bigQueryClient.insert(
+            journalfoeringhendelse_oppgave_v1,
+            journalfoeringhendelse_oppgave_v1.transform(jacksonObjectMapper().valueToTree(payload))
         )
     }
 
@@ -160,6 +174,26 @@ class ProsesserJournalfoeringHendelseTask(
         if (!journalpost.bruker?.id.isNullOrEmpty() && !gyldigeBrukerIdTyper.contains(journalpost.bruker?.type)) {
             throw RuntimeException("BrukerIdType må være en av: $gyldigeBrukerIdTyper, men er: ${journalpost.bruker?.type}")
         }
+    }
+
+    fun opprettOppgave(journalpost: Journalpost): Oppgave {
+        val aktoerId = hentAktoerId(journalpost.bruker)
+
+        val journalfoeringOppgave = OpprettJournalfoeringOppgave(
+            beskrivelse = journalpost.hentHovedDokumentTittel(),
+            journalpostId = journalpost.journalpostId,
+            aktoerId = aktoerId,
+            tema = journalpost.tema.toString(),
+            tildeltEnhetsnr = journalpost.journalfoerendeEnhetEllerNull(),
+            oppgavetype = Oppgavetype.JOURNALFOERING.kortnavn,
+            behandlingstema = null, // skal være null
+            behandlingstype = null, // skal være null
+            prioritet = Prioritet.NORM,
+            fristFerdigstillelse = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(journalpost.datoOpprettet),
+            aktivDato = journalpost.datoOpprettet.toLocalDate()
+        )
+
+        return oppgaveClient.opprettOppgave(journalfoeringOppgave)
     }
 
     companion object {

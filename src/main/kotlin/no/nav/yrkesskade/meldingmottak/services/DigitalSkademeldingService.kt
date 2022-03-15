@@ -3,6 +3,9 @@ package no.nav.yrkesskade.meldingmottak.services
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClient
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.SkademeldingPayload
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.skademelding_v1
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.domene.Adresse
@@ -37,6 +40,7 @@ class SkademeldingService(
     private val pdfService: PdfService,
     private val pdlClient: PdlClient,
     private val dokarkivClient: DokarkivClient,
+    private val bigQueryClient: BigQueryClient
 ) {
     private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
     private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
@@ -50,10 +54,24 @@ class SkademeldingService(
     fun mottaSkademelding(record: SkademeldingInnsendtHendelse) {
         log.info("Mottatt ny skademelding")
         secureLogger.info("Mottatt ny skademelding: $record")
+        foerMetrikkIBigQuery(record)
         val pdf = pdfService.lagPdf(record, PdfTemplate.SKADEMELDING_TRO_KOPI)
         val beriketPdf = lagBeriketPdf(record)
         val opprettJournalpostRequest = mapSkademeldingTilOpprettJournalpostRequest(record, pdf, beriketPdf)
         dokarkivClient.journalfoerSkademelding(opprettJournalpostRequest)
+    }
+
+    private fun foerMetrikkIBigQuery(record: SkademeldingInnsendtHendelse) {
+        val skademeldingPayload = SkademeldingPayload(
+            kilde = record.metadata.kilde,
+            tidspunktMottatt = record.metadata.tidspunktMottatt,
+            spraak = record.metadata.spraak.toString(),
+            callId = record.metadata.navCallId
+        )
+        bigQueryClient.insert(
+            skademelding_v1,
+            skademelding_v1.transform(objectMapper.valueToTree(skademeldingPayload))
+        )
     }
 
     private fun lagBeriketPdf(record: SkademeldingInnsendtHendelse): ByteArray {
