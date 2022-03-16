@@ -4,9 +4,11 @@ import com.expediagroup.graphql.client.spring.GraphQLWebClient
 import com.expediagroup.graphql.client.types.GraphQLClientResponse
 import com.expediagroup.graphql.generated.Journalpost
 import kotlinx.coroutines.runBlocking
+import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import no.nav.yrkesskade.meldingmottak.util.getLogger
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import javax.ws.rs.core.HttpHeaders
@@ -18,6 +20,7 @@ import javax.ws.rs.core.HttpHeaders
 @Component
 class SafClient(
     @Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
+    @Value("\${spring.application.name}") val applicationName: String,
     private val tokenUtil: TokenUtil
 ) {
 
@@ -38,7 +41,11 @@ class SafClient(
         val oppdatertJournalpost: Journalpost.Result?
         runBlocking {
             val response: GraphQLClientResponse<Journalpost.Result> = client.execute(journalpostQuery) {
-                header(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                headers {
+                    it.add(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                    it.add("Nav-Callid", MDC.get(MDCConstants.MDC_CALL_ID))
+                    it.add("Nav-Consumer-Id", applicationName)
+                }
             }
             oppdatertJournalpost = response.data
             if (!response.errors.isNullOrEmpty()) {
