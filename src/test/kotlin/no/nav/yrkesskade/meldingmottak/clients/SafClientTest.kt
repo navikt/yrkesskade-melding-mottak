@@ -33,7 +33,7 @@ internal class SafClientTest {
     fun init() {
         every { tokenUtilMock.getAppAccessTokenWithSafScope() } returns "abc"
 
-        client = SafClient(safGraphqlUrl = "test", tokenUtilMock)
+        client = SafClient(safGraphqlUrl = "test", "yrkesskade-melding-mottak", tokenUtilMock)
         ReflectionTestUtils.setField(client, "client", graphQLWebClient)
     }
 
