@@ -4,9 +4,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import no.nav.yrkesskade.model.SkademeldingBeriketData
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import no.nav.yrkesskade.model.SkademeldingMetadata
 import no.nav.yrkesskade.model.Spraak
+import no.nav.yrkesskade.model.Systemkilde
 import no.nav.yrkesskade.skademelding.model.Skademelding
 import java.nio.file.Files
 import java.nio.file.Path
@@ -114,6 +116,9 @@ fun skademeldingInnsendtHendelse(): SkademeldingInnsendtHendelse {
             tidspunktMottatt = Instant.now(),
             spraak = Spraak.NB,
             navCallId = UUID.randomUUID().toString()
+        ),
+        beriketData = SkademeldingBeriketData(
+            innmeldersOrganisasjonsnavn = "NAV IT" to Systemkilde.ENHETSREGISTERET
         )
     )
 }

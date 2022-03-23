@@ -25,6 +25,7 @@ fun opprettJournalpostRequest() = OpprettJournalpostRequest(
     tittel = "skademelding",
     journalposttype = Journalposttype.INNGAAENDE,
     avsenderMottaker = AvsenderMottaker(
+        navn = "NAV IT",
         id = "12345699999",
         idType = BrukerIdType.FNR
     ),

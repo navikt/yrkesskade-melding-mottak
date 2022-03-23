@@ -28,6 +28,7 @@ data class OpprettJournalpostRequest(
 )
 
 data class AvsenderMottaker(
+    val navn: String,
     val id: String,
     val idType: BrukerIdType,
 )

@@ -111,6 +111,7 @@ class SkademeldingService(
             tittel = DIGITAL_SKADEMELDING_TITTEL,
             journalposttype = Journalposttype.INNGAAENDE,
             avsenderMottaker = AvsenderMottaker(
+                navn = record.beriketData.innmeldersOrganisasjonsnavn.first,
                 id = skademelding.innmelder?.paaVegneAv.orEmpty(),
                 idType = BrukerIdType.ORGNR
             ),
