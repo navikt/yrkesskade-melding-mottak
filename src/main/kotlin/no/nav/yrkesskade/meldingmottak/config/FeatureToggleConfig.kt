@@ -88,3 +88,7 @@ interface FeatureToggleService {
 
     fun isEnabled(toggleId: String, defaultValue: Boolean = false): Boolean
 }
+
+enum class FeatureToggles(val toggleId: String) {
+    LANDKODER_TIL_PDF("yrkesskade.landkoder-til-pdf")
+}

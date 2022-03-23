@@ -105,7 +105,7 @@ private fun hendelsesfakta(): Hendelsesfakta? {
                 adresselinje1 = "Storgaten 13",
                 adresselinje2 = "2345 Småbygda",
                 adresselinje3 = null,
-                land = "SVERIGE"
+                land = "SE"
             )
         ),
         aarsakUlykkeTabellAogE = listOf(
@@ -139,7 +139,7 @@ fun beriketData(): BeriketData {
             adresselinje1 = "Stigen 7A",
             adresselinje2 = "7730 Småby",
             adresselinje3 = null,
-            land = ""
+            land = "NO"
         )
     )
 }

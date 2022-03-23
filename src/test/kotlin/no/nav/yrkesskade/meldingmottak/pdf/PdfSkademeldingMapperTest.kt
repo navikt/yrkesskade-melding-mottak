@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.fixtures.beriketData
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkademeldingInnsendtHendelse
+import no.nav.yrkesskade.meldingmottak.fixtures.noenLand
 import no.nav.yrkesskade.meldingmottak.pdf.domene.*
 import no.nav.yrkesskade.skademelding.model.*
 import org.assertj.core.api.Assertions.assertThat
@@ -22,7 +23,7 @@ internal class PdfSkademeldingMapperTest {
         val beriketData = beriketData()
         println("beriket data er:\n $beriketData")
 
-        val pdfSkademelding = PdfSkademeldingMapper.tilPdfSkademelding(record, beriketData)
+        val pdfSkademelding = PdfSkademeldingMapper.tilPdfSkademelding(record, noenLand(), beriketData)
         println("PdfSkademeldingen er $pdfSkademelding")
 
         assertPdfSkademelding(pdfSkademelding)
@@ -57,7 +58,7 @@ internal class PdfSkademeldingMapperTest {
                 adresselinje1 = "Stigen 7A",
                 adresselinje2 = "7730 Småby",
                 adresselinje3 = null,
-                land = ""
+                land = null
             ))
         assertThat(skadelidt?.dekningsforhold?.organisasjonsnummer?.verdi).isEqualTo("123456789")
         assertThat(skadelidt?.dekningsforhold?.navnPaaVirksomheten?.verdi).isEqualTo("Bedriften AS")
