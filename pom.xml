@@ -10,7 +10,7 @@
     </parent>
     <groupId>no.nav.yrkesskade</groupId>
     <artifactId>yrkesskade-melding-mottak</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>ys-melding-mottak</name>
     <description>Mottaksmodul for innsendte meldinger om yrkesskade, -sykdom og menerstatning</description>
 
