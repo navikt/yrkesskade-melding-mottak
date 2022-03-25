@@ -72,6 +72,10 @@ prosessering:
     after:
       weeks: 4
 
+kodeverk:
+  cache:
+    gyldigTidMinutter: 60
+
 YRKESSKADE_DOKGEN_API_URL: http://yrkesskade-dokgen.default
 YRKESSKADE_KODEVERK_API_URL: https://yrkesskade-kodeverk.dev.intern.nav.no
 saf.graphql.url: https://saf.dev-fss-pub.nais.io/graphql

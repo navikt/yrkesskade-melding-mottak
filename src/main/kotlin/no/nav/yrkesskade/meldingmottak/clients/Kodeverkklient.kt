@@ -1,9 +1,9 @@
 package no.nav.yrkesskade.meldingmottak.clients
 
-import no.nav.yrkesskade.meldingmottak.domene.Land
-import no.nav.yrkesskade.meldingmottak.domene.Landkode
+import no.nav.yrkesskade.meldingmottak.domene.KodeverdiRespons
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
 import org.slf4j.LoggerFactory
-import org.springframework.http.MediaType
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -21,21 +21,33 @@ class Kodeverkklient(
     }
 
     @Retryable
-    fun hentLand(spraak: String = "nb"): Map<Landkode, Land> {
-        log.info("Henter land fra ys-kodeverk")
+    fun hentKodeverk(type: String, kategori: String, spraak: String = "nb"): Map<KodeverkKode, KodeverkVerdi> {
+        log.info("Kaller ys-kodeverk - type=$type, kategori=$kategori, spraak=$spraak")
         return logTimingAndWebClientResponseException("hentLand") {
-            kodeverkWebClient.get()
-                .uri { uriBuilder ->
-                    val typeLandkoder = "landkoderISO2"
-                    val tilfeldigKategori = "arbeidstaker"
-                    uriBuilder.pathSegment("api/v1/kodeverk/typer", typeLandkoder, "kategorier", tilfeldigKategori, "kodeverdier")
-                        .build()
-                }
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono<Map<Landkode, Land>>()
-                .block() ?: emptyMap()
+            kallKodeverkApi(type, kategori)
         }
+    }
+
+    private fun kallKodeverkApi(type: String, kategori: String): Map<KodeverkKode, KodeverkVerdi> {
+        val kodeverdiRespons = kodeverkWebClient.get()
+            .uri { uriBuilder ->
+                uriBuilder.pathSegment(
+                    "api",
+                    "v1",
+                    "kodeverk",
+                    "typer",
+                    type,
+                    "kategorier",
+                    kategori.ifBlank { "dummy" },
+                    "kodeverdier"
+                )
+                    .build()
+            }
+            .retrieve()
+            .bodyToMono<KodeverdiRespons>()
+            .block() ?: KodeverdiRespons(emptyMap())
+
+        return kodeverdiRespons.kodeverdierMap
     }
 
     @Suppress("SameParameterValue")

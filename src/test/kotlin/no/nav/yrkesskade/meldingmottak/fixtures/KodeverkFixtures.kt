@@ -1,11 +1,11 @@
 package no.nav.yrkesskade.meldingmottak.fixtures
 
-import no.nav.yrkesskade.meldingmottak.domene.Land
-import no.nav.yrkesskade.meldingmottak.domene.Landkode
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
 
-fun noenLand(): Map<Landkode, Land> {
+fun noenLand(): Map<KodeverkKode, KodeverkVerdi> {
     return mapOf(
-        "NO" to Land("NO", "NORGE"),
-        "SE" to Land("SE", "SVERIGE"),
+        "NO" to KodeverkVerdi("NO", "nb", "NORGE", null),
+        "SE" to KodeverkVerdi("SE", "nb","SVERIGE", null)
     )
 }

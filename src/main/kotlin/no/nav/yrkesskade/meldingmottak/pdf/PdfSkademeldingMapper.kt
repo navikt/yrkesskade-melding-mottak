@@ -1,8 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.pdf
 
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
-import no.nav.yrkesskade.meldingmottak.domene.Land
-import no.nav.yrkesskade.meldingmottak.domene.Landkode
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.pdf.domene.*
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
@@ -17,7 +17,7 @@ object PdfSkademeldingMapper {
 
     fun tilPdfSkademelding(
         record: SkademeldingInnsendtHendelse,
-        alleLand: Map<Landkode, Land>,
+        alleLand: Map<KodeverkKode, KodeverkVerdi>,
         beriketData: BeriketData? = null
     ) : PdfSkademelding {
 
@@ -50,7 +50,7 @@ object PdfSkademeldingMapper {
         skadelidt: Skadelidt?,
         skadelidtsNavn: Navn?,
         skadelidtsBostedsadresse: no.nav.yrkesskade.meldingmottak.domene.Adresse?,
-        alleLand: Map<Landkode, Land>
+        alleLand: Map<KodeverkKode, KodeverkVerdi>
     ): PdfSkadelidt? {
         if (skadelidt == null) {
             return null
@@ -96,7 +96,7 @@ object PdfSkademeldingMapper {
         )
     }
 
-    private fun tilPdfHendelsesfakta(hendelsesfakta: Hendelsesfakta?, alleLand: Map<Landkode, Land>): PdfHendelsesfakta? {
+    private fun tilPdfHendelsesfakta(hendelsesfakta: Hendelsesfakta?, alleLand: Map<KodeverkKode, KodeverkVerdi>): PdfHendelsesfakta? {
         if (hendelsesfakta == null) {
             return null
         }
@@ -131,7 +131,7 @@ object PdfSkademeldingMapper {
         )
     }
 
-    private fun tilPdfAdresse(adresse: Adresse?, alleLand: Map<Landkode, Land>): PdfAdresse? {
+    private fun tilPdfAdresse(adresse: Adresse?, alleLand: Map<KodeverkKode, KodeverkVerdi>): PdfAdresse? {
         if (adresse == null) {
             return null
         }
@@ -144,7 +144,7 @@ object PdfSkademeldingMapper {
         )
     }
 
-    private fun tilPdfAdresse2(adresse: no.nav.yrkesskade.meldingmottak.domene.Adresse?, alleLand: Map<Landkode, Land>): PdfAdresse {
+    private fun tilPdfAdresse2(adresse: no.nav.yrkesskade.meldingmottak.domene.Adresse?, alleLand: Map<KodeverkKode, KodeverkVerdi>): PdfAdresse {
         return PdfAdresse(
             adresselinje1 = adresse?.adresselinje1 ?: "",
             adresselinje2 = adresse?.adresselinje2,
@@ -153,10 +153,10 @@ object PdfSkademeldingMapper {
         )
     }
 
-    private fun landNavnEllerKode(landkode: String?, alleLand: Map<Landkode, Land>): String? {
+    private fun landNavnEllerKode(landkode: String?, alleLand: Map<KodeverkKode, KodeverkVerdi>): String? {
         if (landkode == null || landkode == "NO" || landkode == "NOR") return null
         val land = alleLand[landkode]
-        return land?.navn ?: landkode
+        return land?.verdi ?: landkode
     }
 
     private fun lagPdfDokumentInfo(metadata: SkademeldingMetadata): PdfDokumentInfo {
