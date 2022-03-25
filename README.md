@@ -59,3 +59,17 @@ Det er allerede opprettet en data fil for oneshot, som ligger i ./local-setup ma
 Kjør enhetstester med `mvn test`.
 
 Kjør alle tester, både enhetstester og integrasjonstester (*IT), med `mvn verify`.
+
+---
+
+# Henvendelser
+
+Enten:
+Spørsmål knyttet til koden eller prosjektet kan stilles som issues her på GitHub
+
+Eller:
+Spørsmål knyttet til koden eller prosjektet kan stilles til yrkesskade@nav.no
+
+## For NAV-ansatte
+
+Interne henvendelser kan sendes via Slack i kanalen #team-yrkesskade.
