@@ -46,6 +46,7 @@ class Kodeverkklient(
             .retrieve()
             .bodyToMono<KodeverdiRespons>()
             .block() ?: KodeverdiRespons(emptyMap())
+        // TODO: Send med callid i header for enklere feilsøking
 
         return kodeverdiRespons.kodeverdierMap
     }
