@@ -22,7 +22,10 @@ spring:
       group-id: srvc01
   datasource:
     url: jdbc:postgresql://localhost:5432/yrkesskade_mottak
-
+  cloud:
+    gcp:
+      bigquery:
+        enabled: false
 # bruk oneshot for å opprette topic
 kafka:
   topic:
@@ -62,3 +65,4 @@ no.nav.security.jwt:
           client-auth-method: client_secret_basic
 
 YRKESSKADE_DOKGEN_API_URL: http://localhost:5914
+YRKESSKADE_KODEVERK_API_URL: http://localhost:8080

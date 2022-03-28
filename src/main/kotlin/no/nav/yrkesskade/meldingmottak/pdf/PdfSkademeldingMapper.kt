@@ -1,6 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.pdf
 
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.pdf.domene.*
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
@@ -15,14 +17,15 @@ object PdfSkademeldingMapper {
 
     fun tilPdfSkademelding(
         record: SkademeldingInnsendtHendelse,
+        alleLand: Map<KodeverkKode, KodeverkVerdi>,
         beriketData: BeriketData? = null
     ) : PdfSkademelding {
 
         val skademelding = record.skademelding
         val innmelder: PdfInnmelder? = tilPdfInnmelder(skademelding.innmelder, beriketData?.innmeldersNavn)
-        val skadelidt: PdfSkadelidt? = tilPdfSkadelidt(skademelding.skadelidt, beriketData?.skadelidtsNavn, beriketData?.skadelidtsBostedsadresse)
+        val skadelidt: PdfSkadelidt? = tilPdfSkadelidt(skademelding.skadelidt, beriketData?.skadelidtsNavn, beriketData?.skadelidtsBostedsadresse, alleLand)
         val skade: PdfSkade? = tilPdfSkade(skademelding.skade)
-        val hendelsesfakta: PdfHendelsesfakta? = tilPdfHendelsesfakta(skademelding.hendelsesfakta)
+        val hendelsesfakta: PdfHendelsesfakta? = tilPdfHendelsesfakta(skademelding.hendelsesfakta, alleLand)
         val dokumentInfo: PdfDokumentInfo = lagPdfDokumentInfo(record.metadata)
 
         return PdfSkademelding(innmelder, skadelidt, skade, hendelsesfakta, dokumentInfo)
@@ -43,7 +46,12 @@ object PdfSkademeldingMapper {
         )
     }
 
-    private fun tilPdfSkadelidt(skadelidt: Skadelidt?, skadelidtsNavn: Navn?, skadelidtsBostedsadresse: no.nav.yrkesskade.meldingmottak.domene.Adresse?): PdfSkadelidt? {
+    private fun tilPdfSkadelidt(
+        skadelidt: Skadelidt?,
+        skadelidtsNavn: Navn?,
+        skadelidtsBostedsadresse: no.nav.yrkesskade.meldingmottak.domene.Adresse?,
+        alleLand: Map<KodeverkKode, KodeverkVerdi>
+    ): PdfSkadelidt? {
         if (skadelidt == null) {
             return null
         }
@@ -51,7 +59,7 @@ object PdfSkademeldingMapper {
         return PdfSkadelidt(
             Soknadsfelt("Fødselsnummer", skadelidt.norskIdentitetsnummer),
             Soknadsfelt("Navn", tilString(skadelidtsNavn)),
-            Soknadsfelt("Bosted", tilPdfAdresse2(skadelidtsBostedsadresse)),
+            Soknadsfelt("Bosted", tilPdfAdresse2(skadelidtsBostedsadresse, alleLand)),
             tilPdfDekningsforhold(skadelidt.dekningsforhold)
         )
     }
@@ -88,7 +96,7 @@ object PdfSkademeldingMapper {
         )
     }
 
-    private fun tilPdfHendelsesfakta(hendelsesfakta: Hendelsesfakta?): PdfHendelsesfakta? {
+    private fun tilPdfHendelsesfakta(hendelsesfakta: Hendelsesfakta?, alleLand: Map<KodeverkKode, KodeverkVerdi>): PdfHendelsesfakta? {
         if (hendelsesfakta == null) {
             return null
         }
@@ -114,7 +122,7 @@ object PdfSkademeldingMapper {
             hvorSkjeddeUlykken = Soknadsfelt("Hvor skjedde ulykken", hendelsesfakta.hvorSkjeddeUlykken.value),
             ulykkessted = PdfUlykkessted(
                 sammeSomVirksomhetensAdresse = Soknadsfelt("Skjedde ulykken på samme adresse", jaNei(hendelsesfakta.ulykkessted.sammeSomVirksomhetensAdresse)),
-                adresse = Soknadsfelt("Adresse", tilPdfAdresse(hendelsesfakta.ulykkessted.adresse))
+                adresse = Soknadsfelt("Adresse", tilPdfAdresse(hendelsesfakta.ulykkessted.adresse, alleLand))
             ),
             aarsakUlykkeTabellAogE = Soknadsfelt("Hva var årsaken til hendelsen og bakgrunn for årsaken", hendelsesfakta.aarsakUlykkeTabellAogE.map { it.value }),
             bakgrunnsaarsakTabellBogG = Soknadsfelt("Hva var bakgrunnen til hendelsen", hendelsesfakta.bakgrunnsaarsakTabellBogG.map { it.value }),
@@ -123,7 +131,7 @@ object PdfSkademeldingMapper {
         )
     }
 
-    private fun tilPdfAdresse(adresse: Adresse?): PdfAdresse? {
+    private fun tilPdfAdresse(adresse: Adresse?, alleLand: Map<KodeverkKode, KodeverkVerdi>): PdfAdresse? {
         if (adresse == null) {
             return null
         }
@@ -132,17 +140,23 @@ object PdfSkademeldingMapper {
             adresselinje1 = adresse.adresselinje1,
             adresselinje2 = adresse.adresselinje2,
             adresselinje3 = adresse.adresselinje3,
-            land = adresse.land
+            land = landNavnEllerKode(adresse.land, alleLand)
         )
     }
 
-    private fun tilPdfAdresse2(adresse: no.nav.yrkesskade.meldingmottak.domene.Adresse?): PdfAdresse {
+    private fun tilPdfAdresse2(adresse: no.nav.yrkesskade.meldingmottak.domene.Adresse?, alleLand: Map<KodeverkKode, KodeverkVerdi>): PdfAdresse {
         return PdfAdresse(
             adresselinje1 = adresse?.adresselinje1 ?: "",
             adresselinje2 = adresse?.adresselinje2,
             adresselinje3 = adresse?.adresselinje3,
-            land = adresse?.land
+            land = landNavnEllerKode(adresse?.land, alleLand)
         )
+    }
+
+    private fun landNavnEllerKode(landkode: String?, alleLand: Map<KodeverkKode, KodeverkVerdi>): String? {
+        if (landkode == null || landkode == "NO" || landkode == "NOR") return null
+        val land = alleLand[landkode]
+        return land?.verdi ?: landkode
     }
 
     private fun lagPdfDokumentInfo(metadata: SkademeldingMetadata): PdfDokumentInfo {

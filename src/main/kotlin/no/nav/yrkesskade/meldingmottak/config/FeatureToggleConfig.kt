@@ -88,3 +88,8 @@ interface FeatureToggleService {
 
     fun isEnabled(toggleId: String, defaultValue: Boolean = false): Boolean
 }
+
+// TODO: Jira-oppgave YSMOD-144: Fjern feature-toggle for henting av land for visning i utenlandske adresser på pdf
+enum class FeatureToggles(val toggleId: String) {
+    LANDKODER_TIL_PDF("yrkesskade.landkoder-til-pdf")
+}
