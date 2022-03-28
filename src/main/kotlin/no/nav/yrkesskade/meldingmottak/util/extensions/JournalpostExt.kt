@@ -18,7 +18,7 @@ fun Journalpost.journalfoerendeEnhetEllerNull(): String? {
         return null
     }
 
-    val nedlagteEnheter = listOf("0889")
+    val nedlagteEnheter = listOf("0889", "4203")
     if (nedlagteEnheter.contains(journalfoerendeEnhet)) {
         return null
     }
