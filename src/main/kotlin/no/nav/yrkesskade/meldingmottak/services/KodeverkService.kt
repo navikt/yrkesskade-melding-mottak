@@ -25,13 +25,11 @@ class KodeverkService(
         val key = KodeverkTypeKategori(type, kategori)
 
         if (!gyldig(type, kategori, spraak)) {
-            log.info("Henter kodeverk for type=$type, (kategori=$kategori,) språk=$spraak fra felles kodeverk")
             val map = kodeverkklient.hentKodeverk(type, kategori, spraak)
             kodeverkMap[key] = KodeverkTidData(map)
+            log.info("Hentet kodeverk for type=$type, (kategori=$kategori,) språk=$spraak. Antall koder=${kodeverkMap[key]?.data?.size}.")
         }
-        log.info("Hentet kodeverk for type=$type, (kategori=$kategori,) språk=$spraak. Antall koder=${kodeverkMap[key]?.data?.size}.")
-        val kodeverkVerdi = (kodeverkMap[key]?.data ?: emptyMap())["SWE"]
-        log.info("Landkode for SWE=${kodeverkVerdi?.verdi}")
+
         return kodeverkMap[key]?.data ?: emptyMap()
     }
 
