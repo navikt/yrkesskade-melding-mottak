@@ -31,7 +31,7 @@ class PdfService(
     private fun landkoder(spraak: String = "nb"): Map<KodeverkKode, KodeverkVerdi> {
         // TODO: Jira-oppgave YSMOD-144: Fjern feature-toggle for henting av land for visning i utenlandske adresser på pdf
         if (featureToggleService.isEnabled(FeatureToggles.LANDKODER_TIL_PDF.toggleId)) {
-            return kodeverkservice.hentKodeverk("landkoderISO2", "", spraak)
+            return kodeverkservice.hentKodeverk("landkoder", "", spraak)
         }
         return emptyMap()
     }
