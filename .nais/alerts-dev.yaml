@@ -28,6 +28,6 @@ spec:
   - alert: Økende Kafka consumer lag
     expr: sum(delta(kafka_consumergroup_group_topic_sum_lag{group="yrkesskade-melding-mottak"}[5m])) by(group, topic)/(5*60) > 0
     for: 5m
-    description: "consumer group *{{ $labels.group }}* øker med  {{ $value }} pr sekund på *{{ $labels.topic }}*"
-    action: "Sjekk logger"
+    description: "Økende Kafka lag på yrkesskade-melding-mottak"
+    action: "Sjekk Grafana og logger"
     severity: danger
