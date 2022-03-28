@@ -25,7 +25,7 @@ spec:
     action: "Sjekk loggene for å se hvorfor det er så mye feil: `kubectl logs {{ $labels.log_pod_name }} -n {{ $labels.log_namespace }}`"
     sla: Responder innen 1 time i kontortid
     severity: warning
-  - alert: (Bare erik som tester at denne fyrer) Økende Kafka consumer lag
+  - alert: Økende Kafka consumer lag
     expr: sum(delta(kafka_consumergroup_group_topic_sum_lag{group="yrkesskade-melding-mottak"}[5m])) by(group, topic)/(5*60) > 0
     for: 5m
     description: "consumer group *{{ $labels.group }}* øker med  {{ $value }} pr sekund på *{{ $labels.topic }}*"
