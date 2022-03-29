@@ -1,8 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.services
 
 import no.nav.yrkesskade.meldingmottak.clients.PdfClient
-import no.nav.yrkesskade.meldingmottak.config.FeatureToggleService
-import no.nav.yrkesskade.meldingmottak.config.FeatureToggles
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
 import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
 import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
@@ -14,8 +12,7 @@ import org.springframework.stereotype.Service
 @Service
 class PdfService(
     private val pdfClient: PdfClient,
-    private val kodeverkservice: KodeverkService,
-    private val featureToggleService: FeatureToggleService
+    private val kodeverkservice: KodeverkService
 ) {
 
     fun lagPdf(record: SkademeldingInnsendtHendelse, template: PdfTemplate): ByteArray {
@@ -29,11 +26,7 @@ class PdfService(
     }
 
     private fun landkoder(spraak: String = "nb"): Map<KodeverkKode, KodeverkVerdi> {
-        // TODO: Jira-oppgave YSMOD-144: Fjern feature-toggle for henting av land for visning i utenlandske adresser på pdf
-        if (featureToggleService.isEnabled(FeatureToggles.LANDKODER_TIL_PDF.toggleId)) {
-            return kodeverkservice.hentKodeverk("landkoder", "", spraak)
-        }
-        return emptyMap()
+        return kodeverkservice.hentKodeverk("landkoder", "", spraak)
     }
 }
 
