@@ -54,7 +54,7 @@ internal class KodeverkServiceTest {
         val map = (ReflectionTestUtils.getField(service, "kodeverkMap") as MutableMap<KodeverkTypeKategori, KodeverkTidData>)
         val kodeverkTidData = map[keyLandkoder]!!
         // Data finnes...
-        assertThat(kodeverkTidData.data["NO"]).isEqualTo(KodeverkVerdi("NO", "nb","NORGE", null))
+        assertThat(kodeverkTidData.data["NO"]).isEqualTo(KodeverkVerdi("NO", "NORGE"))
         // ...men er hentet for mer enn x minutter siden
         assertThat(kodeverkTidData.hentetTid).isBefore(Instant.now().minusSeconds(60*60))
 
