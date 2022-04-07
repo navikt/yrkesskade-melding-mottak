@@ -15,9 +15,7 @@ typealias KodeverkKode = String
 
 data class KodeverkVerdi(
     val kode: String,
-    val spraak: String,
     val verdi: String,
-    val sortering: Int?
 )
 
 data class KodeverdiRespons (
