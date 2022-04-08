@@ -1,6 +1,7 @@
 package no.nav.yrkesskade.meldingmottak.services
 
 import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
+import no.nav.yrkesskade.meldingmottak.fixtures.beriketData
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkademeldingInnsendtHendelse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -65,7 +66,7 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
     @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `skal lage saksbehandling-pdf`() {
-        val byteArray = pdfService.lagPdf(enkelSkademeldingInnsendtHendelse(), PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
+        val byteArray = pdfService.lagBeriketPdf(enkelSkademeldingInnsendtHendelse(), beriketData(), PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
         println("Pdf-størrelsen er ${byteArray.size} bytes")
 
         File("pdfServiceTest-saksbehandling.pdf").writeBytes(byteArray)
