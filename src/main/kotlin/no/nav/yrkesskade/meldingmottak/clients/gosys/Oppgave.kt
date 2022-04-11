@@ -90,4 +90,16 @@ enum class Statuskategori {
     AAPEN, AVSLUTTET
 }
 
+enum class KrutkodeMapping(val brevkode: String?, val behandlingstema: String?, val behandlingstype: String?) {
+    UTL("UTL", "ab0276", "ae0106"),
+    NAVe_13_13_05("NAVe 13-13.05", "ab0085", null),
+    NAVe_13_07_05("NAVe 13-07.05", "ab0276", null),
+    NAV_13_13_05("NAV 13-13.05", "ab0085", null),
+    UKJENT(null, null, null);
+
+    companion object {
+        fun fromBrevkode(brevkode: String?) = values().find { it.brevkode == brevkode?.trim() } ?: UKJENT
+    }
+}
+
 

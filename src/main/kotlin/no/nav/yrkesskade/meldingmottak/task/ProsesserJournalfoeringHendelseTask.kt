@@ -12,6 +12,7 @@ import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClient
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.JournalfoeringHendelseOppgavePayload
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.journalfoeringhendelse_oppgave_v1
+import no.nav.yrkesskade.meldingmottak.clients.gosys.KrutkodeMapping
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgave
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgavetype
@@ -178,6 +179,7 @@ class ProsesserJournalfoeringHendelseTask(
 
     fun opprettOppgave(journalpost: Journalpost): Oppgave {
         val aktoerId = hentAktoerId(journalpost.bruker)
+        val krutkoder = KrutkodeMapping.fromBrevkode(journalpost.hentBrevkode())
 
         val journalfoeringOppgave = OpprettJournalfoeringOppgave(
             beskrivelse = journalpost.hentHovedDokumentTittel(),
@@ -186,8 +188,8 @@ class ProsesserJournalfoeringHendelseTask(
             tema = journalpost.tema.toString(),
             tildeltEnhetsnr = journalpost.journalfoerendeEnhetEllerNull(),
             oppgavetype = Oppgavetype.JOURNALFOERING.kortnavn,
-            behandlingstema = null, // skal være null
-            behandlingstype = null, // skal være null
+            behandlingstema = krutkoder.behandlingstema,
+            behandlingstype = krutkoder.behandlingstype,
             prioritet = Prioritet.NORM,
             fristFerdigstillelse = FristFerdigstillelseTimeManager.nesteGyldigeFristForFerdigstillelse(journalpost.datoOpprettet),
             aktivDato = journalpost.datoOpprettet.toLocalDate()
