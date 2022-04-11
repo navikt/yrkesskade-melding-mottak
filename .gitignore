@@ -3,6 +3,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+Skademelding_*.pdf
+Skadeforklaring_*.pdf
 
 ### STS ###
 .apt_generated

@@ -37,43 +37,37 @@ class SkademeldingService(
     /**
      * lag PDF
      * journalfør i dokarkiv
-     * registrer metrikker?
+     * registrer metrikker
      */
     fun mottaSkademelding(record: SkademeldingInnsendtHendelse) {
         log.info("Mottatt ny skademelding")
         secureLogger.info("Mottatt ny skademelding: $record")
         val pdf = pdfService.lagPdf(record, PdfTemplate.SKADEMELDING_TRO_KOPI)
-        val beriketPdf = lagBeriketPdf(record)
+        val beriketPdf = lagBeriketPdf(record, PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
         val opprettJournalpostRequest = mapSkademeldingTilOpprettJournalpostRequest(record, pdf, beriketPdf)
         dokarkivClient.journalfoerSkademelding(opprettJournalpostRequest)
         foerMetrikkIBigQuery(record)
     }
 
-    private fun foerMetrikkIBigQuery(record: SkademeldingInnsendtHendelse) {
-        val skademeldingPayload = SkademeldingPayload(
-            kilde = record.metadata.kilde,
-            tidspunktMottatt = record.metadata.tidspunktMottatt,
-            spraak = record.metadata.spraak.toString(),
-            callId = record.metadata.navCallId
-        )
-        bigQueryClient.insert(
-            skademelding_v1,
-            skademelding_v1.transform(objectMapper.valueToTree(skademeldingPayload))
-        )
-    }
 
-    private fun lagBeriketPdf(record: SkademeldingInnsendtHendelse): ByteArray {
+    @Suppress("SameParameterValue")
+    private fun lagBeriketPdf(record: SkademeldingInnsendtHendelse, pdfTemplateSaksbehandling: PdfTemplate): ByteArray {
         val innmeldersFnr = record.skademelding.innmelder?.norskIdentitetsnummer
         val skadelidtsFnr = record.skademelding.skadelidt?.norskIdentitetsnummer
-
-        val innmeldersNavn: Navn? = hentNavn(innmeldersFnr)
-        val skadelidtsNavnOgAdresse: Pair<Navn?, Adresse?> = hentNavnOgAdresse(skadelidtsFnr)
-        val beriketData = BeriketData(innmeldersNavn, skadelidtsNavnOgAdresse.first, skadelidtsNavnOgAdresse.second)
-
-        return pdfService.lagBeriketPdf(record, beriketData, PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
+        val beriketData = lagBeriketData(innmeldersFnr, skadelidtsFnr)
+        return pdfService.lagBeriketPdf(record, beriketData, pdfTemplateSaksbehandling)
     }
 
-    private fun hentNavn(fodselsnummer: String?): Navn? {
+    private fun lagBeriketData(
+        innmeldersFnr: String?,
+        skadelidtsFnr: String?
+    ): BeriketData {
+        val innmeldersNavn: Navn? = hentNavnFraPersondataloesningen(innmeldersFnr)
+        val skadelidtsNavnOgAdresse: Pair<Navn?, Adresse?> = hentNavnOgAdresse(skadelidtsFnr)
+        return BeriketData(innmeldersNavn, skadelidtsNavnOgAdresse.first, skadelidtsNavnOgAdresse.second)
+    }
+
+    private fun hentNavnFraPersondataloesningen(fodselsnummer: String?): Navn? {
         if (fodselsnummer == null) {
             return null
         }
@@ -142,4 +136,18 @@ class SkademeldingService(
             )
         )
     }
+
+    private fun foerMetrikkIBigQuery(record: SkademeldingInnsendtHendelse) {
+        val skademeldingPayload = SkademeldingPayload(
+            kilde = record.metadata.kilde,
+            tidspunktMottatt = record.metadata.tidspunktMottatt,
+            spraak = record.metadata.spraak.toString(),
+            callId = record.metadata.navCallId
+        )
+        bigQueryClient.insert(
+            skademelding_v1,
+            skademelding_v1.transform(objectMapper.valueToTree(skademeldingPayload))
+        )
+    }
+
 }

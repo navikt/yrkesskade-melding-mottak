@@ -2,6 +2,8 @@ package no.nav.yrkesskade.meldingmottak.services
 
 import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
 import no.nav.yrkesskade.meldingmottak.fixtures.beriketData
+import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkademeldingInnsendtHendelse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -24,13 +26,14 @@ private const val CONTROLLED_BROKER_SHUTDOWN = true
  * integrasjonstester, men kan være nyttig under utvikling og feilretting.
  *
  * Forutsetninger:
- * Lokal kjøring av <code>yrkesskade-dokgen</code> må være startet.
+ * Lokal kjøring av <code>yrkesskade-dokgen</code> må være startet, eller overstyr til å bruke testmiljøet.
  *
  * Kommenter ut @Disabled annoteringer for å kjøre testene.
  *
  * OBS! @Disabled annoteringene blir ikke alltid tatt hensyn til i IntelliJ.
  */
 @Disabled("Disabled ved automatisk testkjøring")
+@Suppress("NonAsciiCharacters")
 @EmbeddedKafka(topics = [TOPIC])
 internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
 
@@ -55,21 +58,74 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
 
     @Disabled("Disabled ved automatisk testkjøring")
     @Test
-    fun `skal lage tro-kopi-pdf`() {
+    fun `skademelding - A) tro-kopi-pdf`() {
         val byteArray = pdfService.lagPdf(enkelSkademeldingInnsendtHendelse(), PdfTemplate.SKADEMELDING_TRO_KOPI)
         println("Pdf-størrelsen er ${byteArray.size} bytes")
 
-        File("pdfServiceTest-tro-kopi.pdf").writeBytes(byteArray)
+        File("Skademelding_tro-kopi.pdf").writeBytes(byteArray)
         println("Ferdig med å lage pdf.")
     }
 
     @Disabled("Disabled ved automatisk testkjøring")
     @Test
-    fun `skal lage saksbehandling-pdf`() {
+    fun `skademelding - B) saksbehandling-pdf`() {
         val byteArray = pdfService.lagBeriketPdf(enkelSkademeldingInnsendtHendelse(), beriketData(), PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
         println("Pdf-størrelsen er ${byteArray.size} bytes")
 
-        File("pdfServiceTest-saksbehandling.pdf").writeBytes(byteArray)
+        File("Skademelding_saksbehandling.pdf").writeBytes(byteArray)
+        println("Ferdig med å lage pdf.")
+    }
+
+    @Disabled("Disabled ved automatisk testkjøring")
+    @Test
+    fun `skadeforklaring - 1A) tro-kopi-pdf - foresatt melder på vegne av barn`() {
+        val byteArray = pdfService.lagPdf(
+            enkelSkadeforklaringInnsendingHendelse(),
+            PdfTemplate.SKADEFORKLARING_TRO_KOPI
+        )
+        println("Pdf-størrelsen er ${byteArray.size} bytes")
+
+        File("Skadeforklaring_tro-kopi_foresatt-melder.pdf").writeBytes(byteArray)
+        println("Ferdig med å lage pdf.")
+    }
+
+        @Disabled("Disabled ved automatisk testkjøring")
+    @Test
+    fun `skadeforklaring - 1B) tro-kopi-pdf - skadelidt melder selv`() {
+        val byteArray = pdfService.lagPdf(
+            enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv(),
+            PdfTemplate.SKADEFORKLARING_TRO_KOPI
+        )
+        println("Pdf-størrelsen er ${byteArray.size} bytes")
+
+        File("Skadeforklaring_tro-kopi_skadelidt-melder.pdf").writeBytes(byteArray)
+        println("Ferdig med å lage pdf.")
+    }
+
+    @Disabled("Disabled ved automatisk testkjøring")
+    @Test
+    fun `skadeforklaring - 2A) beriket pdf - foresatt melder på vegne av barn`() {
+        val byteArray = pdfService.lagBeriketPdf(
+            enkelSkadeforklaringInnsendingHendelse(),
+            beriketData(),
+            PdfTemplate.SKADEFORKLARING_BERIKET
+        )
+        println("Pdf-størrelsen er ${byteArray.size} bytes")
+
+        File("Skadeforklaring_beriket_foresatt-melder.pdf").writeBytes(byteArray)
+        println("Ferdig med å lage pdf.")
+    }
+
+    @Disabled("Disabled ved automatisk testkjøring")
+    @Test
+    fun `skadeforklaring - 2B) beriket pdf - skadelidt melder selv`() {
+        val byteArray = pdfService.lagBeriketPdf(
+            enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv(),
+            beriketData(), PdfTemplate.SKADEFORKLARING_BERIKET
+        )
+        println("Pdf-størrelsen er ${byteArray.size} bytes")
+
+        File("Skadeforklaring_beriket_skadelidt-melder.pdf").writeBytes(byteArray)
         println("Ferdig med å lage pdf.")
     }
 

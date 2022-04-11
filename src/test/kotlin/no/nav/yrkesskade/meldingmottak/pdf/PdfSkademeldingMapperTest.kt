@@ -7,13 +7,14 @@ import no.nav.yrkesskade.meldingmottak.fixtures.beriketData
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkademeldingInnsendtHendelse
 import no.nav.yrkesskade.meldingmottak.fixtures.noenLand
 import no.nav.yrkesskade.meldingmottak.pdf.domene.*
+import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.*
 import no.nav.yrkesskade.skademelding.model.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class PdfSkademeldingMapperTest {
 
-    val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
+    private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
 
     @Test
@@ -89,7 +90,7 @@ internal class PdfSkademeldingMapperTest {
         assertThat(hendelsesfakta?.tid?.tidspunkt?.verdi).isEqualTo(
             PdfTidspunkt(
                 dato = "28.02.2022",
-                klokkeslett = "10.15"
+                klokkeslett = "17.15"
             )
         )
         assertThat(hendelsesfakta?.tid?.periode).isEqualTo(Soknadsfelt(

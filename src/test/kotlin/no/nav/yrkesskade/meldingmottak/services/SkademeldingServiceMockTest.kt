@@ -10,6 +10,7 @@ import no.nav.yrkesskade.meldingmottak.domene.Adresse
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostResponse
 import no.nav.yrkesskade.meldingmottak.fixtures.skademeldingInnsendtHendelse
+import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -24,8 +25,8 @@ class SkademeldingServiceMockTest {
 
     @BeforeEach
     fun setup() {
-        every { pdfService.lagPdf(any(), any()) } answers { ByteArray(10) }
-        every { pdfService.lagBeriketPdf(any(), any(), any()) } answers { ByteArray(10) }
+        every { pdfService.lagPdf(ofType(SkademeldingInnsendtHendelse::class), any()) } answers { ByteArray(10) }
+        every { pdfService.lagBeriketPdf(ofType(SkademeldingInnsendtHendelse::class), any(), any()) } answers { ByteArray(10) }
         every { pdlClient.hentNavn(any()) } answers { Navn("John", null, "Doe") }
         every { pdlClient.hentNavnOgAdresse(any(), any()) } answers {
             Pair(
@@ -38,8 +39,8 @@ class SkademeldingServiceMockTest {
     @Test
     fun `skal kalle paa pdfService naar en skademelding kommer inn`() {
         service.mottaSkademelding(skademeldingInnsendtHendelse())
-        verify(exactly = 1) { pdfService.lagPdf(any(), any()) }
-        verify(exactly = 1) { pdfService.lagBeriketPdf(any(), any(), any()) }
+        verify(exactly = 1) { pdfService.lagPdf(ofType(SkademeldingInnsendtHendelse::class), any()) }
+        verify(exactly = 1) { pdfService.lagBeriketPdf(ofType(SkademeldingInnsendtHendelse::class), any(), any()) }
     }
 
     @Test
