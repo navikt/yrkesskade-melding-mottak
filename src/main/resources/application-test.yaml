@@ -57,6 +57,4 @@ no.nav.security.jwt:
           client-auth-method: client_secret_basic
 
 YRKESSKADE_DOKGEN_API_URL: http://localhost:5914
-#YRKESSKADE_DOKGEN_API_URL: https://yrkesskade-dokgen.dev.intern.nav.no
 YRKESSKADE_KODEVERK_API_URL: http://localhost:8080
-#YRKESSKADE_KODEVERK_API_URL: https://yrkesskade-kodeverk.dev.intern.nav.no
