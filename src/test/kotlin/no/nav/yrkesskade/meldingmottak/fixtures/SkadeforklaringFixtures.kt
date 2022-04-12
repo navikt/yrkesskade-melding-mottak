@@ -42,7 +42,7 @@ fun enkelSkadeforklaring(): Skadeforklaring =
         ),
         vedleggtype = "",
         vedleggreferanser = emptyList(),
-        fravaer = Fravaer(true, "Egenmelding"),
+        fravaer = Fravaer(true, "sykemelding"),
         behandler = behandler()
     )
 
@@ -59,7 +59,7 @@ fun enkelSkadeforklaringHvorSkadelidtMelderSelv(): Skadeforklaring =
         ),
         vedleggtype = "",
         vedleggreferanser = emptyList(),
-        fravaer = Fravaer(true, "Egenmelding"),
+        fravaer = Fravaer(true, "egenmelding"),
         behandler = behandler()
     )
 

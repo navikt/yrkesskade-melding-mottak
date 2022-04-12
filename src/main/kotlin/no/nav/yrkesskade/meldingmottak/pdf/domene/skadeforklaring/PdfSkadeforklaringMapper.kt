@@ -1,6 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.pdf.domene.skadeforklaring
 
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.integration.model.*
 import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
@@ -11,6 +13,7 @@ object PdfSkadeforklaringMapper {
 
     fun tilPdfSkadeforklaring(
         record: SkadeforklaringInnsendingHendelse,
+        fravaertyper: Map<KodeverkKode, KodeverkVerdi>,
         beriketData: BeriketData? = null
     ) : PdfSkadeforklaring {
 
@@ -20,7 +23,7 @@ object PdfSkadeforklaringMapper {
         val tid = tilPdfTid(skadeforklaring)
         val arbeidsbeskrivelse = tilPdfArbeidsbeskrivelse(skadeforklaring.arbeidsbeskrivelse)
         val ulykkesbeskrivelse = tilPdfUlykkesbeskrivelse(skadeforklaring.ulykkesbeskrivelse)
-        val fravaer = tilPdfFravaer(skadeforklaring.fravaer)
+        val fravaer = tilPdfFravaer(skadeforklaring.fravaer, fravaertyper)
         val behandler = tilPdfBehandler(skadeforklaring.behandler)
         val dokumentInfo = lagPdfDokumentInfo(record.metadata)
 
@@ -78,11 +81,15 @@ object PdfSkadeforklaringMapper {
     private fun tilPdfUlykkesbeskrivelse(ulykkesbeskrivelse: String): Soknadsfelt<String> =
         Soknadsfelt("Gi en så nøyaktig beskrivelse av hendelsen som mulig", ulykkesbeskrivelse)
 
-    private fun tilPdfFravaer(fravaer: Fravaer): PdfFravaer {
+    private fun tilPdfFravaer(fravaer: Fravaer, fravaertyper: Map<KodeverkKode, KodeverkVerdi>): PdfFravaer {
         return PdfFravaer(
             Soknadsfelt("Førte din skade/sykdom til fravær?", MapperUtil.jaNei(fravaer.harFravaer)),
-            Soknadsfelt("Velg type fravær", fravaer.fravaertype)
+            Soknadsfelt("Velg type fravær", hentVerdi(fravaer.fravaertype, fravaertyper))
         )
+    }
+
+    private fun hentVerdi(kode: KodeverkKode, kodeverdier: Map<KodeverkKode, KodeverkVerdi>): String {
+        return kodeverdier[kode]?.verdi.orEmpty()
     }
 
     private fun tilPdfBehandler(behandler: Behandler): PdfBehandler {

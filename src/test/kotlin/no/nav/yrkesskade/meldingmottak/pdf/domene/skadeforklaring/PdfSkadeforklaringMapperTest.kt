@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.fixtures.beriketData
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.meldingmottak.fixtures.fravaertyper
 import no.nav.yrkesskade.meldingmottak.pdf.domene.*
 import no.nav.yrkesskade.skademelding.model.Tidstype
 import org.assertj.core.api.Assertions.assertThat
@@ -22,7 +23,7 @@ internal class PdfSkadeforklaringMapperTest {
         val beriketData = beriketData()
         println("beriket data er:\n $beriketData")
 
-        val pdfSkadeforklaring = PdfSkadeforklaringMapper.tilPdfSkadeforklaring(record, beriketData)
+        val pdfSkadeforklaring = PdfSkadeforklaringMapper.tilPdfSkadeforklaring(record, fravaertyper(), beriketData)
         println("PdfSkadeforklaringen er $pdfSkadeforklaring")
 
         assertPdfSkadeforklaring(pdfSkadeforklaring)
@@ -82,7 +83,7 @@ internal class PdfSkadeforklaringMapperTest {
 
     private fun assertFravaer(fravaer: PdfFravaer) {
         assertThat(fravaer.harFravaer.verdi).isEqualTo("Ja")
-        assertThat(fravaer.fravaertype.verdi).isEqualTo("Egenmelding")
+        assertThat(fravaer.fravaertype.verdi).isEqualTo("Sykemelding")
     }
 
     private fun assertBehandler(behandler: PdfBehandler) {

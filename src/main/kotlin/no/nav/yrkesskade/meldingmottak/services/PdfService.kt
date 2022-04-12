@@ -28,17 +28,21 @@ class PdfService(
     }
 
     fun lagPdf(record: SkadeforklaringInnsendingHendelse, template: PdfTemplate): ByteArray {
-        val pdfData: PdfData = PdfSkadeforklaringMapper.tilPdfSkadeforklaring(record)
+        val pdfData: PdfData = PdfSkadeforklaringMapper.tilPdfSkadeforklaring(record, fravaertyper())
         return pdfClient.lagPdf(pdfData, template)
     }
 
     fun lagBeriketPdf(record: SkadeforklaringInnsendingHendelse, beriketData: BeriketData?, template: PdfTemplate): ByteArray {
-        val pdfData: PdfData = PdfSkadeforklaringMapper.tilPdfSkadeforklaring(record, beriketData)
+        val pdfData: PdfData = PdfSkadeforklaringMapper.tilPdfSkadeforklaring(record, fravaertyper(), beriketData)
         return pdfClient.lagPdf(pdfData, template)
     }
 
     private fun landkoder(spraak: String = "nb"): Map<KodeverkKode, KodeverkVerdi> {
         return kodeverkservice.hentKodeverk("landkoder", "", spraak)
+    }
+
+    private fun fravaertyper(spraak: String = "nb"): Map<KodeverkKode, KodeverkVerdi> {
+        return kodeverkservice.hentKodeverk("fravaertype", "", spraak)
     }
 }
 
