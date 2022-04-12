@@ -3,7 +3,7 @@ package no.nav.yrkesskade.meldingmottak.clients
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfSkademelding
+import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfData
 import no.nav.yrkesskade.meldingmottak.services.PdfTemplate
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.slf4j.LoggerFactory
@@ -27,9 +27,9 @@ class PdfClient(
     }
 
     @Retryable
-    fun lagPdf(pdfSkademelding: PdfSkademelding, template: PdfTemplate): ByteArray {
+    fun lagPdf(pdfData: PdfData, template: PdfTemplate): ByteArray {
         log.info("Lager pdf av typen ${template.templatenavn}")
-        val prettyJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pdfSkademelding)
+        val prettyJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pdfData)
         secureLogger.info("Lager pdf med data:\n\r$prettyJson")
         return logTimingAndWebClientResponseException("lagPdf") {
             pdfWebClient.post()
@@ -40,7 +40,7 @@ class PdfClient(
                         .build()
                 }
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(pdfSkademelding)
+                .bodyValue(pdfData)
                 .retrieve()
                 .bodyToMono<ByteArray>()
                 .block() ?: throw RuntimeException("Kunne ikke lage pdf")

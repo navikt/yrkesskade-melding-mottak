@@ -1,10 +1,6 @@
-package no.nav.yrkesskade.meldingmottak.pdf.domene
+package no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding
 
-data class Soknadsfelt<T>(
-    val label: String,
-    val verdi: T
-)
-
+import no.nav.yrkesskade.meldingmottak.pdf.domene.*
 
 data class PdfSkademelding(
     val innmelder: PdfInnmelder?,
@@ -12,7 +8,7 @@ data class PdfSkademelding(
     val skade: PdfSkade?,
     val hendelsesfakta: PdfHendelsesfakta?,
     val dokumentInfo: PdfDokumentInfo
-)
+) : PdfData()
 
 
 
@@ -60,48 +56,8 @@ data class PdfHendelsesfakta(
     val utfyllendeBeskrivelse: Soknadsfelt<String?>
 )
 
-data class PdfTid(
-    val tidstype: String,
-    val tidspunkt: Soknadsfelt<PdfTidspunkt>,
-    val periode: Soknadsfelt<PdfPeriode>,
-    val ukjent: Soknadsfelt<Boolean?>
-)
-
-data class PdfTidspunkt(
-    val dato: String,
-    val klokkeslett: String
-)
-
-data class PdfPeriode(
-    val fra: String,
-    val til: String
-)
-
 data class PdfUlykkessted(
     val sammeSomVirksomhetensAdresse: Soknadsfelt<String>,
     val adresse: Soknadsfelt<PdfAdresse?>
 )
 
-data class PdfAdresse(
-    val adresselinje1: String,
-    val adresselinje2: String?,
-    val adresselinje3: String?,
-    val land: String?
-)
-
-data class PdfDokumentInfo(
-    val dokumentnavn: String,
-    val dokumentnummer: String,
-    val dokumentDatoPrefix: String,
-    val dokumentDato: String,
-    val tekster: PdfTekster
-)
-
-data class PdfTekster(
-    val innmelderSeksjonstittel: String,
-    val tidOgStedSeksjonstittel: String,
-    val skadelidtSeksjonstittel: String,
-    val omUlykkenSeksjonstittel: String,
-    val omSkadenSeksjonstittel: String,
-    val omSkadenFlereSkader: String
-)

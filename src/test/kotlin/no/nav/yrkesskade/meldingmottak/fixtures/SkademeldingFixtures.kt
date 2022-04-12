@@ -1,35 +1,11 @@
+@file:Suppress("RedundantNullableReturnType")
+
 package no.nav.yrkesskade.meldingmottak.fixtures
 
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
 import no.nav.yrkesskade.meldingmottak.domene.Navn
-import no.nav.yrkesskade.model.SkademeldingBeriketData
-import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
-import no.nav.yrkesskade.model.SkademeldingMetadata
-import no.nav.yrkesskade.model.Spraak
-import no.nav.yrkesskade.model.Systemkilde
-import no.nav.yrkesskade.skademelding.model.Adresse
-import no.nav.yrkesskade.skademelding.model.Alvorlighetsgrad
-import no.nav.yrkesskade.skademelding.model.AntattSykefravaerTabellH
-import no.nav.yrkesskade.skademelding.model.BakgrunnsaarsakTabellBogG
-import no.nav.yrkesskade.skademelding.model.Dekningsforhold
-import no.nav.yrkesskade.skademelding.model.Hendelsesfakta
-import no.nav.yrkesskade.skademelding.model.HvorSkjeddeUlykken
-import no.nav.yrkesskade.skademelding.model.Innmelder
-import no.nav.yrkesskade.skademelding.model.Innmelderrolle
-import no.nav.yrkesskade.skademelding.model.KroppsdelTabellD
-import no.nav.yrkesskade.skademelding.model.NaarSkjeddeUlykken
-import no.nav.yrkesskade.skademelding.model.Rolletype
-import no.nav.yrkesskade.skademelding.model.Skade
-import no.nav.yrkesskade.skademelding.model.SkadeartTabellC
-import no.nav.yrkesskade.skademelding.model.Skadelidt
-import no.nav.yrkesskade.skademelding.model.Skademelding
-import no.nav.yrkesskade.skademelding.model.SkadetDel
-import no.nav.yrkesskade.skademelding.model.StedsbeskrivelseTabellF
-import no.nav.yrkesskade.skademelding.model.Stillingstittel
-import no.nav.yrkesskade.skademelding.model.Tid
-import no.nav.yrkesskade.skademelding.model.Tidstype
-import no.nav.yrkesskade.skademelding.model.UlykkesAarsakTabellAogE
-import no.nav.yrkesskade.skademelding.model.Ulykkessted
+import no.nav.yrkesskade.model.*
+import no.nav.yrkesskade.skademelding.model.*
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.OffsetDateTime
@@ -69,7 +45,7 @@ private fun skadelidt(): Skadelidt? {
         dekningsforhold = Dekningsforhold(
             organisasjonsnummer = "123456789",
             navnPaaVirksomheten = "Bedriften AS",
-            stillingstittelTilDenSkadelidte = listOf<Stillingstittel>(
+            stillingstittelTilDenSkadelidte = listOf(
                 Stillingstittel.agroteknikere,
                 Stillingstittel.altmuligmann
             ),
@@ -93,7 +69,7 @@ private fun hendelsesfakta(): Hendelsesfakta? {
     return Hendelsesfakta(
         tid = Tid(
             tidstype = Tidstype.tidspunkt,
-            tidspunkt = OffsetDateTime.of(2022, Month.FEBRUARY.value, 28, 10, 15, 0, 0, ZoneOffset.UTC),
+            tidspunkt = OffsetDateTime.of(2022, Month.FEBRUARY.value, 28, 16, 15, 0, 0, ZoneOffset.UTC),
             periode = null,
             ukjent = false
         ),
@@ -125,7 +101,7 @@ private fun hendelsesfakta(): Hendelsesfakta? {
 private fun metadata(): SkademeldingMetadata {
     return SkademeldingMetadata(
         kilde = "web",
-        tidspunktMottatt = LocalDateTime.of(2022, Month.FEBRUARY, 28, 7, 30, 0).toInstant(ZoneOffset.ofHours(1)),
+        tidspunktMottatt = LocalDateTime.of(2022, Month.FEBRUARY, 28, 17, 30, 0).toInstant(ZoneOffset.ofHours(1)),
         spraak = Spraak.NB,
         navCallId = "ABC-123456789"
     )

@@ -4,7 +4,15 @@ data class Navn(
     val fornavn: String,
     val mellomnavn: String?,
     val etternavn: String
-)
+) {
+    override fun toString(): String {
+        return buildString {
+            append("$fornavn ")
+            if (mellomnavn != null) append("$mellomnavn ")
+            append(etternavn)
+        }
+    }
+}
 
 data class Adresse(
     val adresselinje1: String,

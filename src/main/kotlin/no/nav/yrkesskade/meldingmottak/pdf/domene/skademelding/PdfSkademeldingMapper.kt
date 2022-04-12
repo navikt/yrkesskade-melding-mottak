@@ -1,17 +1,16 @@
-package no.nav.yrkesskade.meldingmottak.pdf
+package no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding
 
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
-import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
 import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.pdf.domene.*
+import no.nav.yrkesskade.meldingmottak.pdf.domene.MapperUtil.datoFormatert
+import no.nav.yrkesskade.meldingmottak.pdf.domene.MapperUtil.jaNei
+import no.nav.yrkesskade.meldingmottak.pdf.domene.MapperUtil.klokkeslettFormatert
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import no.nav.yrkesskade.model.SkademeldingMetadata
 import no.nav.yrkesskade.skademelding.model.*
-import java.time.LocalDate
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 object PdfSkademeldingMapper {
 
@@ -39,7 +38,7 @@ object PdfSkademeldingMapper {
 
         return PdfInnmelder(
             norskIdentitetsnummer = Soknadsfelt("Fødselsnummer", innmelder.norskIdentitetsnummer),
-            navn = Soknadsfelt("Navn", tilString(innmeldersNavn)),
+            navn = Soknadsfelt("Navn", innmeldersNavn?.toString().orEmpty()),
             paaVegneAv = Soknadsfelt("TODO", innmelder.paaVegneAv),
             innmelderrolle = Soknadsfelt("TODO", innmelder.innmelderrolle.value),
             altinnrolleIDer = Soknadsfelt("Rolle hentet fra Altinn", innmelder.altinnrolleIDer)
@@ -58,7 +57,7 @@ object PdfSkademeldingMapper {
 
         return PdfSkadelidt(
             Soknadsfelt("Fødselsnummer", skadelidt.norskIdentitetsnummer),
-            Soknadsfelt("Navn", tilString(skadelidtsNavn)),
+            Soknadsfelt("Navn", skadelidtsNavn?.toString().orEmpty()),
             Soknadsfelt("Bosted", tilPdfAdresse2(skadelidtsBostedsadresse, alleLand)),
             tilPdfDekningsforhold(skadelidt.dekningsforhold)
         )
@@ -164,7 +163,7 @@ object PdfSkademeldingMapper {
             dokumentnavn = "Melding om yrkesskade eller yrkessykdom",
             dokumentnummer = "NAV 13",
             dokumentDatoPrefix = "Innsendt digitalt ",
-            dokumentDato = datoFormatert(LocalDate.ofInstant(metadata.tidspunktMottatt, ZoneId.of("Europe/Oslo"))),
+            dokumentDato = datoFormatert(metadata.tidspunktMottatt),
             tekster = lagPdfTekster()
         )
     }
@@ -178,37 +177,6 @@ object PdfSkademeldingMapper {
             omSkadenSeksjonstittel = "Om skaden",
             omSkadenFlereSkader = "Denne skademeldingen inneholder flere skader"
         )
-    }
-
-    private fun datoFormatert(dateTime: OffsetDateTime?): String {
-        return dateTime?.toLocalDate()?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: ""
-    }
-
-    private fun datoFormatert(date: LocalDate?): String {
-        return date?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: ""
-    }
-
-    private fun klokkeslettFormatert(dateTime: OffsetDateTime?): String {
-        return dateTime?.toLocalTime()?.format(DateTimeFormatter.ofPattern("hh.mm")) ?: ""
-    }
-
-    private fun jaNei(boolean: Boolean): String {
-        return when (boolean) {
-            true -> "Ja"
-            false -> "Nei"
-        }
-    }
-
-    private fun tilString(navn: Navn?): String {
-        if (navn == null) {
-            return ""
-        }
-
-        return buildString {
-            append("${navn.fornavn} ")
-            if (navn.mellomnavn != null) append("${navn.mellomnavn} ")
-            append(navn.etternavn)
-        }
     }
 
 }
