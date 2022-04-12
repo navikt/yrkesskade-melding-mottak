@@ -19,7 +19,7 @@ class SkadeforklaringService(
     private val secureLogger = getSecureLogger()
 
 
-    // mottak av skadeforklaring er ikke ferdig implementert ennå.
+    // TODO: YSMOD-200 Mottak av skadeforklaring er ikke ferdig implementert ennå.
     // vil skadeforklaring komme på en egen kafka topic?
     fun mottaSkadeforklaring(record: SkadeforklaringInnsendingHendelse) {
         log.info("Mottatt ny skadeforklaring")
