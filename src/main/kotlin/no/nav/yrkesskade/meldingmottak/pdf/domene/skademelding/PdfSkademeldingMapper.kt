@@ -8,7 +8,6 @@ import no.nav.yrkesskade.meldingmottak.pdf.domene.*
 import no.nav.yrkesskade.meldingmottak.pdf.domene.MapperUtil.datoFormatert
 import no.nav.yrkesskade.meldingmottak.pdf.domene.MapperUtil.jaNei
 import no.nav.yrkesskade.meldingmottak.pdf.domene.MapperUtil.klokkeslettFormatert
-import no.nav.yrkesskade.meldingmottak.pdf.domene.MapperUtil.tilString
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import no.nav.yrkesskade.model.SkademeldingMetadata
 import no.nav.yrkesskade.skademelding.model.*
@@ -39,7 +38,7 @@ object PdfSkademeldingMapper {
 
         return PdfInnmelder(
             norskIdentitetsnummer = Soknadsfelt("Fødselsnummer", innmelder.norskIdentitetsnummer),
-            navn = Soknadsfelt("Navn", tilString(innmeldersNavn)),
+            navn = Soknadsfelt("Navn", innmeldersNavn?.toString().orEmpty()),
             paaVegneAv = Soknadsfelt("TODO", innmelder.paaVegneAv),
             innmelderrolle = Soknadsfelt("TODO", innmelder.innmelderrolle.value),
             altinnrolleIDer = Soknadsfelt("Rolle hentet fra Altinn", innmelder.altinnrolleIDer)
@@ -58,7 +57,7 @@ object PdfSkademeldingMapper {
 
         return PdfSkadelidt(
             Soknadsfelt("Fødselsnummer", skadelidt.norskIdentitetsnummer),
-            Soknadsfelt("Navn", tilString(skadelidtsNavn)),
+            Soknadsfelt("Navn", skadelidtsNavn?.toString().orEmpty()),
             Soknadsfelt("Bosted", tilPdfAdresse2(skadelidtsBostedsadresse, alleLand)),
             tilPdfDekningsforhold(skadelidt.dekningsforhold)
         )

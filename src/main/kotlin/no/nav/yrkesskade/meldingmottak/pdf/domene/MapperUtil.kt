@@ -1,6 +1,5 @@
 package no.nav.yrkesskade.meldingmottak.pdf.domene
 
-import no.nav.yrkesskade.meldingmottak.domene.Navn
 import java.time.*
 import java.time.format.DateTimeFormatter
 
@@ -51,18 +50,6 @@ object MapperUtil {
         return when (boolean) {
             true -> "Ja"
             false -> "Nei"
-        }
-    }
-
-    fun tilString(navn: Navn?): String {
-        if (navn == null) {
-            return ""
-        }
-
-        return buildString {
-            append("${navn.fornavn} ")
-            if (navn.mellomnavn != null) append("${navn.mellomnavn} ")
-            append(navn.etternavn)
         }
     }
 

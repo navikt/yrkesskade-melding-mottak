@@ -39,7 +39,7 @@ object PdfSkadeforklaringMapper {
     private fun tilPdfInnmelder(innmelder: Innmelder, innmeldersNavn: Navn?): PdfInnmelder {
         return PdfInnmelder(
             norskIdentitetsnummer = Soknadsfelt("Fødselsnummer", innmelder.norskIdentitetsnummer),
-            navn = Soknadsfelt("Navn", MapperUtil.tilString(innmeldersNavn)),
+            navn = Soknadsfelt("Navn", innmeldersNavn?.toString().orEmpty()),
             innmelderrolle = Soknadsfelt("Rolle", innmelder.rolle)
         )
     }
@@ -47,7 +47,7 @@ object PdfSkadeforklaringMapper {
     private fun tilPdfSkadelidt(skadelidt: Skadelidt, skadelidtsNavn: Navn?): PdfSkadelidt {
         return PdfSkadelidt(
             Soknadsfelt("Fødselsnummer", skadelidt.norskIdentitetsnummer),
-            Soknadsfelt("Navn", MapperUtil.tilString(skadelidtsNavn))
+            Soknadsfelt("Navn", skadelidtsNavn?.toString().orEmpty())
         )
     }
 
