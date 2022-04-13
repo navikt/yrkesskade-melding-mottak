@@ -90,6 +90,24 @@ enum class Statuskategori {
     AAPEN, AVSLUTTET
 }
 
+/**
+ * Enum for mapping fra enkelte brevkoder til behandlingstema og behandlingstype.
+ * Behandlingstema og behandlingstype sendes til Oppgave-API for å sørge for at brevene under får satt riktig
+ * "Gjelder-kode" i Gosys og rutes til riktig enhet.
+ * Kodene hentes "egentlig" med oppslag mot felles kodeverk, men det er så få som gjelder YRK, så vi kan bare ha dem her.
+ *
+ * Beskrivelse av brevkoder:
+ * UTL:             Brev - utland
+ *
+ * NAVe 13-13.05:   Ettersendelse til søknad fra selvstendig næringsdrivende og frilansere om opptak i
+ *                  frivillig trygd med rett til særytelser ved yrkesskade
+ *
+ * NAVe 13-07.05:   Ettersendelse til melding om yrkesskade eller yrkessykdom som er
+ *                  påført under arbeid på norsk eller utenlandsk landterritorium
+ *
+ * NAV 13-13.05:    Søknad fra selvstendig næringsdrivende og frilansere om opptak i frivillig trygd
+ *                  med rett til særytelser ved yrkesskade
+ */
 enum class KrutkodeMapping(val brevkode: String?, val behandlingstema: String?, val behandlingstype: String?) {
     UTL("UTL", "ab0276", "ae0106"),
     NAVe_13_13_05("NAVe 13-13.05", "ab0085", null),
