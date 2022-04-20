@@ -1,0 +1,36 @@
+{
+  "innmelder": {
+    "norskIdentitetsnummer": "12345678901"
+  },
+  "skadelidt": {
+    "norskIdentitetsnummer": "12345678901"
+  },
+  "tid": {
+    "tidstype": "TIDSPUNKT",
+    "tidspunkt": "2022-04-02T08:45:00.000Z"
+  },
+  "behandler": {
+    "erBehandlerOppsokt": true,
+    "behandlerNavn": "Helsesenteret",
+    "adresse": {
+      "adresse": "Tverrgata 10",
+      "postnummer": "1590",
+      "poststed": "Nabobyen"
+    }
+  },
+  "fravaer": {
+    "harFravaer": true,
+    "fravaertype": ""
+  },
+  "arbeidsbeskrivelse": "Jeg arbeidet med blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla ",
+  "ulykkesbeskrivelse": "Hendelsesforløpet var at blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla ",
+  "vedleggtype": "digital",
+  "vedleggreferanser": [
+    {
+      "id": "Vf86812ec1acb4e7587808372c3baf4b2",
+      "navn": "sample.pdf",
+      "url": "https://storage.googleapis.com/download/storage/v1/b/yrkesskade-skadeforklaring-vedlegg/o/Vf86812ec1acb4e7587808372c3baf4b2?generation=1650451916189200&alt=media",
+      "storrelse": 3028
+    }
+  ]
+}
