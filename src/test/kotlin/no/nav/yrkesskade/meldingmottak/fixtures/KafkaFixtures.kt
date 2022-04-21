@@ -4,6 +4,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import no.nav.yrkesskade.meldingmottak.domene.BeriketData
+import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.integration.model.Skadeforklaring
 import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringMetadata
@@ -132,6 +134,11 @@ fun skadeforklaringInnsendingHendelse(): SkadeforklaringInnsendingHendelse {
             spraak = no.nav.yrkesskade.meldingmottak.integration.mottak.model.Spraak.NB,
             navCallId = UUID.randomUUID().toString()
         ),
-        skadeforklaring = skadeforklaring
+        skadeforklaring = skadeforklaring,
+        beriketData = BeriketData(
+            innmeldersNavn = Navn("Ola", "B", "Normann"),
+            skadelidtsNavn = Navn("Lisa", null, "Normann"),
+            skadelidtsBostedsadresse = null
+        )
     )
 }

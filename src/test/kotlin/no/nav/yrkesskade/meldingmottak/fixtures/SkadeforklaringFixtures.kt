@@ -1,5 +1,7 @@
 package no.nav.yrkesskade.meldingmottak.fixtures
 
+import no.nav.yrkesskade.meldingmottak.domene.BeriketData
+import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.integration.model.*
 import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringMetadata
@@ -16,7 +18,12 @@ fun enkelSkadeforklaringInnsendingHendelse(): SkadeforklaringInnsendingHendelse 
             spraak = Spraak.NB,
             navCallId = "1234-5678-90"
         ),
-        skadeforklaring = enkelSkadeforklaring()
+        skadeforklaring = enkelSkadeforklaring(),
+        beriketData = BeriketData(
+            innmeldersNavn = Navn("Ola", "B", "Normann"),
+            skadelidtsNavn = Navn("Lisa", null, "Normann"),
+            skadelidtsBostedsadresse = null
+        )
     )
 
 fun enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv(): SkadeforklaringInnsendingHendelse =
@@ -26,7 +33,12 @@ fun enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv(): Skadeforkla
             spraak = Spraak.NB,
             navCallId = "2222-3333-4444"
         ),
-        skadeforklaring = enkelSkadeforklaringHvorSkadelidtMelderSelv()
+        skadeforklaring = enkelSkadeforklaringHvorSkadelidtMelderSelv(),
+        beriketData = BeriketData(
+            innmeldersNavn = Navn("Lisa", null, "Normann"),
+            skadelidtsNavn = Navn("Lisa", null, "Normann"),
+            skadelidtsBostedsadresse = null
+        )
     )
 
 fun enkelSkadeforklaring(): Skadeforklaring =

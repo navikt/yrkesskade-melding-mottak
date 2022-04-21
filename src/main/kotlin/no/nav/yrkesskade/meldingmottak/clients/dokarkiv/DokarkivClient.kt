@@ -29,9 +29,9 @@ class DokarkivClient(
     }
 
     @Retryable
-    fun journalfoerSkademelding(opprettJournalpostRequest: OpprettJournalpostRequest): OpprettJournalpostResponse? {
-        log.info("Journalfører skademelding")
-        return logTimingAndWebClientResponseException("journalførSkademelding") {
+    fun journalfoerDokument(opprettJournalpostRequest: OpprettJournalpostRequest): OpprettJournalpostResponse? {
+        log.info("Journalfører dokument")
+        return logTimingAndWebClientResponseException("journalførDokument") {
             dokarkivWebClient.post()
                 .uri { uriBuilder ->
                     uriBuilder.pathSegment("rest")
@@ -47,7 +47,7 @@ class DokarkivClient(
                 .bodyValue(opprettJournalpostRequest)
                 .retrieve()
                 .bodyToMono<OpprettJournalpostResponse>()
-                .block() ?: throw RuntimeException("Kunne ikke journalføre skademelding")
+                .block() ?: throw RuntimeException("Kunne ikke journalføre dokument")
         }
     }
 
@@ -64,7 +64,7 @@ class DokarkivClient(
                 ex.responseBodyAsString
             )
             if (ex.statusCode == HttpStatus.CONFLICT) {
-                log.info("Skademeldingen har allerede blitt journalført.")
+                log.info("Dokumentet har allerede blitt journalført.")
                 return null
             }
             throw ex
