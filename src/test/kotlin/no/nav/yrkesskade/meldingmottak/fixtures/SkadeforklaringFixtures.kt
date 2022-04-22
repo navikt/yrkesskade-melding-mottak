@@ -43,10 +43,11 @@ fun enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv(): Skadeforkla
 
 fun enkelSkadeforklaring(): Skadeforklaring =
     Skadeforklaring(
+        saksnummer = null,
         innmelder = skadeforklaringInnmelderErForesatt(),
         skadelidt = skadeforklaringSkadelidt(),
-        arbeidsbeskrivelse = "Dette er arbeidsbeskrivelsen",
-        ulykkesbeskrivelse = "Dette er ulykkesbeskrivelsen",
+        arbeidetMedIUlykkesoeyeblikket = "Dette er arbeidsbeskrivelsen",
+        noeyaktigBeskrivelseAvHendelsen = "Dette er ulykkesbeskrivelsen",
         tid = Tid(
             tidstype = "Tidspunkt",
             tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
@@ -54,16 +55,17 @@ fun enkelSkadeforklaring(): Skadeforklaring =
         ),
         vedleggtype = "",
         vedleggreferanser = emptyList(),
-        fravaer = Fravaer(true, "sykemelding"),
+        fravaer = Fravaer("treDagerEllerMindre", "Sykemelding"),
         behandler = behandler()
     )
 
 fun enkelSkadeforklaringHvorSkadelidtMelderSelv(): Skadeforklaring =
     Skadeforklaring(
+        saksnummer = null,
         innmelder = skadeforklaringInnmelderErSkadelidt(),
         skadelidt = skadeforklaringSkadelidt(),
-        arbeidsbeskrivelse = "Dette er arbeidsbeskrivelsen",
-        ulykkesbeskrivelse = "Dette er ulykkesbeskrivelsen",
+        arbeidetMedIUlykkesoeyeblikket = "Dette er arbeidsbeskrivelsen",
+        noeyaktigBeskrivelseAvHendelsen = "Dette er ulykkesbeskrivelsen",
         tid = Tid(
             tidstype = "Tidspunkt",
             tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
@@ -71,7 +73,7 @@ fun enkelSkadeforklaringHvorSkadelidtMelderSelv(): Skadeforklaring =
         ),
         vedleggtype = "",
         vedleggreferanser = emptyList(),
-        fravaer = Fravaer(true, "egenmelding"),
+        fravaer = Fravaer("treDagerEllerMindre", "Egenmelding"),
         behandler = behandler()
     )
 
@@ -91,7 +93,7 @@ fun skadeforklaringSkadelidt(): Skadelidt = Skadelidt("12120522222")
 
 fun behandler(): Behandler =
     Behandler(
-        erBehandlerOppsokt = true,
+        erBehandlerOppsokt = "ja",
         behandlerNavn = "Bli-bra-igjen Legesenter",
         adresse = Adresse(
             adresse = "Stien 3B",

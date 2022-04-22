@@ -10,7 +10,7 @@
     "tidspunkt": "2022-04-02T08:45:00.000Z"
   },
   "behandler": {
-    "erBehandlerOppsokt": true,
+    "erBehandlerOppsokt": "ja",
     "behandlerNavn": "Helsesenteret",
     "adresse": {
       "adresse": "Tverrgata 10",
@@ -19,11 +19,11 @@
     }
   },
   "fravaer": {
-    "harFravaer": true,
-    "fravaertype": ""
+    "foerteDinSkadeEllerSykdomTilFravaer": "treDagerEllerMindre",
+    "fravaertype": "Sykemelding"
   },
-  "arbeidsbeskrivelse": "Jeg arbeidet med blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla ",
-  "ulykkesbeskrivelse": "Hendelsesforløpet var at blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla ",
+  "arbeidetMedIUlykkesoeyeblikket": "Jeg arbeidet med blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla ",
+  "noeyaktigBeskrivelseAvHendelsen": "Hendelsesforløpet var at blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla ",
   "vedleggtype": "digital",
   "vedleggreferanser": [
     {

@@ -1,8 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.clients
 
 import no.nav.yrkesskade.meldingmottak.domene.KodeverdiRespons
-import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
 import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
 import org.slf4j.LoggerFactory
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
@@ -29,20 +29,10 @@ class Kodeverkklient(
     }
 
     private fun kallKodeverkApi(type: String, kategori: String): Map<KodeverkKode, KodeverkVerdi> {
+        val kategoriEllerBlank = kategori.ifBlank { " " }
+        val uriPath = "api/v1/kodeverk/typer/$type/kategorier/$kategoriEllerBlank/kodeverdier"
         val kodeverdiRespons = kodeverkWebClient.get()
-            .uri { uriBuilder ->
-                uriBuilder.pathSegment(
-                    "api",
-                    "v1",
-                    "kodeverk",
-                    "typer",
-                    type,
-                    "kategorier",
-                    kategori.ifBlank { "dummy" },
-                    "kodeverdier"
-                )
-                    .build()
-            }
+            .uri { uriBuilder -> uriBuilder.path(uriPath).build() }
             .retrieve()
             .bodyToMono<KodeverdiRespons>()
             .block() ?: KodeverdiRespons(emptyMap())

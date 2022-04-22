@@ -37,8 +37,8 @@ internal class PdfSkadeforklaringMapperTest {
         assertInnmelder(skadeforklaring.innmelder)
         assertSkadelidt(skadeforklaring.skadelidt)
         assertTid(skadeforklaring.tid)
-        assertArbeidsbeskrivelse(skadeforklaring.arbeidsbeskrivelse)
-        assertUlykkesbeskrivelse(skadeforklaring.ulykkesbeskrivelse)
+        assertArbeidsbeskrivelse(skadeforklaring.arbeidetMedIUlykkesoeyeblikket)
+        assertUlykkesbeskrivelse(skadeforklaring.noeyaktigBeskrivelseAvHendelsen)
         assertFravaer(skadeforklaring.fravaer)
         assertBehandler(skadeforklaring.behandler)
         assertDokumentInfo(skadeforklaring.dokumentInfo)
@@ -82,7 +82,7 @@ internal class PdfSkadeforklaringMapperTest {
     }
 
     private fun assertFravaer(fravaer: PdfFravaer) {
-        assertThat(fravaer.harFravaer.verdi).isEqualTo("Ja")
+        assertThat(fravaer.foerteDinSkadeEllerSykdomTilFravaer.verdi).isEqualTo("Ja")
         assertThat(fravaer.fravaertype.verdi).isEqualTo("Sykemelding")
     }
 

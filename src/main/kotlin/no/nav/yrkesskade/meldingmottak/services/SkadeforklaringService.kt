@@ -47,8 +47,8 @@ class SkadeforklaringService(
 
 
     private fun lagBeriketData(record: SkadeforklaringInnsendingHendelse): BeriketData {
-        val innmeldersFnr = record.skadeforklaring.innmelder.norskIdentitetsnummer
-        val skadelidtsFnr = record.skadeforklaring.skadelidt.norskIdentitetsnummer
+        val innmeldersFnr = record.skadeforklaring.innmelder?.norskIdentitetsnummer
+        val skadelidtsFnr = record.skadeforklaring.skadelidt?.norskIdentitetsnummer
         val innmeldersNavn: Navn? = hentNavnFraPersondataloesningen(innmeldersFnr)
         val skadelidtsNavn: Navn? = hentNavnFraPersondataloesningen(skadelidtsFnr)
         return BeriketData(innmeldersNavn, skadelidtsNavn, null)
@@ -83,11 +83,11 @@ class SkadeforklaringService(
             journalposttype = Journalposttype.INNGAAENDE,
             avsenderMottaker = AvsenderMottaker(
                 navn = beriketData.innmeldersNavn.toString(),
-                id = skadeforklaring.innmelder.norskIdentitetsnummer,
+                id = skadeforklaring.innmelder?.norskIdentitetsnummer ?: "",
                 idType = BrukerIdType.FNR
             ),
             bruker = Bruker(
-                id = skadeforklaring.skadelidt.norskIdentitetsnummer,
+                id = skadeforklaring.skadelidt?.norskIdentitetsnummer,
                 idType = BrukerIdType.FNR
             ),
             tema = TEMA_YRKESSKADE,
