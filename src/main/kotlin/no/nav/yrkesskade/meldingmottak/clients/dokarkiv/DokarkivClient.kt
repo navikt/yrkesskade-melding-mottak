@@ -30,7 +30,7 @@ class DokarkivClient(
 
     @Retryable
     fun journalfoerDokument(opprettJournalpostRequest: OpprettJournalpostRequest): OpprettJournalpostResponse? {
-        log.info("Journalfører dokument")
+        log.info("Journalfører dokument ${opprettJournalpostRequest.tittel} med ekstern referanseId ${opprettJournalpostRequest.eksternReferanseId}")
         return logTimingAndWebClientResponseException("journalførDokument") {
             dokarkivWebClient.post()
                 .uri { uriBuilder ->
@@ -64,7 +64,7 @@ class DokarkivClient(
                 ex.responseBodyAsString
             )
             if (ex.statusCode == HttpStatus.CONFLICT) {
-                log.info("Dokumentet har allerede blitt journalført.")
+                log.warn("Dokumentet har allerede blitt journalført.")
                 return null
             }
             throw ex
