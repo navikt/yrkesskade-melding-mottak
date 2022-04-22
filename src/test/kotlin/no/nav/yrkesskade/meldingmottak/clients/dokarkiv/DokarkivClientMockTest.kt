@@ -31,7 +31,7 @@ internal class DokarkivClientMockTest {
             tokenUtilMock,
             "mock"
         )
-        dokarkivClient.journalfoerSkademelding(opprettJournalpostRequest())
+        dokarkivClient.journalfoerDokument(opprettJournalpostRequest())
     }
 
     @Test
@@ -41,7 +41,7 @@ internal class DokarkivClientMockTest {
             tokenUtilMock,
             "mock"
         )
-        dokarkivClient.journalfoerSkademelding(opprettJournalpostRequest())
+        dokarkivClient.journalfoerDokument(opprettJournalpostRequest())
     }
 }
 

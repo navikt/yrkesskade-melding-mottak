@@ -21,8 +21,8 @@ object PdfSkadeforklaringMapper {
         val innmelder = tilPdfInnmelder(skadeforklaring.innmelder, beriketData?.innmeldersNavn)
         val skadelidt = tilPdfSkadelidt(skadeforklaring.skadelidt, beriketData?.skadelidtsNavn)
         val tid = tilPdfTid(skadeforklaring)
-        val arbeidsbeskrivelse = tilPdfArbeidsbeskrivelse(skadeforklaring.arbeidsbeskrivelse)
-        val ulykkesbeskrivelse = tilPdfUlykkesbeskrivelse(skadeforklaring.ulykkesbeskrivelse)
+        val arbeidsbeskrivelse = tilPdfArbeidsbeskrivelse(skadeforklaring.arbeidetMedIUlykkesoeyeblikket)
+        val ulykkesbeskrivelse = tilPdfUlykkesbeskrivelse(skadeforklaring.noeyaktigBeskrivelseAvHendelsen)
         val fravaer = tilPdfFravaer(skadeforklaring.fravaer, fravaertyper)
         val behandler = tilPdfBehandler(skadeforklaring.behandler)
         val dokumentInfo = lagPdfDokumentInfo(record.metadata)
@@ -31,25 +31,25 @@ object PdfSkadeforklaringMapper {
             innmelder = innmelder,
             skadelidt = skadelidt,
             tid = tid,
-            arbeidsbeskrivelse = arbeidsbeskrivelse,
-            ulykkesbeskrivelse = ulykkesbeskrivelse,
+            arbeidetMedIUlykkesoeyeblikket = arbeidsbeskrivelse,
+            noeyaktigBeskrivelseAvHendelsen = ulykkesbeskrivelse,
             fravaer = fravaer,
             behandler = behandler,
            dokumentInfo = dokumentInfo
         )
     }
 
-    private fun tilPdfInnmelder(innmelder: Innmelder, innmeldersNavn: Navn?): PdfInnmelder {
+    private fun tilPdfInnmelder(innmelder: Innmelder?, innmeldersNavn: Navn?): PdfInnmelder {
         return PdfInnmelder(
-            norskIdentitetsnummer = Soknadsfelt("Fødselsnummer", innmelder.norskIdentitetsnummer),
+            norskIdentitetsnummer = Soknadsfelt("Fødselsnummer", innmelder?.norskIdentitetsnummer),
             navn = Soknadsfelt("Navn", innmeldersNavn?.toString().orEmpty()),
-            innmelderrolle = Soknadsfelt("Rolle", innmelder.rolle)
+            innmelderrolle = Soknadsfelt("Rolle", innmelder?.rolle)
         )
     }
 
-    private fun tilPdfSkadelidt(skadelidt: Skadelidt, skadelidtsNavn: Navn?): PdfSkadelidt {
+    private fun tilPdfSkadelidt(skadelidt: Skadelidt?, skadelidtsNavn: Navn?): PdfSkadelidt {
         return PdfSkadelidt(
-            Soknadsfelt("Fødselsnummer", skadelidt.norskIdentitetsnummer),
+            Soknadsfelt("Fødselsnummer", skadelidt?.norskIdentitetsnummer),
             Soknadsfelt("Navn", skadelidtsNavn?.toString().orEmpty())
         )
     }
@@ -82,14 +82,21 @@ object PdfSkadeforklaringMapper {
         Soknadsfelt("Gi en så nøyaktig beskrivelse av hendelsen som mulig", ulykkesbeskrivelse)
 
     private fun tilPdfFravaer(fravaer: Fravaer, fravaertyper: Map<KodeverkKode, KodeverkVerdi>): PdfFravaer {
+        val foerteTilFravaer = when(fravaer.foerteDinSkadeEllerSykdomTilFravaer) {
+            "fravaersdagerUkjent" -> "Ja"
+            "treDagerEllerMindre" -> "Ja"
+            "merEnnTreDager" -> "Ja"
+            else -> "Nei"
+        }
+
         return PdfFravaer(
-            Soknadsfelt("Førte din skade/sykdom til fravær?", MapperUtil.jaNei(fravaer.harFravaer)),
+            Soknadsfelt("Førte din skade/sykdom til fravær?", foerteTilFravaer),
             Soknadsfelt("Velg type fravær", hentVerdi(fravaer.fravaertype, fravaertyper))
         )
     }
 
-    private fun hentVerdi(kode: KodeverkKode, kodeverdier: Map<KodeverkKode, KodeverkVerdi>): String {
-        return kodeverdier[kode]?.verdi.orEmpty()
+    private fun hentVerdi(kode: String?, kodeverdier: Map<KodeverkKode, KodeverkVerdi>): String {
+        return kodeverdier[kode?.lowercase()]?.verdi.orEmpty()
     }
 
     private fun tilPdfBehandler(behandler: Behandler): PdfBehandler {

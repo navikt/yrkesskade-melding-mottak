@@ -5,6 +5,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
@@ -14,11 +15,7 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
-import org.springframework.kafka.core.ConsumerFactory
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory
-import org.springframework.kafka.core.DefaultKafkaProducerFactory
-import org.springframework.kafka.core.KafkaTemplate
-import org.springframework.kafka.core.ProducerFactory
+import org.springframework.kafka.core.*
 import org.springframework.kafka.listener.ContainerStoppingErrorHandler
 import org.springframework.kafka.support.serializer.JsonDeserializer
 import org.springframework.kafka.support.serializer.JsonSerializer
@@ -81,6 +78,22 @@ class KafkaConfig {
         }
     }
 
+    @Bean
+    fun skadeforklaringInnsendingHendelseListenerContainerFactory(kafkaProperties: KafkaProperties):
+            ConcurrentKafkaListenerContainerFactory<String, SkadeforklaringInnsendingHendelse> {
+        val consumerFactory = DefaultKafkaConsumerFactory<String, SkadeforklaringInnsendingHendelse>(
+            kafkaProperties.buildConsumerProperties().apply {
+                this[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java
+            }
+        )
+
+        return ConcurrentKafkaListenerContainerFactory<String, SkadeforklaringInnsendingHendelse>().apply {
+            this.setConsumerFactory(consumerFactory)
+            this.setErrorHandler(ContainerStoppingErrorHandler())
+            this.setRetryTemplate(retryTemplate())
+        }
+    }
+
     fun retryTemplate() = RetryTemplate().apply {
         this.setBackOffPolicy(ExponentialBackOffPolicy().apply {
             this.initialInterval = ETT_SEKUND
@@ -110,6 +123,14 @@ class KafkaConfig {
         )
 
     @Bean
+    fun skadeforklaringProducerFactory(properties: KafkaProperties): DefaultKafkaProducerFactory<String, SkadeforklaringInnsendingHendelse> =
+        DefaultKafkaProducerFactory(
+            properties.buildProducerProperties().apply {
+                this[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = JsonSerializer::class.java
+            }
+        )
+
+    @Bean
     fun journalfoeringHendelseKafkaTemplate(
         journalfoeringHendelseProducerFactory: ProducerFactory<String, Any>
     ): KafkaTemplate<String, Any> = KafkaTemplate(journalfoeringHendelseProducerFactory)
@@ -118,4 +139,10 @@ class KafkaConfig {
     fun skademeldingKafkaTemplate(
         skademeldingProducerFactory: ProducerFactory<String, SkademeldingInnsendtHendelse>
     ): KafkaTemplate<String, SkademeldingInnsendtHendelse> = KafkaTemplate(skademeldingProducerFactory)
+
+    @Bean
+    fun skadeforklaringKafkaTemplate(
+        skadeforklaringProducerFactory: ProducerFactory<String, SkadeforklaringInnsendingHendelse>
+    ): KafkaTemplate<String, SkadeforklaringInnsendingHendelse> = KafkaTemplate(skadeforklaringProducerFactory)
+
 }

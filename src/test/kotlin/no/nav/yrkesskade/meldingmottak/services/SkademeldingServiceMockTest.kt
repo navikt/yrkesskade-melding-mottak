@@ -33,7 +33,7 @@ class SkademeldingServiceMockTest {
                 Navn("Kari", "Bull", "Hansen"),
                 Adresse("Liaveien 3B", "1250 Plassen", "", ""))
         }
-        every { dokarkivClient.journalfoerSkademelding(any()) } answers { OpprettJournalpostResponse(false, "123", emptyList()) }
+        every { dokarkivClient.journalfoerDokument(any()) } answers { OpprettJournalpostResponse(false, "123", emptyList()) }
     }
 
     @Test
@@ -53,6 +53,6 @@ class SkademeldingServiceMockTest {
     @Test
     fun `skal kalle paa dokarkivClient naar en skademelding kommer inn`() {
         service.mottaSkademelding(skademeldingInnsendtHendelse())
-        verify(exactly = 1) { dokarkivClient.journalfoerSkademelding(any()) }
+        verify(exactly = 1) { dokarkivClient.journalfoerDokument(any()) }
     }
 }

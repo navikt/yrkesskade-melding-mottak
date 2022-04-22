@@ -25,6 +25,7 @@ kafka:
   topic:
     aapen-dok-journalfoering: teamdokumenthandtering.aapen-dok-journalfoering-q1
     skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldinginnsendt
+    skadeforklaring-innsendt: yrkesskade.privat-yrkesskade-skadeforklaringinnsendt
 
 no.nav.security.jwt:
   issuer:

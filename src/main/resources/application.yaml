@@ -13,7 +13,7 @@ spring:
       auto-offset-reset: earliest
       enable-auto-commit: false
       properties:
-        spring.json.trusted.packages: no.nav.yrkesskade.model
+        spring.json.trusted.packages: no.nav.yrkesskade.model,no.nav.yrkesskade.meldingmottak.integration.mottak.model
     listener:
       ack-mode: record
   datasource:

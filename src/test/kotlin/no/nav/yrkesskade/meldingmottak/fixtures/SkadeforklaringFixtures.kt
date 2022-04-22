@@ -1,5 +1,7 @@
 package no.nav.yrkesskade.meldingmottak.fixtures
 
+import no.nav.yrkesskade.meldingmottak.domene.BeriketData
+import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.integration.model.*
 import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringMetadata
@@ -16,7 +18,12 @@ fun enkelSkadeforklaringInnsendingHendelse(): SkadeforklaringInnsendingHendelse 
             spraak = Spraak.NB,
             navCallId = "1234-5678-90"
         ),
-        skadeforklaring = enkelSkadeforklaring()
+        skadeforklaring = enkelSkadeforklaring(),
+        beriketData = BeriketData(
+            innmeldersNavn = Navn("Ola", "B", "Normann"),
+            skadelidtsNavn = Navn("Lisa", null, "Normann"),
+            skadelidtsBostedsadresse = null
+        )
     )
 
 fun enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv(): SkadeforklaringInnsendingHendelse =
@@ -26,15 +33,21 @@ fun enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv(): Skadeforkla
             spraak = Spraak.NB,
             navCallId = "2222-3333-4444"
         ),
-        skadeforklaring = enkelSkadeforklaringHvorSkadelidtMelderSelv()
+        skadeforklaring = enkelSkadeforklaringHvorSkadelidtMelderSelv(),
+        beriketData = BeriketData(
+            innmeldersNavn = Navn("Lisa", null, "Normann"),
+            skadelidtsNavn = Navn("Lisa", null, "Normann"),
+            skadelidtsBostedsadresse = null
+        )
     )
 
 fun enkelSkadeforklaring(): Skadeforklaring =
     Skadeforklaring(
+        saksnummer = null,
         innmelder = skadeforklaringInnmelderErForesatt(),
         skadelidt = skadeforklaringSkadelidt(),
-        arbeidsbeskrivelse = "Dette er arbeidsbeskrivelsen",
-        ulykkesbeskrivelse = "Dette er ulykkesbeskrivelsen",
+        arbeidetMedIUlykkesoeyeblikket = "Dette er arbeidsbeskrivelsen",
+        noeyaktigBeskrivelseAvHendelsen = "Dette er ulykkesbeskrivelsen",
         tid = Tid(
             tidstype = "Tidspunkt",
             tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
@@ -42,16 +55,17 @@ fun enkelSkadeforklaring(): Skadeforklaring =
         ),
         vedleggtype = "",
         vedleggreferanser = emptyList(),
-        fravaer = Fravaer(true, "sykemelding"),
+        fravaer = Fravaer("treDagerEllerMindre", "Sykemelding"),
         behandler = behandler()
     )
 
 fun enkelSkadeforklaringHvorSkadelidtMelderSelv(): Skadeforklaring =
     Skadeforklaring(
+        saksnummer = null,
         innmelder = skadeforklaringInnmelderErSkadelidt(),
         skadelidt = skadeforklaringSkadelidt(),
-        arbeidsbeskrivelse = "Dette er arbeidsbeskrivelsen",
-        ulykkesbeskrivelse = "Dette er ulykkesbeskrivelsen",
+        arbeidetMedIUlykkesoeyeblikket = "Dette er arbeidsbeskrivelsen",
+        noeyaktigBeskrivelseAvHendelsen = "Dette er ulykkesbeskrivelsen",
         tid = Tid(
             tidstype = "Tidspunkt",
             tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
@@ -59,7 +73,7 @@ fun enkelSkadeforklaringHvorSkadelidtMelderSelv(): Skadeforklaring =
         ),
         vedleggtype = "",
         vedleggreferanser = emptyList(),
-        fravaer = Fravaer(true, "egenmelding"),
+        fravaer = Fravaer("treDagerEllerMindre", "Egenmelding"),
         behandler = behandler()
     )
 
@@ -79,7 +93,7 @@ fun skadeforklaringSkadelidt(): Skadelidt = Skadelidt("12120522222")
 
 fun behandler(): Behandler =
     Behandler(
-        erBehandlerOppsokt = true,
+        erBehandlerOppsokt = "ja",
         behandlerNavn = "Bli-bra-igjen Legesenter",
         adresse = Adresse(
             adresse = "Stien 3B",

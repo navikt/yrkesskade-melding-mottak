@@ -4,16 +4,17 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
-import no.nav.yrkesskade.model.SkademeldingBeriketData
-import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
-import no.nav.yrkesskade.model.SkademeldingMetadata
-import no.nav.yrkesskade.model.Spraak
-import no.nav.yrkesskade.model.Systemkilde
+import no.nav.yrkesskade.meldingmottak.domene.BeriketData
+import no.nav.yrkesskade.meldingmottak.domene.Navn
+import no.nav.yrkesskade.meldingmottak.integration.model.Skadeforklaring
+import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringMetadata
+import no.nav.yrkesskade.model.*
 import no.nav.yrkesskade.skademelding.model.Skademelding
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 fun journalfoeringHendelseRecord(): JournalfoeringHendelseRecord? {
     return JournalfoeringHendelseRecord.newBuilder()
@@ -119,6 +120,25 @@ fun skademeldingInnsendtHendelse(): SkademeldingInnsendtHendelse {
         ),
         beriketData = SkademeldingBeriketData(
             innmeldersOrganisasjonsnavn = "NAV IT" to Systemkilde.ENHETSREGISTERET
+        )
+    )
+}
+
+fun skadeforklaringInnsendingHendelse(): SkadeforklaringInnsendingHendelse {
+    val skadeforklaring: Skadeforklaring = jacksonObjectMapper().registerModule(JavaTimeModule()).readValue(
+        Files.readString(Path.of("src/test/resources/skadeforklaringer/skadeforklaring.json"))
+    )
+    return SkadeforklaringInnsendingHendelse(
+        metadata = SkadeforklaringMetadata(
+            tidspunktMottatt = Instant.now(),
+            spraak = no.nav.yrkesskade.meldingmottak.integration.mottak.model.Spraak.NB,
+            navCallId = UUID.randomUUID().toString()
+        ),
+        skadeforklaring = skadeforklaring,
+        beriketData = BeriketData(
+            innmeldersNavn = Navn("Ola", "B", "Normann"),
+            skadelidtsNavn = Navn("Lisa", null, "Normann"),
+            skadelidtsBostedsadresse = null
         )
     )
 }

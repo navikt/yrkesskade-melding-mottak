@@ -1,10 +1,13 @@
 package no.nav.yrkesskade.meldingmottak.services
 
 import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
+import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
 import no.nav.yrkesskade.meldingmottak.fixtures.beriketData
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkademeldingInnsendtHendelse
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -13,6 +16,7 @@ import org.springframework.kafka.config.KafkaListenerEndpointRegistry
 import org.springframework.kafka.test.EmbeddedKafkaBroker
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.kafka.test.utils.ContainerTestUtils
+import org.springframework.test.util.ReflectionTestUtils
 import java.io.File
 
 private const val TOPIC = "test"
@@ -89,7 +93,7 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
         println("Ferdig med å lage pdf.")
     }
 
-        @Disabled("Disabled ved automatisk testkjøring")
+    @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `skadeforklaring - 1B) tro-kopi-pdf - skadelidt melder selv`() {
         val byteArray = pdfService.lagPdf(
@@ -127,6 +131,32 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
 
         File("Skadeforklaring_beriket_skadelidt-melder.pdf").writeBytes(byteArray)
         println("Ferdig med å lage pdf.")
+    }
+
+    @Disabled("Disabled ved automatisk testkjøring")
+    @Test
+    fun `kodeverk landkoder`() {
+        val map = ReflectionTestUtils.invokeMethod<Map<KodeverkKode, KodeverkVerdi>>(pdfService, "landkoder", "nb")!!
+        assertThat(map.size).isGreaterThan(0)
+        val norge = map["NOR"]!!
+        assertThat(norge.kode).isEqualTo("NOR")
+        assertThat(norge.verdi).isEqualTo("NORGE")
+    }
+
+    @Disabled("Disabled ved automatisk testkjøring")
+    @Test
+    fun `kodeverk fravaertyper`() {
+        val map = ReflectionTestUtils.invokeMethod<Map<KodeverkKode, KodeverkVerdi>>(pdfService, "fravaertyper", "nb")!!
+        assertThat(map.size).isEqualTo(4)
+        assertThat(map.keys).containsExactlyInAnyOrder(
+            "sykemelding",
+            "egenmelding",
+            "kombinasjonSykemeldingEgenmelding",
+            "alternativenePasserIkke"
+        )
+        val egenmelding = map["egenmelding"]!!
+        assertThat(egenmelding.kode).isEqualTo("egenmelding")
+        assertThat(egenmelding.verdi).isEqualTo("Egenmelding")
     }
 
 }

@@ -53,4 +53,11 @@ object MapperUtil {
         }
     }
 
+    fun jaNei(string: String): String {
+        return when (string.lowercase()) {
+            "ja" -> "Ja"
+            else -> "Nei"
+        }
+    }
+
 }
