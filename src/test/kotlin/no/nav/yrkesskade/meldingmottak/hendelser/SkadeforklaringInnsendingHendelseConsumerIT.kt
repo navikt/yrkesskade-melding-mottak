@@ -4,6 +4,7 @@ import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
 import no.nav.yrkesskade.meldingmottak.fixtures.skadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
@@ -22,6 +23,7 @@ private const val NUM_BROKERS = 1
 
 private const val CONTROLLED_BROKER_SHUTDOWN = true
 
+@Disabled("Disabled ved automatisk testkjøring")
 @EmbeddedKafka(topics = [TOPIC])
 internal class SkadeforklaringInnsendingHendelseConsumerIT : BaseSpringBootTestClass() {
 
@@ -46,6 +48,7 @@ internal class SkadeforklaringInnsendingHendelseConsumerIT : BaseSpringBootTestC
         }
     }
 
+    @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun listen() {
         val record = skadeforklaringInnsendingHendelse()
