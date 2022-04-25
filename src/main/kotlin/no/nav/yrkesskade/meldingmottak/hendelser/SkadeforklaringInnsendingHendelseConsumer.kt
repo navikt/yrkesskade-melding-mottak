@@ -18,7 +18,7 @@ class SkadeforklaringInnsendingHendelseConsumer(
         topics = ["\${kafka.topic.skadeforklaring-innsendt.name}"],
         containerFactory = "skadeforklaringInnsendingHendelseListenerContainerFactory",
         idIsGroup = false,
-        autoStartup = "\${kafka.topic.skademelding-innsendt.auto-startup:true}"
+        autoStartup = "\${kafka.topic.skadeforklaring-innsendt.auto-startup:true}"
     )
     @Transactional
     fun listen(@Payload record: SkadeforklaringInnsendingHendelse) {
