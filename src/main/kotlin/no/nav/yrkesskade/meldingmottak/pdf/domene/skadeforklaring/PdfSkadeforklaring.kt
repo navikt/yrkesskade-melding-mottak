@@ -9,7 +9,7 @@ data class PdfSkadeforklaring(
     val arbeidetMedIUlykkesoeyeblikket: Soknadsfelt<String>,
     val noeyaktigBeskrivelseAvHendelsen: Soknadsfelt<String>,
     val fravaer: PdfFravaer,
-    val behandler: PdfBehandler,
+    val helseinstitusjon: PdfHelseinstitusjon,
     val dokumentInfo: PdfDokumentInfo
 ) : PdfData()
 
@@ -29,8 +29,8 @@ data class PdfFravaer(
     val fravaertype: Soknadsfelt<String?>
 )
 
-data class PdfBehandler(
-    val erBehandlerOppsokt: Soknadsfelt<String>,
-    val behandlernavn: Soknadsfelt<String?>,
-    val behandleradresse: Soknadsfelt<PdfAdresse?>
+data class PdfHelseinstitusjon(
+    val erHelsepersonellOppsokt: Soknadsfelt<String>,
+    val navn: Soknadsfelt<String?>,
+    val adresse: Soknadsfelt<PdfAdresse?>
 )

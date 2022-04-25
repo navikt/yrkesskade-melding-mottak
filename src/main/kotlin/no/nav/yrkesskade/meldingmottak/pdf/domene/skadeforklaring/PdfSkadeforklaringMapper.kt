@@ -24,7 +24,7 @@ object PdfSkadeforklaringMapper {
         val arbeidsbeskrivelse = tilPdfArbeidsbeskrivelse(skadeforklaring.arbeidetMedIUlykkesoeyeblikket)
         val ulykkesbeskrivelse = tilPdfUlykkesbeskrivelse(skadeforklaring.noeyaktigBeskrivelseAvHendelsen)
         val fravaer = tilPdfFravaer(skadeforklaring.fravaer, fravaertyper)
-        val behandler = tilPdfBehandler(skadeforklaring.behandler)
+        val helseinstitusjon = tilPdfHelseinstitusjon(skadeforklaring.helseinstitusjon)
         val dokumentInfo = lagPdfDokumentInfo(record.metadata)
 
         return PdfSkadeforklaring(
@@ -34,7 +34,7 @@ object PdfSkadeforklaringMapper {
             arbeidetMedIUlykkesoeyeblikket = arbeidsbeskrivelse,
             noeyaktigBeskrivelseAvHendelsen = ulykkesbeskrivelse,
             fravaer = fravaer,
-            behandler = behandler,
+            helseinstitusjon = helseinstitusjon,
            dokumentInfo = dokumentInfo
         )
     }
@@ -43,8 +43,16 @@ object PdfSkadeforklaringMapper {
         return PdfInnmelder(
             norskIdentitetsnummer = Soknadsfelt("Fødselsnummer", innmelder?.norskIdentitetsnummer),
             navn = Soknadsfelt("Navn", innmeldersNavn?.toString().orEmpty()),
-            innmelderrolle = Soknadsfelt("Rolle", innmelder?.rolle)
+            innmelderrolle = Soknadsfelt("Rolle", tilInnmelderrolle(innmelder))
         )
+    }
+
+    private fun tilInnmelderrolle(innmelder: Innmelder?): String? {
+        return when(innmelder?.innmelderrolle) {
+            "vergeOgForesatt" -> "Foresatt/Verge"
+            "denSkadelidte" -> "Den skadelidte selv"
+            else -> null
+        }
     }
 
     private fun tilPdfSkadelidt(skadelidt: Skadelidt?, skadelidtsNavn: Navn?): PdfSkadelidt {
@@ -99,11 +107,11 @@ object PdfSkadeforklaringMapper {
         return kodeverdier[kode?.lowercase()]?.verdi.orEmpty()
     }
 
-    private fun tilPdfBehandler(behandler: Behandler): PdfBehandler {
-        return PdfBehandler(
-            erBehandlerOppsokt = Soknadsfelt("Ble lege oppsøkt etter skaden?", MapperUtil.jaNei(behandler.erBehandlerOppsokt)),
-            behandlernavn = Soknadsfelt("Navn på helseforetak, legevakt eller lege", behandler.behandlerNavn),
-            behandleradresse = Soknadsfelt("Adresse", tilPdfAdresse(behandler.adresse))
+    private fun tilPdfHelseinstitusjon(helseinstitusjon: Helseinstitusjon): PdfHelseinstitusjon {
+        return PdfHelseinstitusjon(
+            erHelsepersonellOppsokt = Soknadsfelt("Ble lege oppsøkt etter skaden?", MapperUtil.jaNei(helseinstitusjon.erHelsepersonellOppsokt)),
+            navn = Soknadsfelt("Navn på helseforetak, legevakt eller lege", helseinstitusjon.navn),
+            adresse = Soknadsfelt("Adresse", tilPdfAdresse(helseinstitusjon.adresse))
         )
     }
 

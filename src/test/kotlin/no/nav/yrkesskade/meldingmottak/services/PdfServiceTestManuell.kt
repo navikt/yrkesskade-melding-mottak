@@ -60,7 +60,6 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
         }
     }
 
-    @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `skademelding - A) tro-kopi-pdf`() {
         val byteArray = pdfService.lagPdf(enkelSkademeldingInnsendtHendelse(), PdfTemplate.SKADEMELDING_TRO_KOPI)
@@ -70,7 +69,6 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
         println("Ferdig med å lage pdf.")
     }
 
-    @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `skademelding - B) saksbehandling-pdf`() {
         val byteArray = pdfService.lagBeriketPdf(enkelSkademeldingInnsendtHendelse(), beriketData(), PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
@@ -80,7 +78,6 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
         println("Ferdig med å lage pdf.")
     }
 
-    @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `skadeforklaring - 1A) tro-kopi-pdf - foresatt melder på vegne av barn`() {
         val byteArray = pdfService.lagPdf(
@@ -93,7 +90,6 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
         println("Ferdig med å lage pdf.")
     }
 
-    @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `skadeforklaring - 1B) tro-kopi-pdf - skadelidt melder selv`() {
         val byteArray = pdfService.lagPdf(
@@ -106,7 +102,6 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
         println("Ferdig med å lage pdf.")
     }
 
-    @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `skadeforklaring - 2A) beriket pdf - foresatt melder på vegne av barn`() {
         val byteArray = pdfService.lagBeriketPdf(
@@ -120,7 +115,6 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
         println("Ferdig med å lage pdf.")
     }
 
-    @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `skadeforklaring - 2B) beriket pdf - skadelidt melder selv`() {
         val byteArray = pdfService.lagBeriketPdf(
@@ -133,7 +127,6 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
         println("Ferdig med å lage pdf.")
     }
 
-    @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `kodeverk landkoder`() {
         val map = ReflectionTestUtils.invokeMethod<Map<KodeverkKode, KodeverkVerdi>>(pdfService, "landkoder", "nb")!!
@@ -143,7 +136,6 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
         assertThat(norge.verdi).isEqualTo("NORGE")
     }
 
-    @Disabled("Disabled ved automatisk testkjøring")
     @Test
     fun `kodeverk fravaertyper`() {
         val map = ReflectionTestUtils.invokeMethod<Map<KodeverkKode, KodeverkVerdi>>(pdfService, "fravaertyper", "nb")!!

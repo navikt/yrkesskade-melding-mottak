@@ -9,9 +9,9 @@
     "tidstype": "TIDSPUNKT",
     "tidspunkt": "2022-04-02T08:45:00.000Z"
   },
-  "behandler": {
-    "erBehandlerOppsokt": "ja",
-    "behandlerNavn": "Helsesenteret",
+  "helseinstitusjon": {
+    "erHelsepersonellOppsokt": "ja",
+    "navn": "Helsesenteret",
     "adresse": {
       "adresse": "Tverrgata 10",
       "postnummer": "1590",

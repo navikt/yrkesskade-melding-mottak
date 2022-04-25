@@ -10,5 +10,5 @@ data class Skadeforklaring(
     val vedleggtype: String,
     val vedleggreferanser: List<Vedleggreferanse>,
     val fravaer: Fravaer,
-    val behandler: Behandler
+    val helseinstitusjon: Helseinstitusjon
 )

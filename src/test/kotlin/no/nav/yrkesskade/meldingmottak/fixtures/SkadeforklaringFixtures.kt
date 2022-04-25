@@ -56,7 +56,7 @@ fun enkelSkadeforklaring(): Skadeforklaring =
         vedleggtype = "",
         vedleggreferanser = emptyList(),
         fravaer = Fravaer("treDagerEllerMindre", "Sykemelding"),
-        behandler = behandler()
+        helseinstitusjon = helseinstitusjon()
     )
 
 fun enkelSkadeforklaringHvorSkadelidtMelderSelv(): Skadeforklaring =
@@ -74,27 +74,27 @@ fun enkelSkadeforklaringHvorSkadelidtMelderSelv(): Skadeforklaring =
         vedleggtype = "",
         vedleggreferanser = emptyList(),
         fravaer = Fravaer("treDagerEllerMindre", "Egenmelding"),
-        behandler = behandler()
+        helseinstitusjon = helseinstitusjon()
     )
 
 fun skadeforklaringInnmelderErForesatt(): Innmelder =
     Innmelder(
         norskIdentitetsnummer = "12345600000",
-        rolle = "Foresatt"
+        innmelderrolle = "vergeOgForesatt"
     )
 
 fun skadeforklaringInnmelderErSkadelidt(): Innmelder =
     Innmelder(
         norskIdentitetsnummer = "31033355555",
-        rolle = "Skadelidt"
+        innmelderrolle = "denSkadelidte"
     )
 
 fun skadeforklaringSkadelidt(): Skadelidt = Skadelidt("12120522222")
 
-fun behandler(): Behandler =
-    Behandler(
-        erBehandlerOppsokt = "ja",
-        behandlerNavn = "Bli-bra-igjen Legesenter",
+fun helseinstitusjon(): Helseinstitusjon =
+    Helseinstitusjon(
+        erHelsepersonellOppsokt = "ja",
+        navn = "Bli-bra-igjen Legesenter",
         adresse = Adresse(
             adresse = "Stien 3B",
             postnummer = "1739",

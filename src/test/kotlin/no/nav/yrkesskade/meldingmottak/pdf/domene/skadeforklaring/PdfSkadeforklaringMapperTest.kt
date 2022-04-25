@@ -40,7 +40,7 @@ internal class PdfSkadeforklaringMapperTest {
         assertArbeidsbeskrivelse(skadeforklaring.arbeidetMedIUlykkesoeyeblikket)
         assertUlykkesbeskrivelse(skadeforklaring.noeyaktigBeskrivelseAvHendelsen)
         assertFravaer(skadeforklaring.fravaer)
-        assertBehandler(skadeforklaring.behandler)
+        assertHelseinstitusjon(skadeforklaring.helseinstitusjon)
         assertDokumentInfo(skadeforklaring.dokumentInfo)
     }
 
@@ -48,7 +48,7 @@ internal class PdfSkadeforklaringMapperTest {
         assertThat(innmelder).isNotNull
         assertThat(innmelder.norskIdentitetsnummer.verdi).isEqualTo("12345600000")
         assertThat(innmelder.navn.verdi).isEqualTo("Inn Melder")
-        assertThat(innmelder.innmelderrolle.verdi).isEqualTo("Foresatt")
+        assertThat(innmelder.innmelderrolle.verdi).isEqualTo("Foresatt/Verge")
     }
 
     private fun assertSkadelidt(skadelidt: PdfSkadelidt?) {
@@ -86,10 +86,10 @@ internal class PdfSkadeforklaringMapperTest {
         assertThat(fravaer.fravaertype.verdi).isEqualTo("Sykemelding")
     }
 
-    private fun assertBehandler(behandler: PdfBehandler) {
-        assertThat(behandler.erBehandlerOppsokt.verdi).isEqualTo("Ja")
-        assertThat(behandler.behandlernavn.verdi).isEqualTo("Bli-bra-igjen Legesenter")
-        assertThat(behandler.behandleradresse.verdi).isEqualTo(
+    private fun assertHelseinstitusjon(helseinstitusjon: PdfHelseinstitusjon) {
+        assertThat(helseinstitusjon.erHelsepersonellOppsokt.verdi).isEqualTo("Ja")
+        assertThat(helseinstitusjon.navn.verdi).isEqualTo("Bli-bra-igjen Legesenter")
+        assertThat(helseinstitusjon.adresse.verdi).isEqualTo(
             PdfAdresse(
                 adresselinje1 = "Stien 3B",
                 adresselinje2 = "1739 Granlia",
