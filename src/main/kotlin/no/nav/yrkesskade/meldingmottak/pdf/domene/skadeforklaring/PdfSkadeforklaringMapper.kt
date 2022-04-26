@@ -143,7 +143,7 @@ object PdfSkadeforklaringMapper {
             skadelidtSeksjonstittel = "Den skadelidte",
             tidOgStedSeksjonstittel = "Tid og sted",
             omUlykkenSeksjonstittel = "Om ulykken",
-            omSkadenSeksjonstittel = "Om skaden",
+            omSkadenSeksjonstittel = "Om fravær og behandling",
             omSkadenFlereSkader = ""
         )
     }
