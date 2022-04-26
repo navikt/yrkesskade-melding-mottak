@@ -64,7 +64,7 @@ object PdfSkadeforklaringMapper {
 
     private fun tilPdfTid(skadeforklaring: Skadeforklaring): PdfTid {
         return PdfTid(
-            tidstype = skadeforklaring.tid.tidstype,
+            tidstype = skadeforklaring.tid.tidstype.uppercase(),
             tidspunkt = Soknadsfelt(
                 "Når skjedde ulykken?",
                 PdfTidspunkt(
