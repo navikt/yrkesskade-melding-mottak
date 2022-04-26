@@ -134,11 +134,6 @@ fun skadeforklaringInnsendingHendelse(): SkadeforklaringInnsendingHendelse {
             spraak = no.nav.yrkesskade.skadeforklaring.integration.mottak.model.Spraak.NB,
             navCallId = UUID.randomUUID().toString()
         ),
-        skadeforklaring = skadeforklaring,
-        beriketData = BeriketData(
-            innmeldersNavn = Navn("Ola", "B", "Normann"),
-            skadelidtsNavn = Navn("Lisa", null, "Normann"),
-            skadelidtsBostedsadresse = null
-        )
+        skadeforklaring = skadeforklaring
     )
 }

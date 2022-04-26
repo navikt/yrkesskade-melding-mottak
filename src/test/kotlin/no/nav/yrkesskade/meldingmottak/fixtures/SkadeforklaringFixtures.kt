@@ -18,12 +18,7 @@ fun enkelSkadeforklaringInnsendingHendelse(): SkadeforklaringInnsendingHendelse 
             spraak = Spraak.NB,
             navCallId = "1234-5678-90"
         ),
-        skadeforklaring = enkelSkadeforklaring(),
-        beriketData = BeriketData(
-            innmeldersNavn = Navn("Ola", "B", "Normann"),
-            skadelidtsNavn = Navn("Lisa", null, "Normann"),
-            skadelidtsBostedsadresse = null
-        )
+        skadeforklaring = enkelSkadeforklaring()
     )
 
 fun enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv(): SkadeforklaringInnsendingHendelse =
@@ -33,12 +28,7 @@ fun enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv(): Skadeforkla
             spraak = Spraak.NB,
             navCallId = "2222-3333-4444"
         ),
-        skadeforklaring = enkelSkadeforklaringHvorSkadelidtMelderSelv(),
-        beriketData = BeriketData(
-            innmeldersNavn = Navn("Lisa", null, "Normann"),
-            skadelidtsNavn = Navn("Lisa", null, "Normann"),
-            skadelidtsBostedsadresse = null
-        )
+        skadeforklaring = enkelSkadeforklaringHvorSkadelidtMelderSelv()
     )
 
 fun enkelSkadeforklaring(): Skadeforklaring =
