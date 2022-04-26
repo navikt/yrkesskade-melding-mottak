@@ -1,3 +1,3 @@
-package no.nav.yrkesskade.meldingmottak.integration.model
+package no.nav.yrkesskade.skadeforklaring.model
 
 data class Innmelder(val norskIdentitetsnummer: String, val innmelderrolle: String?)

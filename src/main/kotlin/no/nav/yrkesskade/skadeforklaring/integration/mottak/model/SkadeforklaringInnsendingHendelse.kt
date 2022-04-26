@@ -1,7 +1,7 @@
-package no.nav.yrkesskade.meldingmottak.integration.mottak.model
+package no.nav.yrkesskade.skadeforklaring.integration.mottak.model
 
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
-import no.nav.yrkesskade.meldingmottak.integration.model.Skadeforklaring
+import no.nav.yrkesskade.skadeforklaring.model.Skadeforklaring
 
 data class SkadeforklaringInnsendingHendelse(
     val metadata: SkadeforklaringMetadata,

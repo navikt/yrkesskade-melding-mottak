@@ -2,10 +2,10 @@ package no.nav.yrkesskade.meldingmottak.fixtures
 
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
 import no.nav.yrkesskade.meldingmottak.domene.Navn
-import no.nav.yrkesskade.meldingmottak.integration.model.*
-import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
-import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringMetadata
-import no.nav.yrkesskade.meldingmottak.integration.mottak.model.Spraak
+import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringMetadata
+import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.Spraak
+import no.nav.yrkesskade.skadeforklaring.model.*
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.Month

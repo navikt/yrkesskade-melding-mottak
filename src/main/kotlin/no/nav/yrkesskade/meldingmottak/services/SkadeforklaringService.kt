@@ -7,8 +7,8 @@ import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClient
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.domene.*
-import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
+import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.lang.invoke.MethodHandles

@@ -6,10 +6,10 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
 import no.nav.yrkesskade.meldingmottak.domene.Navn
-import no.nav.yrkesskade.meldingmottak.integration.model.Skadeforklaring
-import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
-import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringMetadata
 import no.nav.yrkesskade.model.*
+import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringMetadata
+import no.nav.yrkesskade.skadeforklaring.model.Skadeforklaring
 import no.nav.yrkesskade.skademelding.model.Skademelding
 import java.nio.file.Files
 import java.nio.file.Path
@@ -131,7 +131,7 @@ fun skadeforklaringInnsendingHendelse(): SkadeforklaringInnsendingHendelse {
     return SkadeforklaringInnsendingHendelse(
         metadata = SkadeforklaringMetadata(
             tidspunktMottatt = Instant.now(),
-            spraak = no.nav.yrkesskade.meldingmottak.integration.mottak.model.Spraak.NB,
+            spraak = no.nav.yrkesskade.skadeforklaring.integration.mottak.model.Spraak.NB,
             navCallId = UUID.randomUUID().toString()
         ),
         skadeforklaring = skadeforklaring,

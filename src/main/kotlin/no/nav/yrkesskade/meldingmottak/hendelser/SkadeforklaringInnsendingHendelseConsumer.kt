@@ -1,8 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.hendelser
 
-import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.meldingmottak.services.SkadeforklaringService
 import no.nav.yrkesskade.meldingmottak.util.kallMetodeMedCallId
+import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component

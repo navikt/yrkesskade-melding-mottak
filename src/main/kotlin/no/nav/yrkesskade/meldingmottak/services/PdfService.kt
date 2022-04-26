@@ -4,11 +4,11 @@ import no.nav.yrkesskade.meldingmottak.clients.PdfClient
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
 import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
 import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
-import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfData
 import no.nav.yrkesskade.meldingmottak.pdf.domene.skadeforklaring.PdfSkadeforklaringMapper
 import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfSkademeldingMapper
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
+import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import org.springframework.stereotype.Service
 
 @Service

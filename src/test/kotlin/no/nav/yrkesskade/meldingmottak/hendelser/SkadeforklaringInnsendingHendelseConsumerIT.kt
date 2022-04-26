@@ -2,7 +2,7 @@ package no.nav.yrkesskade.meldingmottak.hendelser
 
 import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
 import no.nav.yrkesskade.meldingmottak.fixtures.skadeforklaringInnsendingHendelse
-import no.nav.yrkesskade.meldingmottak.integration.mottak.model.SkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
