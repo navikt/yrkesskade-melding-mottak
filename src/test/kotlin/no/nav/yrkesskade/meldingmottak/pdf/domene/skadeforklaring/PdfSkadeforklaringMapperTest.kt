@@ -57,7 +57,7 @@ internal class PdfSkadeforklaringMapperTest {
     }
 
     private fun assertTid(tid: PdfTid) {
-        assertThat(tid.tidstype).isEqualTo(Tidstype.tidspunkt.value)
+        assertThat(tid.tidstype).isEqualTo(Tidstype.tidspunkt.value.uppercase())
         assertThat(tid.tidspunkt.verdi).isEqualTo(
             PdfTidspunkt(
                 dato = "10.04.2022",
