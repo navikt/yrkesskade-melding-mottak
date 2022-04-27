@@ -7,7 +7,7 @@ data class Skadeforklaring(
     val arbeidetMedIUlykkesoeyeblikket: String,
     val noeyaktigBeskrivelseAvHendelsen: String,
     val tid: Tid,
-    val vedleggtype: String,
+    val skalEttersendeDokumentasjon: String,
     val vedleggreferanser: List<Vedleggreferanse>,
     val fravaer: Fravaer,
     val helseinstitusjon: Helseinstitusjon

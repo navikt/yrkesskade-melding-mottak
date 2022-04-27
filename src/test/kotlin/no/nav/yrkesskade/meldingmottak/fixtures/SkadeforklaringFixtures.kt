@@ -51,7 +51,7 @@ fun enkelSkadeforklaring(): Skadeforklaring =
             tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
             periode = null
         ),
-        vedleggtype = "",
+        skalEttersendeDokumentasjon = "ja",
         vedleggreferanser = emptyList(),
         fravaer = Fravaer("treDagerEllerMindre", "Sykemelding"),
         helseinstitusjon = helseinstitusjon()
@@ -69,7 +69,7 @@ fun enkelSkadeforklaringMedVedlegg(): Skadeforklaring =
             tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
             periode = null
         ),
-        vedleggtype = "",
+        skalEttersendeDokumentasjon = "nei",
         vedleggreferanser = vedleggReferanser(),
         fravaer = Fravaer("treDagerEllerMindre", "Sykemelding"),
         helseinstitusjon = helseinstitusjon()
@@ -87,7 +87,7 @@ fun enkelSkadeforklaringHvorSkadelidtMelderSelv(): Skadeforklaring =
             tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
             periode = null
         ),
-        vedleggtype = "",
+        skalEttersendeDokumentasjon = "ja",
         vedleggreferanser = emptyList(),
         fravaer = Fravaer("treDagerEllerMindre", "Egenmelding"),
         helseinstitusjon = helseinstitusjon()

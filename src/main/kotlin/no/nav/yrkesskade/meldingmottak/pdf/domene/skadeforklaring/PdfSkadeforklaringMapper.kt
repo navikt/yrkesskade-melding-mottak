@@ -25,7 +25,8 @@ object PdfSkadeforklaringMapper {
         val ulykkesbeskrivelse = tilPdfUlykkesbeskrivelse(skadeforklaring.noeyaktigBeskrivelseAvHendelsen)
         val fravaer = tilPdfFravaer(skadeforklaring.fravaer, fravaertyper)
         val helseinstitusjon = tilPdfHelseinstitusjon(skadeforklaring.helseinstitusjon)
-        val dokumentInfo = lagPdfDokumentInfo(record.metadata)
+        val vedleggInfo = tilPdfVedleggInfo(skadeforklaring)
+        val dokumentInfo = lagPdfDokumentInfoSkadeforklaring(record.metadata)
 
         return PdfSkadeforklaring(
             innmelder = innmelder,
@@ -35,7 +36,8 @@ object PdfSkadeforklaringMapper {
             noeyaktigBeskrivelseAvHendelsen = ulykkesbeskrivelse,
             fravaer = fravaer,
             helseinstitusjon = helseinstitusjon,
-           dokumentInfo = dokumentInfo
+            vedleggInfo = vedleggInfo,
+            dokumentInfo = dokumentInfo
         )
     }
 
@@ -127,24 +129,39 @@ object PdfSkadeforklaringMapper {
         )
     }
 
-    private fun lagPdfDokumentInfo(metadata: SkadeforklaringMetadata): PdfDokumentInfo {
-        return PdfDokumentInfo(
+    private fun tilPdfVedleggInfo(skadeforklaring: Skadeforklaring): Soknadsfelt<List<String>> {
+        val tekster = mutableListOf<String>()
+        if (skadeforklaring.vedleggreferanser.isNotEmpty()) {
+            tekster.add("Bruker har opplastet vedlegg")
+        }
+        if (skadeforklaring.skalEttersendeDokumentasjon == "ja") {
+            tekster.add("Bruker skal ettersende dokumentasjon")
+        }
+        else {
+            tekster.add("Bruker har ingenting mer å tilføye")
+        }
+
+        return Soknadsfelt("Vedlegg", tekster)
+    }
+
+    private fun lagPdfDokumentInfoSkadeforklaring(metadata: SkadeforklaringMetadata): PdfDokumentInfoSkadeforklaring {
+        return PdfDokumentInfoSkadeforklaring(
             dokumentnavn = "Skadeforklaring ved arbeidsulykke",
             dokumentnummer = "NAV 13-00.21",
             dokumentDatoPrefix = "Innsendt digitalt ",
             dokumentDato = MapperUtil.datoFormatert(metadata.tidspunktMottatt),
-            tekster = lagPdfTekster()
+            tekster = lagPdfTeksterSkadeforklaring()
         )
     }
 
-    private fun lagPdfTekster(): PdfTekster {
-        return PdfTekster(
+    private fun lagPdfTeksterSkadeforklaring(): PdfTeksterSkadeforklaring {
+        return PdfTeksterSkadeforklaring(
             innmelderSeksjonstittel = "Om innmelder",
             skadelidtSeksjonstittel = "Den skadelidte",
             tidOgStedSeksjonstittel = "Tid og sted",
             omUlykkenSeksjonstittel = "Om ulykken",
             omSkadenSeksjonstittel = "Om fravær og behandling",
-            omSkadenFlereSkader = ""
+            vedleggSeksjonstittel = "Vedlegg"
         )
     }
 

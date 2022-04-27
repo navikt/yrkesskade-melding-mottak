@@ -99,7 +99,7 @@ internal class PdfSkadeforklaringMapperTest {
         )
     }
 
-    private fun assertDokumentInfo(dokumentInfo: PdfDokumentInfo) {
+    private fun assertDokumentInfo(dokumentInfo: PdfDokumentInfoSkadeforklaring) {
         assertThat(dokumentInfo.dokumentnavn).isEqualTo("Skadeforklaring ved arbeidsulykke")
         assertThat(dokumentInfo.dokumentnummer).isEqualTo("NAV 13-00.21")
         assertThat(dokumentInfo.dokumentDatoPrefix).isEqualTo("Innsendt digitalt ")
