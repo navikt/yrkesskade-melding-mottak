@@ -9,6 +9,8 @@ import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.domene.*
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.skadeforklaring.model.Vedleggreferanse
+import no.nav.yrkesskade.storage.Blob
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.lang.invoke.MethodHandles
@@ -27,7 +29,8 @@ class SkadeforklaringService(
     private val pdfService: PdfService,
     private val pdlClient: PdlClient,
     private val dokarkivClient: DokarkivClient,
-    private val bigQueryClient: BigQueryClient
+    private val bigQueryClient: BigQueryClient,
+    private val storageService: StorageService
 ) {
     private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
     private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
@@ -40,11 +43,11 @@ class SkadeforklaringService(
         val pdf = pdfService.lagPdf(record, PdfTemplate.SKADEFORKLARING_TRO_KOPI)
         val beriketData = lagBeriketData(record)
         val beriketPdf = lagBeriketPdf(record, beriketData, PdfTemplate.SKADEFORKLARING_BERIKET)
-        val opprettJournalpostRequest = mapSkadeforklaringTilOpprettJournalpostRequest(record, beriketData, pdf, beriketPdf)
+        val vedleggdokumenter = opprettDokumenter(record.skadeforklaring.vedleggreferanser, record.skadeforklaring.innmelder?.norskIdentitetsnummer ?: "")
+        val opprettJournalpostRequest = mapSkadeforklaringTilOpprettJournalpostRequest(record, beriketData, pdf, beriketPdf, vedleggdokumenter)
         dokarkivClient.journalfoerDokument(opprettJournalpostRequest)
 //        foerMetrikkIBigQuery(record)
     }
-
 
     private fun lagBeriketData(record: SkadeforklaringInnsendingHendelse): BeriketData {
         val innmeldersFnr = record.skadeforklaring.innmelder?.norskIdentitetsnummer
@@ -69,11 +72,34 @@ class SkadeforklaringService(
         return pdlClient.hentNavn(fodselsnummer)
     }
 
+    private fun opprettDokumenter(vedleggreferanser: List<Vedleggreferanse>, dokumentEierIdentifikator: String): List<Dokument> {
+        return vedleggreferanser.mapNotNull { vedleggreferanse ->
+            opprettDokument(vedleggreferanse, dokumentEierIdentifikator)
+        }.toList()
+    }
+
+    private fun opprettDokument(vedleggreferanse: Vedleggreferanse, dokumentEierIdentifikator: String): Dokument? {
+        val vedlegg: Blob = storageService.hent(vedleggreferanse.id, dokumentEierIdentifikator) ?: return null
+
+        return Dokument(
+            brevkode = "",
+            tittel = "Vedlegg",
+            dokumentvarianter = listOf(
+                Dokumentvariant(
+                    filtype = Filtype.PDF,
+                    variantformat = Dokumentvariantformat.ARKIV,
+                    fysiskDokument = vedlegg.bytes ?: byteArrayOf()
+                )
+            )
+        )
+    }
+
     private fun mapSkadeforklaringTilOpprettJournalpostRequest(
         record: SkadeforklaringInnsendingHendelse,
         beriketData: BeriketData,
         pdf: ByteArray,
-        beriketPdf: ByteArray
+        beriketPdf: ByteArray,
+        vedleggdokumenter: List<Dokument>
     ): OpprettJournalpostRequest {
         val skadeforklaring = record.skadeforklaring
         val skadeforklaringJson = objectMapper.writeValueAsString(skadeforklaring)
@@ -122,7 +148,7 @@ class SkadeforklaringService(
                         ),
                     )
                 )
-            )
+            ) + vedleggdokumenter
         )
     }
 
