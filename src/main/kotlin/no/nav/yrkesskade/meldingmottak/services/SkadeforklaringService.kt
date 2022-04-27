@@ -7,6 +7,7 @@ import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClient
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.domene.*
+import no.nav.yrkesskade.meldingmottak.util.VedleggUtil
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.skadeforklaring.model.Vedleggreferanse
@@ -80,13 +81,14 @@ class SkadeforklaringService(
 
     private fun opprettDokument(vedleggreferanse: Vedleggreferanse, dokumentEierIdentifikator: String): Dokument? {
         val vedlegg: Blob = storageService.hent(vedleggreferanse.id, dokumentEierIdentifikator) ?: return null
+        val filtype = VedleggUtil.utledFiltype(vedlegg.bytes) ?: Filtype.PDF
 
         return Dokument(
             brevkode = "",
             tittel = "Vedlegg",
             dokumentvarianter = listOf(
                 Dokumentvariant(
-                    filtype = Filtype.PDF,
+                    filtype = filtype,
                     variantformat = Dokumentvariantformat.ARKIV,
                     fysiskDokument = vedlegg.bytes ?: byteArrayOf()
                 )
