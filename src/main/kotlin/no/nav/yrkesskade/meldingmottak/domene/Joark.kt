@@ -49,8 +49,13 @@ enum class Journalposttype {
 }
 
 enum class Filtype {
+    PDF,
     PDFA,
-    JSON
+    JSON,
+    XML,
+    JPEG,
+    PNG,
+    RTF
 }
 
 enum class Dokumentvariantformat {

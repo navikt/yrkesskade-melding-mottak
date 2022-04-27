@@ -1,7 +1,5 @@
 package no.nav.yrkesskade.meldingmottak.fixtures
 
-import no.nav.yrkesskade.meldingmottak.domene.BeriketData
-import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringMetadata
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.Spraak
@@ -19,6 +17,16 @@ fun enkelSkadeforklaringInnsendingHendelse(): SkadeforklaringInnsendingHendelse 
             navCallId = "1234-5678-90"
         ),
         skadeforklaring = enkelSkadeforklaring()
+    )
+
+fun enkelSkadeforklaringInnsendingHendelseMedVedlegg(): SkadeforklaringInnsendingHendelse =
+    SkadeforklaringInnsendingHendelse(
+        metadata = SkadeforklaringMetadata(
+            tidspunktMottatt = LocalDateTime.of(2022, Month.APRIL, 8, 17, 30).toInstant(ZoneOffset.UTC),
+            spraak = Spraak.NB,
+            navCallId = "1234-5678-90"
+        ),
+        skadeforklaring = enkelSkadeforklaringMedVedlegg()
     )
 
 fun enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv(): SkadeforklaringInnsendingHendelse =
@@ -45,6 +53,24 @@ fun enkelSkadeforklaring(): Skadeforklaring =
         ),
         vedleggtype = "",
         vedleggreferanser = emptyList(),
+        fravaer = Fravaer("treDagerEllerMindre", "Sykemelding"),
+        helseinstitusjon = helseinstitusjon()
+    )
+
+fun enkelSkadeforklaringMedVedlegg(): Skadeforklaring =
+    Skadeforklaring(
+        saksnummer = null,
+        innmelder = skadeforklaringInnmelderErForesatt(),
+        skadelidt = skadeforklaringSkadelidt(),
+        arbeidetMedIUlykkesoeyeblikket = "Dette er arbeidsbeskrivelsen",
+        noeyaktigBeskrivelseAvHendelsen = "Dette er ulykkesbeskrivelsen",
+        tid = Tid(
+            tidstype = "Tidspunkt",
+            tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
+            periode = null
+        ),
+        vedleggtype = "",
+        vedleggreferanser = vedleggReferanser(),
         fravaer = Fravaer("treDagerEllerMindre", "Sykemelding"),
         helseinstitusjon = helseinstitusjon()
     )
@@ -91,3 +117,10 @@ fun helseinstitusjon(): Helseinstitusjon =
             poststed = "Granlia"
         )
     )
+
+fun vedleggReferanser(): List<Vedleggreferanse> {
+    val vedleggreferanse1 = Vedleggreferanse("vedlegg-1", "Vedlegg1.pdf", 512, "https://vedlegglager/vedlegg1")
+    val vedleggreferanse2 = Vedleggreferanse("vedlegg-2", "Vedlegg2.pdf", 300, "https://vedlegglager/vedlegg2")
+    return listOf(vedleggreferanse1, vedleggreferanse2)
+}
+

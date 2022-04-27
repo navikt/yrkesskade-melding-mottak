@@ -29,6 +29,8 @@ kafka:
       name: yrkesskade.privat-yrkesskade-skadeforklaringinnsendt
       auto-startup: false
 
+storage.type: GCP
+
 no.nav.security.jwt:
   issuer:
     azuread:

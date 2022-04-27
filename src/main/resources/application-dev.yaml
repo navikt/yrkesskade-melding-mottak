@@ -28,6 +28,8 @@ kafka:
     skadeforklaring-innsendt:
       name: yrkesskade.privat-yrkesskade-skadeforklaringinnsendt
 
+storage.type: GCP
+
 no.nav.security.jwt:
   issuer:
     azuread:
