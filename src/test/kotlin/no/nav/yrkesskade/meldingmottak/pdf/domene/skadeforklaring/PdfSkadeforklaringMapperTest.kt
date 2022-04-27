@@ -48,7 +48,7 @@ internal class PdfSkadeforklaringMapperTest {
         assertThat(innmelder).isNotNull
         assertThat(innmelder.norskIdentitetsnummer.verdi).isEqualTo("12345600000")
         assertThat(innmelder.navn.verdi).isEqualTo("Inn Melder")
-        assertThat(innmelder.innmelderrolle.verdi).isEqualTo("Foresatt/Verge")
+        assertThat(innmelder.innmelderrolle.verdi).isEqualTo("Verge/Foresatt")
     }
 
     private fun assertSkadelidt(skadelidt: PdfSkadelidt?) {

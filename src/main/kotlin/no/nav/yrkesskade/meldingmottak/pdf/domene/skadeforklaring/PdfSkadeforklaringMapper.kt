@@ -49,7 +49,7 @@ object PdfSkadeforklaringMapper {
 
     private fun tilInnmelderrolle(innmelder: Innmelder?): String? {
         return when(innmelder?.innmelderrolle) {
-            "vergeOgForesatt" -> "Foresatt/Verge"
+            "vergeOgForesatt" -> "Verge/Foresatt"
             "denSkadelidte" -> "Den skadelidte selv"
             else -> null
         }
