@@ -3,10 +3,7 @@ package no.nav.yrkesskade.meldingmottak.services
 import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
 import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
 import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
-import no.nav.yrkesskade.meldingmottak.fixtures.beriketData
-import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelse
-import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv
-import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkademeldingInnsendtHendelse
+import no.nav.yrkesskade.meldingmottak.fixtures.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -105,7 +102,7 @@ internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
     @Test
     fun `skadeforklaring - 2A) beriket pdf - foresatt melder på vegne av barn`() {
         val byteArray = pdfService.lagBeriketPdf(
-            enkelSkadeforklaringInnsendingHendelse(),
+            enkelSkadeforklaringInnsendingHendelseMedVedlegg(),
             beriketData(),
             PdfTemplate.SKADEFORKLARING_BERIKET
         )
