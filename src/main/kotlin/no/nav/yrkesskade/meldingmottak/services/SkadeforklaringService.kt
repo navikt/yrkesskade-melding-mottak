@@ -85,7 +85,7 @@ class SkadeforklaringService(
 
         return Dokument(
             brevkode = "",
-            tittel = "Vedlegg",
+            tittel = vedlegg.navn ?: "Vedlegg",
             dokumentvarianter = listOf(
                 Dokumentvariant(
                     filtype = filtype,
