@@ -63,6 +63,12 @@ spec:
     bigQueryDatasets:
       - name: yrkesskade_metrikker
         permission: READWRITE
+    buckets:
+      - name: yrkesskade-skadeforklaring-vedlegg
+        lifecycleCondition:
+          age: 7
+          numNewerVersions: 2
+          withState: ANY
   azure:
     application:
       enabled: true
