@@ -10,6 +10,8 @@ spec:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: {{springProfile}}
+    - name: GCP_PROJECT_ID
+      value: {{gcpProjectId}}
   liveness:
     path: /internal/health
     port: 8080
