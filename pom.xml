@@ -23,6 +23,7 @@
         <okhttp3.version>4.9.3</okhttp3.version>
         <yrkesskade-felles-backend.version>74d27c24_202204270904</yrkesskade-felles-backend.version>
         <tika.version>2.3.0</tika.version>
+        <pdfbox.version>2.0.26</pdfbox.version>
     </properties>
 
     <dependencies>
@@ -161,6 +162,11 @@
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
             <version>${tika.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>${pdfbox.version}</version>
         </dependency>
 
         <!-- Security -->
