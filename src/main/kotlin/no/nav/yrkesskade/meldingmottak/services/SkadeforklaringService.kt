@@ -7,8 +7,13 @@ import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClient
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.domene.*
-import no.nav.yrkesskade.meldingmottak.util.VedleggUtil
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
+import no.nav.yrkesskade.meldingmottak.vedlegg.AttachmentTypeUnsupportedException
+import no.nav.yrkesskade.meldingmottak.vedlegg.Image2PDFConverter
+import no.nav.yrkesskade.meldingmottak.vedlegg.VedleggUtil
+import no.nav.yrkesskade.meldingmottak.vedlegg.VedleggUtil.gyldigBildevedleggFiltype
+import no.nav.yrkesskade.meldingmottak.vedlegg.VedleggUtil.gyldigVedleggFiltype
+import no.nav.yrkesskade.meldingmottak.vedlegg.VedleggUtil.mediaType
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.skadeforklaring.model.Vedleggreferanse
 import no.nav.yrkesskade.storage.Blob
@@ -31,7 +36,8 @@ class SkadeforklaringService(
     private val pdlClient: PdlClient,
     private val dokarkivClient: DokarkivClient,
     private val bigQueryClient: BigQueryClient,
-    private val storageService: StorageService
+    private val storageService: StorageService,
+    private val image2PDFConverter: Image2PDFConverter
 ) {
     private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
     private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
@@ -81,16 +87,27 @@ class SkadeforklaringService(
 
     private fun opprettDokument(vedleggreferanse: Vedleggreferanse, dokumentEierIdentifikator: String): Dokument? {
         val vedlegg: Blob = storageService.hent(vedleggreferanse.id, dokumentEierIdentifikator) ?: return null
-        val filtype = VedleggUtil.utledFiltype(vedlegg.bytes) ?: Filtype.PDF
+        var bytes = vedlegg.bytes
+        var filtype: Filtype? = VedleggUtil.utledFiltype(bytes)
+            ?: throw AttachmentTypeUnsupportedException("Kan ikke utlede filtypen for vedlegg ${vedlegg.navn}", mediaType(bytes), null)
+
+        if (!gyldigVedleggFiltype(filtype)) {
+            throw AttachmentTypeUnsupportedException("Kan ikke journalføre vedlegg av typen $filtype, ${vedlegg.navn}", mediaType(bytes), null)
+        }
+
+        if (bytes != null && bytes.isNotEmpty() && gyldigBildevedleggFiltype(filtype)) {
+            bytes = image2PDFConverter.convert(bytes)
+            filtype = Filtype.PDF
+        }
 
         return Dokument(
             brevkode = "",
             tittel = vedlegg.navn ?: "Vedlegg",
             dokumentvarianter = listOf(
                 Dokumentvariant(
-                    filtype = filtype,
+                    filtype = filtype!!,
                     variantformat = Dokumentvariantformat.ARKIV,
-                    fysiskDokument = vedlegg.bytes ?: byteArrayOf()
+                    fysiskDokument = bytes ?: byteArrayOf()
                 )
             )
         )

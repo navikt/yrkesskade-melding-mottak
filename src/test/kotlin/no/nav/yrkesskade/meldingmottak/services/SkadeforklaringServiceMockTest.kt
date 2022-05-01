@@ -9,11 +9,14 @@ import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostResponse
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelseMedBildevedlegg
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelseMedVedlegg
+import no.nav.yrkesskade.meldingmottak.vedlegg.Image2PDFConverter
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.storage.Blob
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.core.io.ClassPathResource
 
 class SkadeforklaringServiceMockTest {
 
@@ -22,9 +25,11 @@ class SkadeforklaringServiceMockTest {
     private val dokarkivClient: DokarkivClient = mockk()
     private val bigQueryClient = BigQueryClientStub()
     private val storageService: StorageService = mockk()
+    private val image2PDFConverter: Image2PDFConverter = mockk()
 
 
-    private val service: SkadeforklaringService = SkadeforklaringService(pdfService, pdlClient, dokarkivClient, bigQueryClient, storageService)
+
+    private val service: SkadeforklaringService = SkadeforklaringService(pdfService, pdlClient, dokarkivClient, bigQueryClient, storageService, image2PDFConverter)
 
     @BeforeEach
     fun setup() {
@@ -32,7 +37,8 @@ class SkadeforklaringServiceMockTest {
         every { pdfService.lagBeriketPdf(ofType(SkadeforklaringInnsendingHendelse::class), any(), any()) } answers { ByteArray(10) }
         every { pdlClient.hentNavn(any()) } answers { Navn("John", null, "Doe") }
         every { dokarkivClient.journalfoerDokument(any()) } answers { OpprettJournalpostResponse(false, "123", emptyList()) }
-        every { storageService.hent(any(), any()) } answers { Blob("10", "12345678901", byteArrayOf(10), "vedlegg.pdf", 250) }
+        every { storageService.hent(any(), any()) } answers { Blob("10", "12345678901", readPdfFile(), "vedlegg-1.pdf", 250) }
+        every { image2PDFConverter.convert(ofType(ByteArray::class)) } answers { readJpegFile() }
     }
 
     @Test
@@ -65,4 +71,26 @@ class SkadeforklaringServiceMockTest {
         service.mottaSkadeforklaring(enkelSkadeforklaringInnsendingHendelse())
         verify(exactly = 0) { storageService.hent(any(), any()) }
     }
+
+    @Test
+    fun `skal kalle paa image2PDFConverter naar en skadeforklaring med gyldig bildevedlegg kommer inn`() {
+        every { storageService.hent(any(), any()) } answers { Blob("10", "12345678901", readJpegFile(), "vedlegg-3.jpeg", 250) }
+
+        service.mottaSkadeforklaring(enkelSkadeforklaringInnsendingHendelseMedBildevedlegg())
+        verify(exactly = 1) { storageService.hent(any(), any()) }
+    }
+
+    @Test
+    fun `skal ikke kalle paa image2PDFConverter naar en skadeforklaring med pdf-vedlegg kommer inn`() {
+        service.mottaSkadeforklaring(enkelSkadeforklaringInnsendingHendelseMedVedlegg())
+        verify(exactly = 2) { storageService.hent(any(), any()) }
+    }
+
+
+    private fun readPdfFile(): ByteArray =
+        ClassPathResource("pdf/vedlegg-1.pdf").file.readBytes()
+
+    private fun readJpegFile(): ByteArray =
+        ClassPathResource("pdf/vedlegg-3.jpeg").file.readBytes()
+
 }

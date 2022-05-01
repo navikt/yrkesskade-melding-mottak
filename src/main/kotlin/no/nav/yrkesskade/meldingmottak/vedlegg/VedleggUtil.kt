@@ -1,4 +1,4 @@
-package no.nav.yrkesskade.meldingmottak.util
+package no.nav.yrkesskade.meldingmottak.vedlegg
 
 import no.nav.yrkesskade.meldingmottak.domene.Filtype
 import org.apache.tika.Tika
@@ -6,6 +6,15 @@ import org.springframework.http.MediaType
 import java.util.*
 
 internal object VedleggUtil {
+
+    val GYLDIGE_VEDLEGG_FILTYPER: List<Filtype> = listOf(Filtype.PDF, Filtype.PDFA, Filtype.JPEG, Filtype.PNG)
+    val GYLDIGE_BILDEVEDLEGG_FILTYPER: List<Filtype> = listOf(Filtype.JPEG, Filtype.PNG)
+
+    fun gyldigVedleggFiltype(filtype: Filtype?): Boolean =
+        GYLDIGE_VEDLEGG_FILTYPER.contains(filtype)
+
+    fun gyldigBildevedleggFiltype(filtype: Filtype?): Boolean =
+        GYLDIGE_BILDEVEDLEGG_FILTYPER.contains(filtype)
 
     fun mediaType(bytes: ByteArray?): MediaType? {
         return Optional.ofNullable(bytes)
@@ -18,10 +27,8 @@ internal object VedleggUtil {
         return when (mediaType(bytes)) {
             MediaType.APPLICATION_JSON -> Filtype.JSON
             MediaType.APPLICATION_PDF -> Filtype.PDF
-            MediaType.APPLICATION_XML -> Filtype.XML
             MediaType.IMAGE_JPEG -> Filtype.JPEG
             MediaType.IMAGE_PNG -> Filtype.PNG
-            MediaType.TEXT_PLAIN -> Filtype.RTF
             else -> null
         }
     }

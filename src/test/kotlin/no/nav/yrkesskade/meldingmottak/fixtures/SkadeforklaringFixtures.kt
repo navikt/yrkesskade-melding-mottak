@@ -29,6 +29,16 @@ fun enkelSkadeforklaringInnsendingHendelseMedVedlegg(): SkadeforklaringInnsendin
         skadeforklaring = enkelSkadeforklaringMedVedlegg()
     )
 
+fun enkelSkadeforklaringInnsendingHendelseMedBildevedlegg(): SkadeforklaringInnsendingHendelse =
+    SkadeforklaringInnsendingHendelse(
+        metadata = SkadeforklaringMetadata(
+            tidspunktMottatt = LocalDateTime.of(2022, Month.APRIL, 8, 17, 30).toInstant(ZoneOffset.UTC),
+            spraak = Spraak.NB,
+            navCallId = "1234-5678-90"
+        ),
+        skadeforklaring = enkelSkadeforklaringMedBildevedlegg()
+    )
+
 fun enkelSkadeforklaringInnsendingHendelseHvorSkadelidtMelderSelv(): SkadeforklaringInnsendingHendelse =
     SkadeforklaringInnsendingHendelse(
         metadata = SkadeforklaringMetadata(
@@ -71,6 +81,24 @@ fun enkelSkadeforklaringMedVedlegg(): Skadeforklaring =
         ),
         skalEttersendeDokumentasjon = "nei",
         vedleggreferanser = vedleggReferanser(),
+        fravaer = Fravaer("treDagerEllerMindre", "Sykemelding"),
+        helseinstitusjon = helseinstitusjon()
+    )
+
+fun enkelSkadeforklaringMedBildevedlegg(): Skadeforklaring =
+    Skadeforklaring(
+        saksnummer = null,
+        innmelder = skadeforklaringInnmelderErForesatt(),
+        skadelidt = skadeforklaringSkadelidt(),
+        arbeidetMedIUlykkesoeyeblikket = "Dette er arbeidsbeskrivelsen",
+        noeyaktigBeskrivelseAvHendelsen = "Dette er ulykkesbeskrivelsen",
+        tid = Tid(
+            tidstype = "Tidspunkt",
+            tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
+            periode = null
+        ),
+        skalEttersendeDokumentasjon = "nei",
+        vedleggreferanser = vedleggReferanserMedBildevedlegg(),
         fravaer = Fravaer("treDagerEllerMindre", "Sykemelding"),
         helseinstitusjon = helseinstitusjon()
     )
@@ -122,5 +150,10 @@ fun vedleggReferanser(): List<Vedleggreferanse> {
     val vedleggreferanse1 = Vedleggreferanse("vedlegg-1", "Vedlegg1.pdf", 512, "https://vedlegglager/vedlegg1")
     val vedleggreferanse2 = Vedleggreferanse("vedlegg-2", "Vedlegg2.pdf", 300, "https://vedlegglager/vedlegg2")
     return listOf(vedleggreferanse1, vedleggreferanse2)
+}
+
+fun vedleggReferanserMedBildevedlegg(): List<Vedleggreferanse> {
+    val vedleggreferanse = Vedleggreferanse("vedlegg-9", "katt.jpeg", 1000, "https://ett-vedlegglager/vedlegg9")
+    return listOf(vedleggreferanse)
 }
 

@@ -52,10 +52,8 @@ enum class Filtype {
     PDF,
     PDFA,
     JSON,
-    XML,
     JPEG,
-    PNG,
-    RTF
+    PNG
 }
 
 enum class Dokumentvariantformat {
