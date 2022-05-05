@@ -1,8 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.fixtures
 
 import no.nav.yrkesskade.kodeverk.model.KodeverdiDto
-import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
-import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
 
 fun noenLand(): Map<String, KodeverdiDto> =
     mapOf(
@@ -37,7 +35,7 @@ fun tidsrom(): Map<String, KodeverdiDto> =
 
 fun hvorSkjeddeUlykken(): Map<String, KodeverdiDto> =
     mapOf(
-        "pArbeidsstedetUte" to KodeverdiDto("pArbeidsstedetUte", "På arbeidstedet ute")
+        "pArbeidsstedetUte" to KodeverdiDto("pArbeidsstedetUte", "På arbeidsstedet ute")
     )
 
 fun aarsakBakgrunn(): Map<String, KodeverdiDto> =
@@ -49,7 +47,7 @@ fun aarsakBakgrunn(): Map<String, KodeverdiDto> =
 fun bakgrunnForHendelsen(): Map<String, KodeverdiDto> =
     mapOf(
         "defektUtstyr" to KodeverdiDto("defektUtstyr", "Defekt utstyr"),
-        "feilPlassering" to KodeverdiDto("feilPlassering", "Feil plasseringen"),
+        "feilPlassering" to KodeverdiDto("feilPlassering", "Feil plassering"),
         "mangelfullOpplRing" to KodeverdiDto("mangelfullOpplRing", "Mangelfull opplæring")
     )
 
