@@ -30,42 +30,42 @@ private fun enkelSkademelding(): Skademelding {
     )
 }
 
-private fun innmelder(): Innmelder? {
+private fun innmelder(): Innmelder {
     return Innmelder(
         norskIdentitetsnummer = "12345677777",
         paaVegneAv = "123454321",
-        innmelderrolle = Innmelderrolle.virksomhetsrepresentant,
+        innmelderrolle = "virksomhetsrepresentant",
         altinnrolleIDer = listOf("111", "22")
     )
 }
 
-private fun skadelidt(): Skadelidt? {
+private fun skadelidt(): Skadelidt {
     return Skadelidt(
         norskIdentitetsnummer = "11111177777",
         dekningsforhold = Dekningsforhold(
             organisasjonsnummer = "123456789",
             navnPaaVirksomheten = "Bedriften AS",
             stillingstittelTilDenSkadelidte = listOf(
-                Stillingstittel.agroteknikere,
-                Stillingstittel.altmuligmann
+                "agroteknikere",
+                "altmuligmann"
             ),
-            rolletype = Rolletype.arbeidstaker
+            rolletype = "arbeidstaker"
         )
     )
 }
 
-private fun skade(): Skade? {
+private fun skade(): Skade {
     return Skade(
-        alvorlighetsgrad = Alvorlighetsgrad.andreLivstruendeSykdomSlashSkade,
+        alvorlighetsgrad = "andreLivstruendeSykdomSlashSkade",
         skadedeDeler = listOf(
-            SkadetDel(SkadeartTabellC.etsing, KroppsdelTabellD.ansikt),
-            SkadetDel(SkadeartTabellC.knokkelbrudd, KroppsdelTabellD.armSlashAlbueCommaVenstre)
+            SkadetDel("etsing", "ansikt"),
+            SkadetDel("knokkelbrudd", "armSlashAlbueCommaVenstre")
         ),
-        antattSykefravaerTabellH = AntattSykefravaerTabellH.kjentFravRMerEnn3Dager
+        antattSykefravaerTabellH = "kjentFravRMerEnn3Dager"
     )
 }
 
-private fun hendelsesfakta(): Hendelsesfakta? {
+private fun hendelsesfakta(): Hendelsesfakta {
     return Hendelsesfakta(
         tid = Tid(
             tidstype = Tidstype.tidspunkt,
@@ -73,8 +73,8 @@ private fun hendelsesfakta(): Hendelsesfakta? {
             periode = null,
             ukjent = false
         ),
-        naarSkjeddeUlykken = NaarSkjeddeUlykken.iAvtaltArbeidstid,
-        hvorSkjeddeUlykken = HvorSkjeddeUlykken.pArbeidsstedetUte,
+        naarSkjeddeUlykken = "iAvtaltArbeidstid",
+        hvorSkjeddeUlykken = "pArbeidsstedetUte",
         ulykkessted = Ulykkessted(
             sammeSomVirksomhetensAdresse = true,
             adresse = Adresse(
@@ -85,15 +85,15 @@ private fun hendelsesfakta(): Hendelsesfakta? {
             )
         ),
         aarsakUlykkeTabellAogE = listOf(
-            UlykkesAarsakTabellAogE.fallAvPerson,
-            UlykkesAarsakTabellAogE.kjemikalier
+            "fallAvPerson",
+            "kjemikalier"
         ),
         bakgrunnsaarsakTabellBogG = listOf(
-            BakgrunnsaarsakTabellBogG.defektUtstyr,
-            BakgrunnsaarsakTabellBogG.feilPlassering,
-            BakgrunnsaarsakTabellBogG.mangelfullOpplRing
+            "defektUtstyr",
+            "feilPlassering",
+            "mangelfullOpplRing"
         ),
-        stedsbeskrivelseTabellF = StedsbeskrivelseTabellF.plassForIndustriellVirksomhet,
+        stedsbeskrivelseTabellF = "plassForIndustriellVirksomhet",
         utfyllendeBeskrivelse = "Dette er en veldig lang utfyllende beskrivelse bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla"
     )
 }
