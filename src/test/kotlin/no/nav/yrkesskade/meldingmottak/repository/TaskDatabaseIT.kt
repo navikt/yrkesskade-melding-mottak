@@ -1,5 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.repository
 
+import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
 import no.nav.yrkesskade.meldingmottak.testutils.docker.PostgresDockerContainer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import java.sql.Connection
 import java.sql.DriverManager
 
@@ -21,6 +23,7 @@ import java.sql.DriverManager
 @DataJpaTest
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ContextConfiguration(initializers = [BaseSpringBootTestClass.DockerConfigInitializer::class])
 class TaskDatabaseIT {
 
     init {
