@@ -125,7 +125,7 @@ internal class PdfSkademeldingMapperTest {
     }
 
     private fun assertSkade(skade: PdfSkade?) {
-        assertThat(skade?.alvorlighetsgrad?.verdi).isEqualTo("Andre livstruende sykdom/skade")
+        assertThat(skade?.alvorlighetsgrad?.verdi).isEqualTo("Livstruende sykdom/skade")
         assertThat(skade?.skadedeDeler).containsExactlyInAnyOrder(
             PdfSkadetDel(
                 kroppsdelTabellD = Soknadsfelt("Hvor på kroppen er skaden", "Ansikt"),
@@ -133,7 +133,7 @@ internal class PdfSkademeldingMapperTest {
             ),
             PdfSkadetDel(
                 kroppsdelTabellD = Soknadsfelt("Hvor på kroppen er skaden", "Arm/albue, venstre"),
-                skadeartTabellC = Soknadsfelt("Hva slags skade er det", "Knokkelbrudd")
+                skadeartTabellC = Soknadsfelt("Hva slags skade er det", "Bruddskade")
             )
         )
         assertThat(skade?.antattSykefravaerTabellH?.verdi).isEqualTo("Kjent fravær mer enn 3 dager")
@@ -164,7 +164,7 @@ internal class PdfSkademeldingMapperTest {
             )
         )
         assertThat(hendelsesfakta?.aarsakUlykkeTabellAogE?.verdi).containsExactlyInAnyOrder(
-            "Kjemikalier",
+            "Velt",
             "Fall av person"
         )
         assertThat(hendelsesfakta?.bakgrunnsaarsakTabellBogG?.verdi).containsExactlyInAnyOrder(

@@ -35,45 +35,45 @@ fun tidsrom(): Map<String, KodeverdiDto> =
 
 fun hvorSkjeddeUlykken(): Map<String, KodeverdiDto> =
     mapOf(
-        "pArbeidsstedetUte" to KodeverdiDto("pArbeidsstedetUte", "På arbeidsstedet ute")
+        "arbeidsstedUte" to KodeverdiDto("arbeidsstedUte", "På arbeidsstedet ute")
     )
 
 fun aarsakBakgrunn(): Map<String, KodeverdiDto> =
     mapOf(
         "fallAvPerson" to KodeverdiDto("fallAvPerson", "Fall av person"),
-        "kjemikalier" to KodeverdiDto("kjemikalier", "Kjemikalier")
+        "velt" to KodeverdiDto("velt", "Velt")
     )
 
 fun bakgrunnForHendelsen(): Map<String, KodeverdiDto> =
     mapOf(
         "defektUtstyr" to KodeverdiDto("defektUtstyr", "Defekt utstyr"),
         "feilPlassering" to KodeverdiDto("feilPlassering", "Feil plassering"),
-        "mangelfullOpplRing" to KodeverdiDto("mangelfullOpplRing", "Mangelfull opplæring")
+        "mangelfullOpplaering" to KodeverdiDto("mangelfullOpplaering", "Mangelfull opplæring")
     )
 
 fun typeArbeidsplass(): Map<String, KodeverdiDto> =
     mapOf(
-        "plassForIndustriellVirksomhet" to KodeverdiDto("plassForIndustriellVirksomhet", "Plass for industriell virksomhet")
+        "industriellVirksomhet" to KodeverdiDto("industriellVirksomhet", "Plass for industriell virksomhet")
     )
 
 fun skadetyper(): Map<String, KodeverdiDto> =
     mapOf(
         "etsing" to KodeverdiDto("etsing", "Etsing"),
-        "knokkelbrudd" to KodeverdiDto("knokkelbrudd", "Knokkelbrudd")
+        "bruddskade" to KodeverdiDto("bruddskade", "Bruddskade")
     )
 
 fun skadetKroppsdel(): Map<String, KodeverdiDto> =
     mapOf(
         "ansikt" to KodeverdiDto("ansikt", "Ansikt"),
-        "armSlashAlbueCommaVenstre" to KodeverdiDto("armSlashAlbueCommanVenstre", "Arm/albue, venstre")
+        "venstreArmOgAlbue" to KodeverdiDto("venstreArmOgAlbue", "Arm/albue, venstre")
     )
 
 fun harSkadelidtHattFravaer(): Map<String, KodeverdiDto> =
     mapOf(
-        "kjentFravRMerEnn3Dager" to KodeverdiDto("kjentFravRMerEnn3Dager", "Kjent fravær mer enn 3 dager")
+        "merEnnTreDager" to KodeverdiDto("merEnnTreDager", "Kjent fravær mer enn 3 dager")
     )
 
 fun alvorlighetsgrad(): Map<String, KodeverdiDto> =
     mapOf(
-        "andreLivstruendeSykdomSlashSkade" to KodeverdiDto("andreLivstruendeSykdomSlashSkade", "Andre livstruende sykdom/skade")
+        "livstruendeSykdomEllerSkade" to KodeverdiDto("livstruendeSykdomEllerSkade", "Livstruende sykdom/skade")
     )

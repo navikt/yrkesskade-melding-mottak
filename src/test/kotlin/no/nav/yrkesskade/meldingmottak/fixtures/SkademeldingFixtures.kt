@@ -4,8 +4,22 @@ package no.nav.yrkesskade.meldingmottak.fixtures
 
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
 import no.nav.yrkesskade.meldingmottak.domene.Navn
-import no.nav.yrkesskade.model.*
-import no.nav.yrkesskade.skademelding.model.*
+import no.nav.yrkesskade.model.SkademeldingBeriketData
+import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
+import no.nav.yrkesskade.model.SkademeldingMetadata
+import no.nav.yrkesskade.model.Spraak
+import no.nav.yrkesskade.model.Systemkilde
+import no.nav.yrkesskade.skademelding.model.Adresse
+import no.nav.yrkesskade.skademelding.model.Dekningsforhold
+import no.nav.yrkesskade.skademelding.model.Hendelsesfakta
+import no.nav.yrkesskade.skademelding.model.Innmelder
+import no.nav.yrkesskade.skademelding.model.Skade
+import no.nav.yrkesskade.skademelding.model.Skadelidt
+import no.nav.yrkesskade.skademelding.model.Skademelding
+import no.nav.yrkesskade.skademelding.model.SkadetDel
+import no.nav.yrkesskade.skademelding.model.Tid
+import no.nav.yrkesskade.skademelding.model.Tidstype
+import no.nav.yrkesskade.skademelding.model.Ulykkessted
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.OffsetDateTime
@@ -56,12 +70,12 @@ private fun skadelidt(): Skadelidt {
 
 private fun skade(): Skade {
     return Skade(
-        alvorlighetsgrad = "andreLivstruendeSykdomSlashSkade",
+        alvorlighetsgrad = "livstruendeSykdomEllerSkade",
         skadedeDeler = listOf(
             SkadetDel("etsing", "ansikt"),
-            SkadetDel("knokkelbrudd", "armSlashAlbueCommaVenstre")
+            SkadetDel("bruddskade", "venstreArmOgAlbue")
         ),
-        antattSykefravaerTabellH = "kjentFravRMerEnn3Dager"
+        antattSykefravaerTabellH = "merEnnTreDager"
     )
 }
 
@@ -74,7 +88,7 @@ private fun hendelsesfakta(): Hendelsesfakta {
             ukjent = false
         ),
         naarSkjeddeUlykken = "iAvtaltArbeidstid",
-        hvorSkjeddeUlykken = "pArbeidsstedetUte",
+        hvorSkjeddeUlykken = "arbeidsstedUte",
         ulykkessted = Ulykkessted(
             sammeSomVirksomhetensAdresse = true,
             adresse = Adresse(
@@ -86,14 +100,14 @@ private fun hendelsesfakta(): Hendelsesfakta {
         ),
         aarsakUlykkeTabellAogE = listOf(
             "fallAvPerson",
-            "kjemikalier"
+            "velt"
         ),
         bakgrunnsaarsakTabellBogG = listOf(
             "defektUtstyr",
             "feilPlassering",
-            "mangelfullOpplRing"
+            "mangelfullOpplaering"
         ),
-        stedsbeskrivelseTabellF = "plassForIndustriellVirksomhet",
+        stedsbeskrivelseTabellF = "industriellVirksomhet",
         utfyllendeBeskrivelse = "Dette er en veldig lang utfyllende beskrivelse bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla"
     )
 }
