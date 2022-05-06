@@ -58,6 +58,6 @@ internal class SkademeldingInnsendtHendelseConsumerIT : BaseSpringBootTestClass(
         val record = skademeldingInnsendtHendelse()
         skademeldingKafkaTemplate.send(TOPIC, record)
         Mockito.verify(consumer, timeout(20000L).times(1)).listen(any())
-        Mockito.verify(skademeldingService, timeout(60000L).times(1)).mottaSkademelding(eq(record))
+        Mockito.verify(skademeldingService, timeout(20000L).times(1)).mottaSkademelding(eq(record))
     }
 }
