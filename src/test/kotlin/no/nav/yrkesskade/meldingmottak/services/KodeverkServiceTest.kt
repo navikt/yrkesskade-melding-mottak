@@ -20,10 +20,10 @@ import java.time.Instant
 @ExtendWith(MockKExtension::class)
 internal class KodeverkServiceTest {
 
-    private val typeLandkoderISO2 = "landkoderISO2"
+    private val typeLandkoder = "landkoder"
     private val kategoriBlank = ""
     private val bokmaal = "nb"
-    private val keyLandkoder = KodeverkTypeKategori(typeLandkoderISO2, kategoriBlank)
+    private val keyLandkoder = KodeverkTypeKategori(typeLandkoder, kategoriBlank)
 
     private val kodeverkklientMock: Kodeverkklient = mockk()
 
@@ -41,7 +41,7 @@ internal class KodeverkServiceTest {
         val map = mutableMapOf(keyLandkoder to KodeverkTidData(noenLand(), Instant.now()))
         ReflectionTestUtils.setField(service, "kodeverkMap", map)
 
-        service.hentKodeverk(typeLandkoderISO2, kategoriBlank, bokmaal)
+        service.hentKodeverk(typeLandkoder, kategoriBlank, bokmaal)
         verify(exactly = 0) { kodeverkklientMock.hentKodeverk(any(), any(), any()) }
     }
 
@@ -54,11 +54,11 @@ internal class KodeverkServiceTest {
         val map = (ReflectionTestUtils.getField(service, "kodeverkMap") as MutableMap<KodeverkTypeKategori, KodeverkTidData>)
         val kodeverkTidData = map[keyLandkoder]!!
         // Data finnes...
-        assertThat(kodeverkTidData.data["NO"]).isEqualTo(KodeverdiDto("NO", "NORGE"))
+        assertThat(kodeverkTidData.data["NOR"]).isEqualTo(KodeverdiDto("NOR", "NORGE"))
         // ...men er hentet for mer enn x minutter siden
         assertThat(kodeverkTidData.hentetTid).isBefore(Instant.now().minusSeconds(60*60))
 
-        service.hentKodeverk(typeLandkoderISO2, kategoriBlank, bokmaal)
+        service.hentKodeverk(typeLandkoder, kategoriBlank, bokmaal)
         verify(exactly = 1) { kodeverkklientMock.hentKodeverk(any(), any(), any()) }
     }
 
@@ -69,7 +69,7 @@ internal class KodeverkServiceTest {
         // Data finnes ikke...
         assertThat(kodeverkTidData).isNull()
 
-        service.hentKodeverk(typeLandkoderISO2, kategoriBlank, bokmaal)
+        service.hentKodeverk(typeLandkoder, kategoriBlank, bokmaal)
         verify(exactly = 1) { kodeverkklientMock.hentKodeverk(any(), any(), any()) }
     }
 
@@ -77,7 +77,7 @@ internal class KodeverkServiceTest {
     fun `skal returnere tom map når kodeverket ikke finnes i api`() {
         every { kodeverkklientMock.hentKodeverk(any(), any(), any()) } returns emptyMap()
 
-        val landKodeverk = service.hentKodeverk(typeLandkoderISO2, kategoriBlank, bokmaal)
+        val landKodeverk = service.hentKodeverk(typeLandkoder, kategoriBlank, bokmaal)
         verify(exactly = 1) { kodeverkklientMock.hentKodeverk(any(), any(), any()) }
         assertThat(landKodeverk).isEmpty()
     }

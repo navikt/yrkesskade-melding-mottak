@@ -145,7 +145,7 @@ object PdfSkademeldingMapper {
 
     private fun landNavnEllerKode(landkode: String?, kodeverkHolder: KodeverkHolder): String? {
         if (landkode == null || landkode == "NO" || landkode == "NOR") return null
-        return kodeverkHolder.mapKodeTilVerdi(landkode, "landkoderISO2")
+        return kodeverkHolder.mapKodeTilVerdi(landkode, "landkoder")
     }
 
     private fun lagPdfDokumentInfo(metadata: SkademeldingMetadata): PdfDokumentInfo {

@@ -4,8 +4,8 @@ import no.nav.yrkesskade.kodeverk.model.KodeverdiDto
 
 fun noenLand(): Map<String, KodeverdiDto> =
     mapOf(
-        "NO" to KodeverdiDto("NO", "NORGE"),
-        "SE" to KodeverdiDto("SE", "SVERIGE")
+        "NOR" to KodeverdiDto("NOR", "NORGE"),
+        "SWE" to KodeverdiDto("SWE", "SVERIGE")
     )
 
 

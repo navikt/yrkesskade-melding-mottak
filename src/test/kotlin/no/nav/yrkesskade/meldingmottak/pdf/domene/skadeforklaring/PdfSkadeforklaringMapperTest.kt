@@ -15,6 +15,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 
+@Suppress("UNUSED_VARIABLE")
 internal class PdfSkadeforklaringMapperTest {
 
     private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
@@ -22,7 +23,7 @@ internal class PdfSkadeforklaringMapperTest {
 
     @BeforeEach
     fun setUp() {
-        `when`(kodeverkService.hentKodeverk(org.mockito.kotlin.eq("landkoderISO2"), org.mockito.kotlin.eq(null), any())).thenReturn(noenLand())
+        `when`(kodeverkService.hentKodeverk(org.mockito.kotlin.eq("landkoder"), org.mockito.kotlin.eq(null), any())).thenReturn(noenLand())
         `when`(kodeverkService.hentKodeverk(org.mockito.kotlin.eq("fravaertype"), org.mockito.kotlin.eq(null), any())).thenReturn(fravaertyper())
         `when`(kodeverkService.hentKodeverk(org.mockito.kotlin.eq("rolletype"), org.mockito.kotlin.eq(null), any())).thenReturn(
             rolletyper()

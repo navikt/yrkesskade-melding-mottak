@@ -3,44 +3,21 @@ package no.nav.yrkesskade.meldingmottak.pdf
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import no.nav.yrkesskade.meldingmottak.fixtures.aarsakBakgrunn
-import no.nav.yrkesskade.meldingmottak.fixtures.alvorlighetsgrad
-import no.nav.yrkesskade.meldingmottak.fixtures.bakgrunnForHendelsen
-import no.nav.yrkesskade.meldingmottak.fixtures.beriketData
-import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkademeldingInnsendtHendelse
-import no.nav.yrkesskade.meldingmottak.fixtures.fravaertyper
-import no.nav.yrkesskade.meldingmottak.fixtures.harSkadelidtHattFravaer
-import no.nav.yrkesskade.meldingmottak.fixtures.hvorSkjeddeUlykken
-import no.nav.yrkesskade.meldingmottak.fixtures.noenLand
-import no.nav.yrkesskade.meldingmottak.fixtures.rolletyper
-import no.nav.yrkesskade.meldingmottak.fixtures.skadetKroppsdel
-import no.nav.yrkesskade.meldingmottak.fixtures.skadetyper
-import no.nav.yrkesskade.meldingmottak.fixtures.stillingstitler
-import no.nav.yrkesskade.meldingmottak.fixtures.tidsrom
-import no.nav.yrkesskade.meldingmottak.fixtures.typeArbeidsplass
-import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfAdresse
-import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfDokumentInfo
-import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfPeriode
-import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfTidspunkt
-import no.nav.yrkesskade.meldingmottak.pdf.domene.Soknadsfelt
-import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfHendelsesfakta
-import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfInnmelder
-import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfSkade
-import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfSkadelidt
-import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfSkademelding
-import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfSkademeldingMapper
-import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfSkadetDel
+import no.nav.yrkesskade.meldingmottak.fixtures.*
+import no.nav.yrkesskade.meldingmottak.pdf.domene.*
+import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.*
 import no.nav.yrkesskade.meldingmottak.services.KodeverkService
 import no.nav.yrkesskade.meldingmottak.util.kodeverk.KodeverkHolder
 import no.nav.yrkesskade.skademelding.model.Tidstype
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 
+@Suppress("UNUSED_VARIABLE")
 internal class PdfSkademeldingMapperTest {
 
     private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
@@ -49,7 +26,7 @@ internal class PdfSkademeldingMapperTest {
 
     @BeforeEach
     fun setUp() {
-        `when`(kodeverkService.hentKodeverk(eq("landkoderISO2"), eq(null), any())).thenReturn(noenLand())
+        `when`(kodeverkService.hentKodeverk(eq("landkoder"), eq(null), any())).thenReturn(noenLand())
         `when`(kodeverkService.hentKodeverk(eq("fravaertype"), eq(null), any())).thenReturn(fravaertyper())
         `when`(kodeverkService.hentKodeverk(eq("rolletype"), eq(null), any())).thenReturn(
             rolletyper()
