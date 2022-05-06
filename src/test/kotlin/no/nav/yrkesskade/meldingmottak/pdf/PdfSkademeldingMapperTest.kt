@@ -3,28 +3,82 @@ package no.nav.yrkesskade.meldingmottak.pdf
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import no.nav.yrkesskade.meldingmottak.fixtures.aarsakBakgrunn
+import no.nav.yrkesskade.meldingmottak.fixtures.alvorlighetsgrad
+import no.nav.yrkesskade.meldingmottak.fixtures.bakgrunnForHendelsen
 import no.nav.yrkesskade.meldingmottak.fixtures.beriketData
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkademeldingInnsendtHendelse
+import no.nav.yrkesskade.meldingmottak.fixtures.fravaertyper
+import no.nav.yrkesskade.meldingmottak.fixtures.harSkadelidtHattFravaer
+import no.nav.yrkesskade.meldingmottak.fixtures.hvorSkjeddeUlykken
 import no.nav.yrkesskade.meldingmottak.fixtures.noenLand
-import no.nav.yrkesskade.meldingmottak.pdf.domene.*
-import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.*
-import no.nav.yrkesskade.skademelding.model.*
+import no.nav.yrkesskade.meldingmottak.fixtures.rolletyper
+import no.nav.yrkesskade.meldingmottak.fixtures.skadetKroppsdel
+import no.nav.yrkesskade.meldingmottak.fixtures.skadetyper
+import no.nav.yrkesskade.meldingmottak.fixtures.stillingstitler
+import no.nav.yrkesskade.meldingmottak.fixtures.tidsrom
+import no.nav.yrkesskade.meldingmottak.fixtures.typeArbeidsplass
+import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfAdresse
+import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfDokumentInfo
+import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfPeriode
+import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfTidspunkt
+import no.nav.yrkesskade.meldingmottak.pdf.domene.Soknadsfelt
+import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfHendelsesfakta
+import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfInnmelder
+import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfSkade
+import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfSkadelidt
+import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfSkademelding
+import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfSkademeldingMapper
+import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfSkadetDel
+import no.nav.yrkesskade.meldingmottak.services.KodeverkService
+import no.nav.yrkesskade.meldingmottak.util.kodeverk.KodeverkHolder
+import no.nav.yrkesskade.skademelding.model.Tidstype
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 
 internal class PdfSkademeldingMapperTest {
 
     private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
+    private val kodeverkService = mock(KodeverkService::class.java)
+
+    @BeforeEach
+    fun setUp() {
+        `when`(kodeverkService.hentKodeverk(eq("landkoderISO2"), eq(null), any())).thenReturn(noenLand())
+        `when`(kodeverkService.hentKodeverk(eq("fravaertype"), eq(null), any())).thenReturn(fravaertyper())
+        `when`(kodeverkService.hentKodeverk(eq("rolletype"), eq(null), any())).thenReturn(
+            rolletyper()
+        )
+        `when`(kodeverkService.hentKodeverk(eq("tidsrom"), any(), any())).thenReturn(
+            tidsrom()
+        )
+        `when`(kodeverkService.hentKodeverk(eq("stillingstittel"), any(), any())).thenReturn(stillingstitler())
+        `when`(kodeverkService.hentKodeverk(eq("harSkadelidtHattFravaer"), any(), any())).thenReturn(
+            harSkadelidtHattFravaer()
+        )
+        `when`(kodeverkService.hentKodeverk(eq("hvorSkjeddeUlykken"), any(), any())).thenReturn(hvorSkjeddeUlykken())
+        `when`(kodeverkService.hentKodeverk(eq("typeArbeidsplass"), any(), any())).thenReturn(typeArbeidsplass())
+        `when`(kodeverkService.hentKodeverk(eq("skadetype"), any(), any())).thenReturn(skadetyper())
+        `when`(kodeverkService.hentKodeverk(eq("skadetKroppsdel"), any(), any())).thenReturn(skadetKroppsdel())
+        `when`(kodeverkService.hentKodeverk(eq("bakgrunnForHendelsen"), any(), any())).thenReturn(bakgrunnForHendelsen())
+        `when`(kodeverkService.hentKodeverk(eq("aarsakOgBakgrunn"), any(), any())).thenReturn(aarsakBakgrunn())
+        `when`(kodeverkService.hentKodeverk(eq("alvorlighetsgrad"), any(), any())).thenReturn(alvorlighetsgrad())
+    }
 
     @Test
-    fun `skal mappe skademelding til PdfSkademeldig`() {
+    fun `skal mappe skademelding til PdfSkademelding`() {
+        val kodeverkHolder = KodeverkHolder.init("arbeidstaker", kodeverkService)
         val record = enkelSkademeldingInnsendtHendelse()
         println("skademeldingen er:\n $record")
         val beriketData = beriketData()
         println("beriket data er:\n $beriketData")
 
-        val pdfSkademelding = PdfSkademeldingMapper.tilPdfSkademelding(record, noenLand(), beriketData)
+        val pdfSkademelding = PdfSkademeldingMapper.tilPdfSkademelding(record, kodeverkHolder, beriketData)
         println("PdfSkademeldingen er $pdfSkademelding")
 
         assertPdfSkademelding(pdfSkademelding)
@@ -47,7 +101,7 @@ internal class PdfSkademeldingMapperTest {
         assertThat(innmelder?.norskIdentitetsnummer?.verdi).isEqualTo("12345677777")
         assertThat(innmelder?.navn?.verdi).isEqualTo("Inn Melder")
         assertThat(innmelder?.paaVegneAv?.verdi).isEqualTo("123454321")
-        assertThat(innmelder?.innmelderrolle?.verdi).isEqualTo(Innmelderrolle.virksomhetsrepresentant.value)
+        assertThat(innmelder?.innmelderrolle?.verdi).isEqualTo("virksomhetsrepresentant")
         assertThat(innmelder?.altinnrolleIDer?.verdi).isEqualTo(listOf("111", "22"))
     }
 
@@ -64,25 +118,25 @@ internal class PdfSkademeldingMapperTest {
         assertThat(skadelidt?.dekningsforhold?.organisasjonsnummer?.verdi).isEqualTo("123456789")
         assertThat(skadelidt?.dekningsforhold?.navnPaaVirksomheten?.verdi).isEqualTo("Bedriften AS")
         assertThat(skadelidt?.dekningsforhold?.stillingstittelTilDenSkadelidte?.verdi).containsExactlyInAnyOrder(
-            Stillingstittel.altmuligmann.value,
-            Stillingstittel.agroteknikere.value
+            "Altmuligmann",
+            "Agroteknikere"
         )
-        assertThat(skadelidt?.dekningsforhold?.rolletype?.verdi).isEqualTo(Rolletype.arbeidstaker.value)
+        assertThat(skadelidt?.dekningsforhold?.rolletype?.verdi).isEqualTo("Arbeidstaker")
     }
 
     private fun assertSkade(skade: PdfSkade?) {
-        assertThat(skade?.alvorlighetsgrad?.verdi).isEqualTo(Alvorlighetsgrad.andreLivstruendeSykdomSlashSkade.value)
+        assertThat(skade?.alvorlighetsgrad?.verdi).isEqualTo("Livstruende sykdom/skade")
         assertThat(skade?.skadedeDeler).containsExactlyInAnyOrder(
             PdfSkadetDel(
-                kroppsdelTabellD = Soknadsfelt("Hvor på kroppen er skaden", KroppsdelTabellD.ansikt.value),
-                skadeartTabellC = Soknadsfelt("Hva slags skade er det", SkadeartTabellC.etsing.value)
+                kroppsdelTabellD = Soknadsfelt("Hvor på kroppen er skaden", "Ansikt"),
+                skadeartTabellC = Soknadsfelt("Hva slags skade er det", "Etsing")
             ),
             PdfSkadetDel(
-                kroppsdelTabellD = Soknadsfelt("Hvor på kroppen er skaden", KroppsdelTabellD.armSlashAlbueCommaVenstre.value),
-                skadeartTabellC = Soknadsfelt("Hva slags skade er det", SkadeartTabellC.knokkelbrudd.value)
+                kroppsdelTabellD = Soknadsfelt("Hvor på kroppen er skaden", "Arm/albue, venstre"),
+                skadeartTabellC = Soknadsfelt("Hva slags skade er det", "Bruddskade")
             )
         )
-        assertThat(skade?.antattSykefravaerTabellH?.verdi).isEqualTo(AntattSykefravaerTabellH.kjentFravRMerEnn3Dager.value)
+        assertThat(skade?.antattSykefravaerTabellH?.verdi).isEqualTo("Kjent fravær mer enn 3 dager")
     }
 
     private fun assertHendelsesfakta(hendelsesfakta: PdfHendelsesfakta?) {
@@ -98,8 +152,8 @@ internal class PdfSkademeldingMapperTest {
             PdfPeriode("", "")
         ))
         assertThat(hendelsesfakta?.tid?.ukjent?.verdi).isFalse
-        assertThat(hendelsesfakta?.naarSkjeddeUlykken?.verdi).isEqualTo(NaarSkjeddeUlykken.iAvtaltArbeidstid.value)
-        assertThat(hendelsesfakta?.hvorSkjeddeUlykken?.verdi).isEqualTo(HvorSkjeddeUlykken.pArbeidsstedetUte.value)
+        assertThat(hendelsesfakta?.naarSkjeddeUlykken?.verdi).isEqualTo("I avtalt arbeidstid")
+        assertThat(hendelsesfakta?.hvorSkjeddeUlykken?.verdi).isEqualTo("På arbeidsstedet ute")
         assertThat(hendelsesfakta?.ulykkessted?.sammeSomVirksomhetensAdresse?.verdi).isEqualTo("Ja")
         assertThat(hendelsesfakta?.ulykkessted?.adresse?.verdi).isEqualTo(
             PdfAdresse(
@@ -110,15 +164,15 @@ internal class PdfSkademeldingMapperTest {
             )
         )
         assertThat(hendelsesfakta?.aarsakUlykkeTabellAogE?.verdi).containsExactlyInAnyOrder(
-            UlykkesAarsakTabellAogE.kjemikalier.value,
-            UlykkesAarsakTabellAogE.fallAvPerson.value
+            "Velt",
+            "Fall av person"
         )
         assertThat(hendelsesfakta?.bakgrunnsaarsakTabellBogG?.verdi).containsExactlyInAnyOrder(
-            BakgrunnsaarsakTabellBogG.defektUtstyr.value,
-            BakgrunnsaarsakTabellBogG.feilPlassering.value,
-            BakgrunnsaarsakTabellBogG.mangelfullOpplRing.value
+            "Defekt utstyr",
+            "Feil plassering",
+            "Mangelfull opplæring"
         )
-        assertThat(hendelsesfakta?.stedsbeskrivelseTabellF?.verdi).isEqualTo(StedsbeskrivelseTabellF.plassForIndustriellVirksomhet.value)
+        assertThat(hendelsesfakta?.stedsbeskrivelseTabellF?.verdi).isEqualTo("Plass for industriell virksomhet")
         assertThat(hendelsesfakta?.utfyllendeBeskrivelse?.verdi).contains("blabla bla ")
     }
 

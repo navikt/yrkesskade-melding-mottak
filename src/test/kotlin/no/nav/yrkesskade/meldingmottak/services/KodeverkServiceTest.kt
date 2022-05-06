@@ -4,10 +4,10 @@ import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.yrkesskade.kodeverk.model.KodeverdiDto
 import no.nav.yrkesskade.meldingmottak.clients.Kodeverkklient
 import no.nav.yrkesskade.meldingmottak.domene.KodeverkTidData
 import no.nav.yrkesskade.meldingmottak.domene.KodeverkTypeKategori
-import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
 import no.nav.yrkesskade.meldingmottak.fixtures.noenLand
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -54,7 +54,7 @@ internal class KodeverkServiceTest {
         val map = (ReflectionTestUtils.getField(service, "kodeverkMap") as MutableMap<KodeverkTypeKategori, KodeverkTidData>)
         val kodeverkTidData = map[keyLandkoder]!!
         // Data finnes...
-        assertThat(kodeverkTidData.data["NO"]).isEqualTo(KodeverkVerdi("NO", "NORGE"))
+        assertThat(kodeverkTidData.data["NO"]).isEqualTo(KodeverdiDto("NO", "NORGE"))
         // ...men er hentet for mer enn x minutter siden
         assertThat(kodeverkTidData.hentetTid).isBefore(Instant.now().minusSeconds(60*60))
 

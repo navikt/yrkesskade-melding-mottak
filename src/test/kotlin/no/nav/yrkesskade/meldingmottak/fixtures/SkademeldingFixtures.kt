@@ -4,8 +4,22 @@ package no.nav.yrkesskade.meldingmottak.fixtures
 
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
 import no.nav.yrkesskade.meldingmottak.domene.Navn
-import no.nav.yrkesskade.model.*
-import no.nav.yrkesskade.skademelding.model.*
+import no.nav.yrkesskade.model.SkademeldingBeriketData
+import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
+import no.nav.yrkesskade.model.SkademeldingMetadata
+import no.nav.yrkesskade.model.Spraak
+import no.nav.yrkesskade.model.Systemkilde
+import no.nav.yrkesskade.skademelding.model.Adresse
+import no.nav.yrkesskade.skademelding.model.Dekningsforhold
+import no.nav.yrkesskade.skademelding.model.Hendelsesfakta
+import no.nav.yrkesskade.skademelding.model.Innmelder
+import no.nav.yrkesskade.skademelding.model.Skade
+import no.nav.yrkesskade.skademelding.model.Skadelidt
+import no.nav.yrkesskade.skademelding.model.Skademelding
+import no.nav.yrkesskade.skademelding.model.SkadetDel
+import no.nav.yrkesskade.skademelding.model.Tid
+import no.nav.yrkesskade.skademelding.model.Tidstype
+import no.nav.yrkesskade.skademelding.model.Ulykkessted
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.OffsetDateTime
@@ -30,42 +44,42 @@ private fun enkelSkademelding(): Skademelding {
     )
 }
 
-private fun innmelder(): Innmelder? {
+private fun innmelder(): Innmelder {
     return Innmelder(
         norskIdentitetsnummer = "12345677777",
         paaVegneAv = "123454321",
-        innmelderrolle = Innmelderrolle.virksomhetsrepresentant,
+        innmelderrolle = "virksomhetsrepresentant",
         altinnrolleIDer = listOf("111", "22")
     )
 }
 
-private fun skadelidt(): Skadelidt? {
+private fun skadelidt(): Skadelidt {
     return Skadelidt(
         norskIdentitetsnummer = "11111177777",
         dekningsforhold = Dekningsforhold(
             organisasjonsnummer = "123456789",
             navnPaaVirksomheten = "Bedriften AS",
             stillingstittelTilDenSkadelidte = listOf(
-                Stillingstittel.agroteknikere,
-                Stillingstittel.altmuligmann
+                "agroteknikere",
+                "altmuligmann"
             ),
-            rolletype = Rolletype.arbeidstaker
+            rolletype = "arbeidstaker"
         )
     )
 }
 
-private fun skade(): Skade? {
+private fun skade(): Skade {
     return Skade(
-        alvorlighetsgrad = Alvorlighetsgrad.andreLivstruendeSykdomSlashSkade,
+        alvorlighetsgrad = "livstruendeSykdomEllerSkade",
         skadedeDeler = listOf(
-            SkadetDel(SkadeartTabellC.etsing, KroppsdelTabellD.ansikt),
-            SkadetDel(SkadeartTabellC.knokkelbrudd, KroppsdelTabellD.armSlashAlbueCommaVenstre)
+            SkadetDel("etsing", "ansikt"),
+            SkadetDel("bruddskade", "venstreArmOgAlbue")
         ),
-        antattSykefravaerTabellH = AntattSykefravaerTabellH.kjentFravRMerEnn3Dager
+        antattSykefravaerTabellH = "merEnnTreDager"
     )
 }
 
-private fun hendelsesfakta(): Hendelsesfakta? {
+private fun hendelsesfakta(): Hendelsesfakta {
     return Hendelsesfakta(
         tid = Tid(
             tidstype = Tidstype.tidspunkt,
@@ -73,8 +87,8 @@ private fun hendelsesfakta(): Hendelsesfakta? {
             periode = null,
             ukjent = false
         ),
-        naarSkjeddeUlykken = NaarSkjeddeUlykken.iAvtaltArbeidstid,
-        hvorSkjeddeUlykken = HvorSkjeddeUlykken.pArbeidsstedetUte,
+        naarSkjeddeUlykken = "iAvtaltArbeidstid",
+        hvorSkjeddeUlykken = "arbeidsstedUte",
         ulykkessted = Ulykkessted(
             sammeSomVirksomhetensAdresse = true,
             adresse = Adresse(
@@ -85,15 +99,15 @@ private fun hendelsesfakta(): Hendelsesfakta? {
             )
         ),
         aarsakUlykkeTabellAogE = listOf(
-            UlykkesAarsakTabellAogE.fallAvPerson,
-            UlykkesAarsakTabellAogE.kjemikalier
+            "fallAvPerson",
+            "velt"
         ),
         bakgrunnsaarsakTabellBogG = listOf(
-            BakgrunnsaarsakTabellBogG.defektUtstyr,
-            BakgrunnsaarsakTabellBogG.feilPlassering,
-            BakgrunnsaarsakTabellBogG.mangelfullOpplRing
+            "defektUtstyr",
+            "feilPlassering",
+            "mangelfullOpplaering"
         ),
-        stedsbeskrivelseTabellF = StedsbeskrivelseTabellF.plassForIndustriellVirksomhet,
+        stedsbeskrivelseTabellF = "industriellVirksomhet",
         utfyllendeBeskrivelse = "Dette er en veldig lang utfyllende beskrivelse bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla"
     )
 }
