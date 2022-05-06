@@ -7,6 +7,7 @@ import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHe
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelseMedVedlegg
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkademeldingInnsendtHendelse
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry
@@ -32,6 +33,7 @@ private const val CONTROLLED_BROKER_SHUTDOWN = true
  *
  * OBS! @Disabled annoteringene blir ikke alltid tatt hensyn til i IntelliJ.
  */
+@Disabled("Disabled ved automatisk testkjøring")
 @Suppress("NonAsciiCharacters")
 @EmbeddedKafka(topics = [TOPIC])
 internal class PdfServiceTestManuell : BaseSpringBootTestClass() {
