@@ -44,13 +44,13 @@ internal class SkademeldingInnsendtHendelseConsumerIT : BaseSpringBootTestClass(
 
     @BeforeEach
     fun init() {
+        doNothing().`when`(skademeldingService).mottaSkademelding(any())
         for (messageListenerContainer in kafkaListenerEndpointRegistry.listenerContainers) {
             ContainerTestUtils.waitForAssignment(
                 messageListenerContainer,
                 embeddedKafkaBroker.partitionsPerTopic
             )
         }
-        doNothing().`when`(skademeldingService).mottaSkademelding(any())
     }
 
     @Test
