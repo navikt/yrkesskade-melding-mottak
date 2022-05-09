@@ -1,7 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.hendelser
 
-import no.nav.yrkesskade.meldingmottak.services.SkadeforklaringService
+import no.nav.yrkesskade.meldingmottak.task.ProsesserSkadeforklaringTask
 import no.nav.yrkesskade.meldingmottak.util.kallMetodeMedCallId
+import no.nav.yrkesskade.prosessering.domene.TaskRepository
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.handler.annotation.Payload
@@ -10,7 +11,7 @@ import javax.transaction.Transactional
 
 @Component
 class SkadeforklaringInnsendingHendelseConsumer(
-    private val skadeforklaringService: SkadeforklaringService
+    private val taskRepository: TaskRepository
 ) {
 
     @KafkaListener(
@@ -23,7 +24,7 @@ class SkadeforklaringInnsendingHendelseConsumer(
     @Transactional
     fun listen(@Payload record: SkadeforklaringInnsendingHendelse) {
         kallMetodeMedCallId(record.metadata.navCallId) {
-            skadeforklaringService.mottaSkadeforklaring(record)
+            taskRepository.save(ProsesserSkadeforklaringTask.opprettTask(record))
         }
     }
 }
