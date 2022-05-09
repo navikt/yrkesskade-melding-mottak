@@ -1,4 +1,4 @@
-name: Build and deploy yrkesskade-melding-mottak
+name: Build and deploy yrkesskade-melding-mottak - PROD
 on:
   push:
     branches:
