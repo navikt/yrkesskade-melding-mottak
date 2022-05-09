@@ -19,6 +19,7 @@ import no.nav.yrkesskade.skadeforklaring.model.Vedleggreferanse
 import no.nav.yrkesskade.storage.Blob
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.lang.invoke.MethodHandles
 
 private const val TEMA_YRKESSKADE = "YRK"
@@ -43,7 +44,7 @@ class SkadeforklaringService(
     private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
     private val secureLogger = getSecureLogger()
 
-
+    @Transactional
     fun mottaSkadeforklaring(record: SkadeforklaringInnsendingHendelse) {
         log.info("Mottatt ny skadeforklaring")
         secureLogger.info("Mottatt ny skadeforklaring: $record")
