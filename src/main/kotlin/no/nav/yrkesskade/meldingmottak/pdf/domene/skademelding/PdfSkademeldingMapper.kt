@@ -66,6 +66,7 @@ object PdfSkademeldingMapper {
         return PdfDekningsforhold(
             organisasjonsnummer = Soknadsfelt("Org.nr", dekningsforhold.organisasjonsnummer),
             navnPaaVirksomheten = Soknadsfelt("Bedrift", dekningsforhold.navnPaaVirksomheten),
+            virksomhetensAdresse = Soknadsfelt("Virksomhetens adresse", tilPdfAdresse(dekningsforhold.virksomhetensAdresse, kodeverkHolder)),
             stillingstittelTilDenSkadelidte = Soknadsfelt("Stilling", dekningsforhold.stillingstittelTilDenSkadelidte.orEmpty().map { kodeverkHolder.mapKodeTilVerdi(it, "stillingstittel") }),
             rolletype = Soknadsfelt("Rolle", kodeverkHolder.mapKodeTilVerdi(dekningsforhold.rolletype, "rolletype")),
         )
@@ -116,9 +117,16 @@ object PdfSkademeldingMapper {
             ),
             aarsakUlykkeTabellAogE = Soknadsfelt("Hva var årsaken til hendelsen og bakgrunn for årsaken", hendelsesfakta.aarsakUlykkeTabellAogE.map { kodeverkHolder.mapKodeTilVerdi(it, "aarsakOgBakgrunn") }),
             bakgrunnsaarsakTabellBogG = Soknadsfelt("Hva var bakgrunnen til hendelsen", hendelsesfakta.bakgrunnsaarsakTabellBogG.map { kodeverkHolder.mapKodeTilVerdi(it, "bakgrunnForHendelsen") }),
-            stedsbeskrivelseTabellF = Soknadsfelt("Hvilken type arbeidsplass er det", kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.stedsbeskrivelseTabellF, "typeArbeidsplass")),
+            stedsbeskrivelseTabellF = Soknadsfelt("Hvilken type arbeidsplass er det", typeArbeidsplass(hendelsesfakta, kodeverkHolder)),
             utfyllendeBeskrivelse = Soknadsfelt("Utfyllende beskrivelse", hendelsesfakta.utfyllendeBeskrivelse)
         )
+    }
+
+    private fun typeArbeidsplass(hendelsesfakta: Hendelsesfakta, kodeverkHolder: KodeverkHolder): String? {
+        if (hendelsesfakta.stedsbeskrivelseTabellF == null) {
+            return null
+        }
+        return kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.stedsbeskrivelseTabellF!!, "typeArbeidsplass")
     }
 
     private fun tilPdfAdresse(adresse: Adresse?, kodeverkHolder: KodeverkHolder): PdfAdresse? {
