@@ -2,11 +2,14 @@ package no.nav.yrkesskade.meldingmottak.hendelser
 
 import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
 import no.nav.yrkesskade.meldingmottak.fixtures.skademeldingInnsendtHendelse
+import no.nav.yrkesskade.meldingmottak.services.SkademeldingService
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.timeout
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.SpyBean
@@ -33,11 +36,15 @@ internal class SkademeldingInnsendtHendelseConsumerIT : BaseSpringBootTestClass(
     @SpyBean
     lateinit var consumer: SkademeldingInnsendtHendelseConsumer
 
+    @SpyBean
+    lateinit var skademeldingService: SkademeldingService
+
     @Autowired
     lateinit var skademeldingKafkaTemplate: KafkaTemplate<String, SkademeldingInnsendtHendelse>
 
     @BeforeEach
     fun init() {
+        doNothing().`when`(skademeldingService).mottaSkademelding(any())
         for (messageListenerContainer in kafkaListenerEndpointRegistry.listenerContainers) {
             ContainerTestUtils.waitForAssignment(
                 messageListenerContainer,
@@ -51,5 +58,6 @@ internal class SkademeldingInnsendtHendelseConsumerIT : BaseSpringBootTestClass(
         val record = skademeldingInnsendtHendelse()
         skademeldingKafkaTemplate.send(TOPIC, record)
         Mockito.verify(consumer, timeout(20000L).times(1)).listen(any())
+        Mockito.verify(skademeldingService, timeout(20000L).times(1)).mottaSkademelding(eq(record))
     }
 }

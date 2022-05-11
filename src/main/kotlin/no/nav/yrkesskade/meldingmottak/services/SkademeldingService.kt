@@ -14,6 +14,7 @@ import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.lang.invoke.MethodHandles
+import javax.transaction.Transactional
 
 private const val TEMA_YRKESSKADE = "YRK"
 
@@ -39,6 +40,7 @@ class SkademeldingService(
      * journalfør i dokarkiv
      * registrer metrikker
      */
+    @Transactional
     fun mottaSkademelding(record: SkademeldingInnsendtHendelse) {
         log.info("Mottatt ny skademelding")
         secureLogger.info("Mottatt ny skademelding: $record")
