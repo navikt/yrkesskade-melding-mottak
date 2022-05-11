@@ -30,6 +30,7 @@ data class PdfSkadelidt(
 data class PdfDekningsforhold(
     val organisasjonsnummer: Soknadsfelt<String>,
     val navnPaaVirksomheten: Soknadsfelt<String?>,
+    val virksomhetensAdresse: Soknadsfelt<PdfAdresse?>,
     val stillingstittelTilDenSkadelidte: Soknadsfelt<List<String>>,
     val rolletype: Soknadsfelt<String>
 )
@@ -52,7 +53,7 @@ data class PdfHendelsesfakta(
     val ulykkessted: PdfUlykkessted,
     val aarsakUlykkeTabellAogE: Soknadsfelt<List<String>>,
     val bakgrunnsaarsakTabellBogG: Soknadsfelt<List<String>>,
-    val stedsbeskrivelseTabellF: Soknadsfelt<String>,
+    val stedsbeskrivelseTabellF: Soknadsfelt<String?>,
     val utfyllendeBeskrivelse: Soknadsfelt<String?>
 )
 
