@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfData
 import no.nav.yrkesskade.meldingmottak.services.PdfTemplate
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
+import no.nav.yrkesskade.meldingmottak.util.kodeverk.KodeverkHolder
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.retry.annotation.Retryable

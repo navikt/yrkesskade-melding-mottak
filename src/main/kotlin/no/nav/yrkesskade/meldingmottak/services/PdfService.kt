@@ -7,6 +7,7 @@ import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
 import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfData
 import no.nav.yrkesskade.meldingmottak.pdf.domene.skadeforklaring.PdfSkadeforklaringMapper
 import no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding.PdfSkademeldingMapper
+import no.nav.yrkesskade.meldingmottak.util.kodeverk.KodeverkHolder
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import org.springframework.stereotype.Service
@@ -18,31 +19,27 @@ class PdfService(
 ) {
 
     fun lagPdf(record: SkademeldingInnsendtHendelse, template: PdfTemplate): ByteArray {
-        val pdfData: PdfData = PdfSkademeldingMapper.tilPdfSkademelding(record, landkoder())
+        val kodeverkHolder = KodeverkHolder.init(record.skademelding.skadelidt.dekningsforhold.rolletype, kodeverkservice)
+        val pdfData: PdfData = PdfSkademeldingMapper.tilPdfSkademelding(record, kodeverkHolder)
         return pdfClient.lagPdf(pdfData, template)
     }
 
     fun lagBeriketPdf(record: SkademeldingInnsendtHendelse, beriketData: BeriketData?, template: PdfTemplate): ByteArray {
-        val pdfData: PdfData = PdfSkademeldingMapper.tilPdfSkademelding(record, landkoder(), beriketData)
+        val kodeverkHolder = KodeverkHolder.init(record.skademelding.skadelidt.dekningsforhold.rolletype, kodeverkservice)
+        val pdfData: PdfData = PdfSkademeldingMapper.tilPdfSkademelding(record, kodeverkHolder, beriketData)
         return pdfClient.lagPdf(pdfData, template)
     }
 
     fun lagPdf(record: SkadeforklaringInnsendingHendelse, template: PdfTemplate): ByteArray {
-        val pdfData: PdfData = PdfSkadeforklaringMapper.tilPdfSkadeforklaring(record, fravaertyper())
+        val kodeverkHolder = KodeverkHolder.init(kodeverkService = kodeverkservice)
+        val pdfData: PdfData = PdfSkadeforklaringMapper.tilPdfSkadeforklaring(record, kodeverkHolder)
         return pdfClient.lagPdf(pdfData, template)
     }
 
     fun lagBeriketPdf(record: SkadeforklaringInnsendingHendelse, beriketData: BeriketData?, template: PdfTemplate): ByteArray {
-        val pdfData: PdfData = PdfSkadeforklaringMapper.tilPdfSkadeforklaring(record, fravaertyper(), beriketData)
+        val kodeverkHolder = KodeverkHolder.init(kodeverkService = kodeverkservice)
+        val pdfData: PdfData = PdfSkadeforklaringMapper.tilPdfSkadeforklaring(record, kodeverkHolder, beriketData)
         return pdfClient.lagPdf(pdfData, template)
-    }
-
-    private fun landkoder(spraak: String = "nb"): Map<KodeverkKode, KodeverkVerdi> {
-        return kodeverkservice.hentKodeverk("landkoder", "", spraak)
-    }
-
-    private fun fravaertyper(spraak: String = "nb"): Map<KodeverkKode, KodeverkVerdi> {
-        return kodeverkservice.hentKodeverk("fravaertype", "", spraak)
     }
 }
 

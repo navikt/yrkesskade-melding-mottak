@@ -1,5 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.services
 
+import no.nav.yrkesskade.kodeverk.model.KodeverdiDto
 import no.nav.yrkesskade.meldingmottak.clients.Kodeverkklient
 import no.nav.yrkesskade.meldingmottak.domene.*
 import org.slf4j.LoggerFactory
@@ -21,7 +22,7 @@ class KodeverkService(
     val kodeverkMap: MutableMap<KodeverkTypeKategori, KodeverkTidData> = mutableMapOf()
 
 
-    fun hentKodeverk(type: String, kategori: String, spraak: String = "nb"): Map<KodeverkKode, KodeverkVerdi> {
+    fun hentKodeverk(type: String, kategori: String?, spraak: String = "nb"): Map<String, KodeverdiDto> {
         val key = KodeverkTypeKategori(type, kategori)
 
         if (!gyldig(type, kategori, spraak)) {
@@ -34,7 +35,7 @@ class KodeverkService(
     }
 
 
-    private fun gyldig(type: KodeverkType, kategori: KodeverkKategori, spraak: String): Boolean {
+    private fun gyldig(type: String, kategori: String?, spraak: String): Boolean {
         val key = KodeverkTypeKategori(type, kategori)
         val kodeverkTidData: KodeverkTidData? = kodeverkMap[key]
 

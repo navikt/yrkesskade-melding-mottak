@@ -63,7 +63,7 @@ fun enkelSkadeforklaring(): Skadeforklaring =
         ),
         skalEttersendeDokumentasjon = "ja",
         vedleggreferanser = emptyList(),
-        fravaer = Fravaer("treDagerEllerMindre", "Sykemelding"),
+        fravaer = Fravaer("treDagerEllerMindre", "sykemelding"),
         helseinstitusjon = helseinstitusjon()
     )
 
@@ -81,7 +81,7 @@ fun enkelSkadeforklaringMedVedlegg(): Skadeforklaring =
         ),
         skalEttersendeDokumentasjon = "nei",
         vedleggreferanser = vedleggReferanser(),
-        fravaer = Fravaer("treDagerEllerMindre", "Sykemelding"),
+        fravaer = Fravaer("treDagerEllerMindre", "sykemelding"),
         helseinstitusjon = helseinstitusjon()
     )
 
@@ -99,7 +99,7 @@ fun enkelSkadeforklaringMedBildevedlegg(): Skadeforklaring =
         ),
         skalEttersendeDokumentasjon = "nei",
         vedleggreferanser = vedleggReferanserMedBildevedlegg(),
-        fravaer = Fravaer("treDagerEllerMindre", "Sykemelding"),
+        fravaer = Fravaer("treDagerEllerMindre", "sykemelding"),
         helseinstitusjon = helseinstitusjon()
     )
 
@@ -117,7 +117,7 @@ fun enkelSkadeforklaringHvorSkadelidtMelderSelv(): Skadeforklaring =
         ),
         skalEttersendeDokumentasjon = "ja",
         vedleggreferanser = emptyList(),
-        fravaer = Fravaer("treDagerEllerMindre", "Egenmelding"),
+        fravaer = Fravaer("treDagerEllerMindre", "egenmelding"),
         helseinstitusjon = helseinstitusjon()
     )
 

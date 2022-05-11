@@ -1,10 +1,9 @@
 package no.nav.yrkesskade.meldingmottak.pdf.domene.skadeforklaring
 
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
-import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
-import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.pdf.domene.*
+import no.nav.yrkesskade.meldingmottak.util.kodeverk.KodeverkHolder
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringMetadata
 import no.nav.yrkesskade.skadeforklaring.model.*
@@ -13,7 +12,7 @@ object PdfSkadeforklaringMapper {
 
     fun tilPdfSkadeforklaring(
         record: SkadeforklaringInnsendingHendelse,
-        fravaertyper: Map<KodeverkKode, KodeverkVerdi>,
+        kodeverkHolder: KodeverkHolder,
         beriketData: BeriketData? = null
     ) : PdfSkadeforklaring {
 
@@ -23,7 +22,7 @@ object PdfSkadeforklaringMapper {
         val tid = tilPdfTid(skadeforklaring)
         val arbeidsbeskrivelse = tilPdfArbeidsbeskrivelse(skadeforklaring.arbeidetMedIUlykkesoeyeblikket)
         val ulykkesbeskrivelse = tilPdfUlykkesbeskrivelse(skadeforklaring.noeyaktigBeskrivelseAvHendelsen)
-        val fravaer = tilPdfFravaer(skadeforklaring.fravaer, fravaertyper)
+        val fravaer = tilPdfFravaer(skadeforklaring.fravaer, kodeverkHolder)
         val helseinstitusjon = tilPdfHelseinstitusjon(skadeforklaring.helseinstitusjon)
         val vedleggInfo = tilPdfVedleggInfo(skadeforklaring)
         val dokumentInfo = lagPdfDokumentInfoSkadeforklaring(record.metadata)
@@ -91,7 +90,7 @@ object PdfSkadeforklaringMapper {
     private fun tilPdfUlykkesbeskrivelse(ulykkesbeskrivelse: String): Soknadsfelt<String> =
         Soknadsfelt("Gi en så nøyaktig beskrivelse av hendelsen som mulig", ulykkesbeskrivelse)
 
-    private fun tilPdfFravaer(fravaer: Fravaer, fravaertyper: Map<KodeverkKode, KodeverkVerdi>): PdfFravaer {
+    private fun tilPdfFravaer(fravaer: Fravaer, kodeverkHolder: KodeverkHolder): PdfFravaer {
         val foerteTilFravaer = when(fravaer.foerteDinSkadeEllerSykdomTilFravaer) {
             "fravaersdagerUkjent" -> "Ja"
             "treDagerEllerMindre" -> "Ja"
@@ -101,12 +100,12 @@ object PdfSkadeforklaringMapper {
 
         return PdfFravaer(
             Soknadsfelt("Førte din skade/sykdom til fravær?", foerteTilFravaer),
-            Soknadsfelt("Velg type fravær", hentVerdi(fravaer.fravaertype, fravaertyper))
+            Soknadsfelt("Velg type fravær", hentVerdi(fravaer.fravaertype!!, "fravaertype", kodeverkHolder))
         )
     }
 
-    private fun hentVerdi(kode: String?, kodeverdier: Map<KodeverkKode, KodeverkVerdi>): String {
-        return kodeverdier[kode?.lowercase()]?.verdi.orEmpty()
+    private fun hentVerdi(kode: String, kodeliste: String, kodeverkHolder: KodeverkHolder): String {
+        return kodeverkHolder.mapKodeTilVerdi(kode, kodeliste)
     }
 
     private fun tilPdfHelseinstitusjon(helseinstitusjon: Helseinstitusjon): PdfHelseinstitusjon {

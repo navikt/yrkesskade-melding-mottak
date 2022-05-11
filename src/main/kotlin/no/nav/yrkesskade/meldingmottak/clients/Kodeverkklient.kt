@@ -1,5 +1,7 @@
 package no.nav.yrkesskade.meldingmottak.clients
 
+import no.nav.yrkesskade.kodeverk.model.KodeverdiDto
+import no.nav.yrkesskade.kodeverk.model.KodeverdiResponsDto
 import no.nav.yrkesskade.meldingmottak.domene.KodeverdiRespons
 import no.nav.yrkesskade.meldingmottak.domene.KodeverkKode
 import no.nav.yrkesskade.meldingmottak.domene.KodeverkVerdi
@@ -21,24 +23,23 @@ class Kodeverkklient(
     }
 
     @Retryable
-    fun hentKodeverk(type: String, kategori: String, spraak: String = "nb"): Map<KodeverkKode, KodeverkVerdi> {
+    fun hentKodeverk(type: String, kategori: String?, spraak: String = "nb"): Map<String, KodeverdiDto> {
         log.info("Kaller ys-kodeverk - type=$type, kategori=$kategori, spraak=$spraak")
         return logTimingAndWebClientResponseException("hentLand") {
             kallKodeverkApi(type, kategori)
         }
     }
 
-    private fun kallKodeverkApi(type: String, kategori: String): Map<KodeverkKode, KodeverkVerdi> {
-        val kategoriEllerBlank = kategori.ifBlank { " " }
-        val uriPath = "api/v1/kodeverk/typer/$type/kategorier/$kategoriEllerBlank/kodeverdier"
+    private fun kallKodeverkApi(type: String, kategori: String?): Map<String, KodeverdiDto> {
+        val uriPath = if (kategori.isNullOrBlank()) "api/v1/kodeverk/typer/$type/kodeverdier" else "api/v1/kodeverk/typer/$type/kategorier/$kategori/kodeverdier"
         val kodeverdiRespons = kodeverkWebClient.get()
             .uri { uriBuilder -> uriBuilder.path(uriPath).build() }
             .retrieve()
-            .bodyToMono<KodeverdiRespons>()
-            .block() ?: KodeverdiRespons(emptyMap())
+            .bodyToMono<KodeverdiResponsDto>()
+            .block() ?: KodeverdiResponsDto(emptyMap())
         // TODO: YSMOD-161 - Send med callid i header for enklere feilsøking
 
-        return kodeverdiRespons.kodeverdierMap
+        return kodeverdiRespons.kodeverdierMap.orEmpty()
     }
 
     @Suppress("SameParameterValue")

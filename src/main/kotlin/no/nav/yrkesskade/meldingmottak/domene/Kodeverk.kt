@@ -1,5 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.domene
 
+import no.nav.yrkesskade.kodeverk.model.KodeverdiDto
 import java.time.Instant
 
 typealias KodeverkType = String
@@ -7,8 +8,8 @@ typealias KodeverkType = String
 typealias KodeverkKategori = String
 
 data class KodeverkTypeKategori(
-    val type: KodeverkType,
-    val kategori: KodeverkKategori
+    val type: String,
+    val kategori: String?
 )
 
 typealias KodeverkKode = String
@@ -23,7 +24,7 @@ data class KodeverdiRespons (
 )
 
 data class KodeverkTidData(
-    val data: Map<KodeverkKode, KodeverkVerdi>,
+    val data: Map<String, KodeverdiDto>,
     val hentetTid: Instant = Instant.now()
 )
 
