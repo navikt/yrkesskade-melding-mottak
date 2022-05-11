@@ -113,7 +113,7 @@ object PdfSkademeldingMapper {
             hvorSkjeddeUlykken = Soknadsfelt("Hvor skjedde ulykken", kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.hvorSkjeddeUlykken, "hvorSkjeddeUlykken")),
             ulykkessted = PdfUlykkessted(
                 sammeSomVirksomhetensAdresse = Soknadsfelt("Skjedde ulykken på samme adresse", jaNei(hendelsesfakta.ulykkessted.sammeSomVirksomhetensAdresse)),
-                adresse = Soknadsfelt("Adresse", tilPdfAdresse(hendelsesfakta.ulykkessted.adresse, kodeverkHolder))
+                adresse = Soknadsfelt("Adresse for ulykken", tilPdfAdresse(hendelsesfakta.ulykkessted.adresse, kodeverkHolder))
             ),
             aarsakUlykkeTabellAogE = Soknadsfelt("Hva var årsaken til hendelsen og bakgrunn for årsaken", hendelsesfakta.aarsakUlykkeTabellAogE.map { kodeverkHolder.mapKodeTilVerdi(it, "aarsakOgBakgrunn") }),
             bakgrunnsaarsakTabellBogG = Soknadsfelt("Hva var bakgrunnen til hendelsen", hendelsesfakta.bakgrunnsaarsakTabellBogG.map { kodeverkHolder.mapKodeTilVerdi(it, "bakgrunnForHendelsen") }),
