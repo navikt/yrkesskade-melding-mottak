@@ -5,6 +5,7 @@ import no.nav.yrkesskade.meldingmottak.testutils.docker.PostgresDockerContainer
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.support.TestPropertySourceUtils
@@ -16,6 +17,7 @@ import org.springframework.test.context.support.TestPropertySourceUtils
  */
 @ActiveProfiles("test")
 @SpringBootTest
+@DirtiesContext
 @EnableMockOAuth2Server
 @ContextConfiguration(initializers = [BaseSpringBootTestClass.DockerConfigInitializer::class])
 abstract class BaseSpringBootTestClass {
