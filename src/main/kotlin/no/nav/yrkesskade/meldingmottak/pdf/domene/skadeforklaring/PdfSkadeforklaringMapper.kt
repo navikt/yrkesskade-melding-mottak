@@ -17,7 +17,7 @@ object PdfSkadeforklaringMapper {
     ) : PdfSkadeforklaring {
 
         val skadeforklaring = record.skadeforklaring
-        val innmelder = tilPdfInnmelder(skadeforklaring.innmelder, beriketData?.innmeldersNavn)
+        val innmelder = tilPdfInnmelder(skadeforklaring.innmelder, beriketData?.innmeldersNavn, kodeverkHolder)
         val skadelidt = tilPdfSkadelidt(skadeforklaring.skadelidt, beriketData?.skadelidtsNavn)
         val tid = tilPdfTid(skadeforklaring)
         val arbeidsbeskrivelse = tilPdfArbeidsbeskrivelse(skadeforklaring.arbeidetMedIUlykkesoeyeblikket)
@@ -40,20 +40,12 @@ object PdfSkadeforklaringMapper {
         )
     }
 
-    private fun tilPdfInnmelder(innmelder: Innmelder?, innmeldersNavn: Navn?): PdfInnmelder {
+    private fun tilPdfInnmelder(innmelder: Innmelder?, innmeldersNavn: Navn?, kodeverkHolder: KodeverkHolder): PdfInnmelder {
         return PdfInnmelder(
             norskIdentitetsnummer = Soknadsfelt("Fødselsnummer", innmelder?.norskIdentitetsnummer),
             navn = Soknadsfelt("Navn", innmeldersNavn?.toString().orEmpty()),
-            innmelderrolle = Soknadsfelt("Rolle", tilInnmelderrolle(innmelder))
+            innmelderrolle = Soknadsfelt("Rolle", if (innmelder?.innmelderrolle.isNullOrBlank()) null else kodeverkHolder.mapKodeTilVerdi(innmelder?.innmelderrolle!!, "innmelderrolle"))
         )
-    }
-
-    private fun tilInnmelderrolle(innmelder: Innmelder?): String? {
-        return when(innmelder?.innmelderrolle) {
-            "vergeOgForesatt" -> "Verge/Foresatt"
-            "denSkadelidte" -> "Den skadelidte selv"
-            else -> null
-        }
     }
 
     private fun tilPdfSkadelidt(skadelidt: Skadelidt?, skadelidtsNavn: Navn?): PdfSkadelidt {
@@ -95,12 +87,13 @@ object PdfSkadeforklaringMapper {
             "fravaersdagerUkjent" -> "Ja"
             "treDagerEllerMindre" -> "Ja"
             "merEnnTreDager" -> "Ja"
+            "ikkeRelevant" -> "Ikke relevant"
             else -> "Nei"
         }
 
         return PdfFravaer(
             Soknadsfelt("Førte din skade/sykdom til fravær?", foerteTilFravaer),
-            Soknadsfelt("Velg type fravær", hentVerdi(fravaer.fravaertype!!, "fravaertype", kodeverkHolder))
+            Soknadsfelt("Velg type fravær", if (fravaer.fravaertype.isNullOrBlank()) "" else hentVerdi(fravaer.fravaertype!!, "fravaertype", kodeverkHolder))
         )
     }
 

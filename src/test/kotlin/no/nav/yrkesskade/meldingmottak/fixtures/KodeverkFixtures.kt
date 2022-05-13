@@ -22,6 +22,12 @@ fun rolletyper(): Map<String, KodeverdiDto> =
         "arbeidstaker" to KodeverdiDto("arbeidstaker", "Arbeidstaker")
     )
 
+fun innmelderroller(): Map<String, KodeverdiDto> =
+    mapOf(
+        "denSkadelidte" to KodeverdiDto("denSkadelidte", "Den skadelidte selv"),
+        "vergeOgForesatt" to KodeverdiDto("vergeOgForesatt", "Verge/Foresatt")
+    )
+
 fun stillingstitler(): Map<String, KodeverdiDto> =
     mapOf(
         "altmuligmann" to KodeverdiDto("altmuligmann","Altmuligmann"),
