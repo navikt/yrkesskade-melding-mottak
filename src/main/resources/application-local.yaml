@@ -31,8 +31,7 @@ kafka:
   topic:
     aapen-dok-journalfoering: aapen-dok-journalfoering
     skademelding-innsendt: privat-yrkesskade-skademeldinginnsendt
-    skadeforklaring-innsendt:
-      name: privat-yrkesskade-skadeforklaringinnsendt
+    skadeforklaring-innsendt: privat-yrkesskade-skadeforklaringinnsendt
 
 no.nav.security.jwt:
   issuer:

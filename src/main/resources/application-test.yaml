@@ -17,8 +17,7 @@ kafka:
   topic:
     aapen-dok-journalfoering: test
     skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldinginnsendt
-    skadeforklaring-innsendt:
-      name: yrkesskade.privat-yrkesskade-skadeforklaringinnsendt
+    skadeforklaring-innsendt: yrkesskade.privat-yrkesskade-skadeforklaringinnsendt
 
 funksjonsbrytere:
   enabled: false
