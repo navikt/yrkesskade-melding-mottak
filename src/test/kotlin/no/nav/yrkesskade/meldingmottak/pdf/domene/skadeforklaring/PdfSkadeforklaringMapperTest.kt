@@ -28,6 +28,7 @@ internal class PdfSkadeforklaringMapperTest {
         `when`(kodeverkService.hentKodeverk(org.mockito.kotlin.eq("rolletype"), org.mockito.kotlin.eq(null), any())).thenReturn(
             rolletyper()
         )
+        `when`(kodeverkService.hentKodeverk(org.mockito.kotlin.eq("innmelderrolle"), org.mockito.kotlin.eq(null), any())).thenReturn(innmelderroller())
     }
 
     @Test
