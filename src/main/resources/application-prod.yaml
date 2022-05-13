@@ -25,9 +25,7 @@ kafka:
   topic:
     aapen-dok-journalfoering: teamdokumenthandtering.aapen-dok-journalfoering
     skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldinginnsendt
-    skadeforklaring-innsendt:
-      name: yrkesskade.privat-yrkesskade-skadeforklaringinnsendt
-      auto-startup: false
+    skadeforklaring-innsendt: yrkesskade.privat-yrkesskade-skadeforklaringinnsendt
 
 storage.type: GCP
 
