@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.transaction.annotation.Transactional
 import java.sql.Connection
 import java.sql.DriverManager
 
@@ -25,7 +25,6 @@ import java.sql.DriverManager
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(initializers = [BaseSpringBootTestClass.DockerConfigInitializer::class])
-@DirtiesContext
 class TaskDatabaseIT {
 
     init {
@@ -46,6 +45,12 @@ class TaskDatabaseIT {
     @BeforeEach
     fun setUp() {
         connection = DriverManager.getConnection(jdbcUrl, username, password)
+        resetDatabase()
+    }
+
+    @Transactional
+    fun resetDatabase() {
+        connection.prepareStatement("TRUNCATE TABLE task CASCADE").execute()
     }
 
     @Test
