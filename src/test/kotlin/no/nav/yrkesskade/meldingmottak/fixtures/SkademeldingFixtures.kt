@@ -45,6 +45,12 @@ private fun skadelidt(): Skadelidt {
         dekningsforhold = Dekningsforhold(
             organisasjonsnummer = "123456789",
             navnPaaVirksomheten = "Bedriften AS",
+            virksomhetensAdresse = Adresse(
+                adresselinje1 = "Virksomhetsgata 70",
+                adresselinje2 = "9955 Industribyen",
+                adresselinje3 = null,
+                land = "SWE"
+            ),
             stillingstittelTilDenSkadelidte = listOf(
                 "agroteknikere",
                 "altmuligmann"

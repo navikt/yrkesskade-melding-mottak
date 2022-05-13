@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.transaction.annotation.Transactional
 import java.sql.Connection
 import java.sql.DriverManager
 
@@ -44,6 +45,12 @@ class TaskDatabaseIT {
     @BeforeEach
     fun setUp() {
         connection = DriverManager.getConnection(jdbcUrl, username, password)
+        resetDatabase()
+    }
+
+    @Transactional
+    fun resetDatabase() {
+        connection.prepareStatement("TRUNCATE TABLE task CASCADE").execute()
     }
 
     @Test

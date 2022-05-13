@@ -94,6 +94,13 @@ internal class PdfSkademeldingMapperTest {
             ))
         assertThat(skadelidt?.dekningsforhold?.organisasjonsnummer?.verdi).isEqualTo("123456789")
         assertThat(skadelidt?.dekningsforhold?.navnPaaVirksomheten?.verdi).isEqualTo("Bedriften AS")
+        assertThat(skadelidt?.dekningsforhold?.virksomhetensAdresse?.verdi).isEqualTo(
+            PdfAdresse(
+                adresselinje1 = "Virksomhetsgata 70",
+                adresselinje2 = "9955 Industribyen",
+                adresselinje3 = null,
+                land = "SVERIGE"
+            ))
         assertThat(skadelidt?.dekningsforhold?.stillingstittelTilDenSkadelidte?.verdi).containsExactlyInAnyOrder(
             "Altmuligmann",
             "Agroteknikere"
