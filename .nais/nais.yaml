@@ -12,6 +12,8 @@ spec:
       value: {{springProfile}}
     - name: GCP_PROJECT_ID
       value: {{gcpProjectId}}
+    - name: VEDLEGG_BUCKET_NAME
+      value: {{vedleggBucketName}}
   liveness:
     path: /internal/health
     port: 8080

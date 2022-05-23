@@ -8,3 +8,5 @@ externalHosts:
 springProfile: prod
 tenant: nav.no
 kafka_pool: nav-prod
+gcpProjectId: yrkesskade-prod-453b
+vedleggBucketName: yrkesskade-skadeforklaring-vedlegg-prod

@@ -9,3 +9,4 @@ springProfile: dev
 tenant: trygdeetaten.no
 kafka_pool: nav-dev
 gcpProjectId: yrkesskade-dev-6235
+vedleggBucketName: yrkesskade-skadeforklaring-vedlegg-dev
