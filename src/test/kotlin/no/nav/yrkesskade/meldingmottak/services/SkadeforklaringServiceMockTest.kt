@@ -3,7 +3,6 @@ package no.nav.yrkesskade.meldingmottak.services
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClientStub
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.domene.Navn
@@ -13,7 +12,9 @@ import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHe
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelseMedVedlegg
 import no.nav.yrkesskade.meldingmottak.vedlegg.Image2PDFConverter
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.skadeforklaring.model.Vedleggreferanse
 import no.nav.yrkesskade.storage.Blob
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
@@ -23,13 +24,12 @@ class SkadeforklaringServiceMockTest {
     private val pdfService: PdfService = mockk()
     private val pdlClient: PdlClient = mockk()
     private val dokarkivClient: DokarkivClient = mockk()
-    private val bigQueryClient = BigQueryClientStub()
     private val storageService: StorageService = mockk()
     private val image2PDFConverter: Image2PDFConverter = mockk()
 
 
 
-    private val service: SkadeforklaringService = SkadeforklaringService(pdfService, pdlClient, dokarkivClient, bigQueryClient, storageService, image2PDFConverter)
+    private val service: SkadeforklaringService = SkadeforklaringService(pdfService, pdlClient, dokarkivClient, storageService, image2PDFConverter)
 
     @BeforeEach
     fun setup() {
@@ -74,7 +74,7 @@ class SkadeforklaringServiceMockTest {
 
     @Test
     fun `skal kalle paa image2PDFConverter naar en skadeforklaring med gyldig bildevedlegg kommer inn`() {
-        every { storageService.hent(any(), any()) } answers { Blob("10", "12345678901", readJpegFile(), "vedlegg-3.jpeg", 250) }
+        every { storageService.hent(any(), any()) } answers { Blob("10", "12345678901", readJpegFile(), "nav-logo.jpeg", 250) }
 
         service.mottaSkadeforklaring(enkelSkadeforklaringInnsendingHendelseMedBildevedlegg())
         verify(exactly = 1) { storageService.hent(any(), any()) }
@@ -86,11 +86,31 @@ class SkadeforklaringServiceMockTest {
         verify(exactly = 2) { storageService.hent(any(), any()) }
     }
 
+    @Test
+    fun `skal opprette dokumenter for vedlegg`() {
+        every { storageService.hent(any(), any()) } answers { Blob("1", "12345678901", readPdfFile(), "vedlegg65.pdf", 210) }
+        val vedleggreferanser = listOf(Vedleggreferanse("1", "vedlegg65.pdf", 210,""))
+        val dokumenter = service.opprettDokumenter(vedleggreferanser, "12345678901")
+
+        assertThat(dokumenter.size).isEqualTo(1)
+        assertThat(dokumenter[0].tittel).isEqualTo("vedlegg65.pdf")
+    }
+
+    @Test
+    fun `skal opprette tomt dokument når vedlegg mangler`() {
+        every { storageService.hent(any(), any()) } answers { null }
+        val vedleggreferanser = listOf(Vedleggreferanse("21", "vedlegg100.pdf", 300,""))
+        val dokumenter = service.opprettDokumenter(vedleggreferanser, "12345678901")
+
+        assertThat(dokumenter.size).isEqualTo(1)
+        assertThat(dokumenter[0].tittel).isEqualTo("vedlegg100.pdf - VEDLEGG MANGLER, KONTAKT INNMELDER")
+    }
+
 
     private fun readPdfFile(): ByteArray =
         ClassPathResource("pdf/vedlegg-1.pdf").file.readBytes()
 
     private fun readJpegFile(): ByteArray =
-        ClassPathResource("pdf/vedlegg-3.jpeg").file.readBytes()
+        ClassPathResource("pdf/nav-logo.jpeg").file.readBytes()
 
 }
