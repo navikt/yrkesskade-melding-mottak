@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
+import no.nav.yrkesskade.meldingmottak.domene.Filtype
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostResponse
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelse
@@ -97,13 +98,16 @@ class SkadeforklaringServiceMockTest {
     }
 
     @Test
-    fun `skal opprette tomt dokument når vedlegg mangler`() {
+    fun `skal opprette vedlegg-mangler dokument når vedlegg mangler`() {
         every { storageService.hent(any(), any()) } answers { null }
         val vedleggreferanser = listOf(Vedleggreferanse("21", "vedlegg100.pdf", 300,""))
         val dokumenter = service.opprettDokumenter(vedleggreferanser, "12345678901")
 
         assertThat(dokumenter.size).isEqualTo(1)
         assertThat(dokumenter[0].tittel).isEqualTo("vedlegg100.pdf - VEDLEGG MANGLER, KONTAKT INNMELDER")
+        assertThat(dokumenter[0].dokumentvarianter.size).isEqualTo(1)
+        assertThat(dokumenter[0].dokumentvarianter[0].filtype).isEqualTo(Filtype.PDF)
+        assertThat(dokumenter[0].dokumentvarianter[0].fysiskDokument.size).isGreaterThan(0)
     }
 
 

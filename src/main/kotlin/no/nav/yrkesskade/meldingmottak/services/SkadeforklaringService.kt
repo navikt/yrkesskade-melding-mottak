@@ -17,6 +17,7 @@ import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.Skadeforklarin
 import no.nav.yrkesskade.skadeforklaring.model.Vedleggreferanse
 import no.nav.yrkesskade.storage.Blob
 import org.slf4j.LoggerFactory
+import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.invoke.MethodHandles
@@ -115,11 +116,14 @@ class SkadeforklaringService(
         return Blob(
             id = "",
             bruker = dokumentEierIdentifikator,
-            bytes = null,
+            bytes = vedleggManglerPdfFil(),
             navn = vedleggreferanse.navn + VedleggUtil.VEDLEGG_MANGLER_MELDING,
-            storrelse = null
+            storrelse = vedleggManglerPdfFil().size.toLong()
         )
     }
+
+    private fun vedleggManglerPdfFil(): ByteArray =
+        ClassPathResource("pdf/vedlegg-mangler.pdf").file.readBytes()
 
     private fun mapSkadeforklaringTilOpprettJournalpostRequest(
         record: SkadeforklaringInnsendingHendelse,
