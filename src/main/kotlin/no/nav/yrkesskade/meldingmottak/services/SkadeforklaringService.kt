@@ -3,7 +3,6 @@ package no.nav.yrkesskade.meldingmottak.services
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClient
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.domene.*
@@ -36,7 +35,6 @@ class SkadeforklaringService(
     private val pdfService: PdfService,
     private val pdlClient: PdlClient,
     private val dokarkivClient: DokarkivClient,
-    private val bigQueryClient: BigQueryClient,
     private val storageService: StorageService,
     private val image2PDFConverter: Image2PDFConverter
 ) {
@@ -54,7 +52,6 @@ class SkadeforklaringService(
         val vedleggdokumenter = opprettDokumenter(record.skadeforklaring.vedleggreferanser, record.skadeforklaring.innmelder?.norskIdentitetsnummer ?: "")
         val opprettJournalpostRequest = mapSkadeforklaringTilOpprettJournalpostRequest(record, beriketData, pdf, beriketPdf, vedleggdokumenter)
         dokarkivClient.journalfoerDokument(opprettJournalpostRequest)
-//        foerMetrikkIBigQuery(record)
     }
 
     private fun lagBeriketData(record: SkadeforklaringInnsendingHendelse): BeriketData {
@@ -80,16 +77,16 @@ class SkadeforklaringService(
         return pdlClient.hentNavn(fodselsnummer)
     }
 
-    private fun opprettDokumenter(vedleggreferanser: List<Vedleggreferanse>, dokumentEierIdentifikator: String): List<Dokument> {
+    internal fun opprettDokumenter(vedleggreferanser: List<Vedleggreferanse>, dokumentEierIdentifikator: String): List<Dokument> {
         return vedleggreferanser.mapNotNull { vedleggreferanse ->
             opprettDokument(vedleggreferanse, dokumentEierIdentifikator)
         }.toList()
     }
 
     private fun opprettDokument(vedleggreferanse: Vedleggreferanse, dokumentEierIdentifikator: String): Dokument? {
-        val vedlegg: Blob = storageService.hent(vedleggreferanse.id, dokumentEierIdentifikator) ?: return null
+        val vedlegg: Blob = storageService.hent(vedleggreferanse.id, dokumentEierIdentifikator) ?: opprettBlobForManglendeVedlegg(vedleggreferanse, dokumentEierIdentifikator)
         var bytes = vedlegg.bytes
-        var filtype: Filtype? = VedleggUtil.utledFiltype(bytes)
+        var filtype: Filtype? = VedleggUtil.utledFiltype(bytes, vedlegg.navn)
             ?: throw AttachmentTypeUnsupportedException("Kan ikke utlede filtypen for vedlegg ${vedlegg.navn}", mediaType(bytes), null)
 
         if (!gyldigVedleggFiltype(filtype)) {
@@ -111,6 +108,16 @@ class SkadeforklaringService(
                     fysiskDokument = bytes ?: byteArrayOf()
                 )
             )
+        )
+    }
+
+    private fun opprettBlobForManglendeVedlegg(vedleggreferanse: Vedleggreferanse, dokumentEierIdentifikator: String): Blob {
+        return Blob(
+            id = "",
+            bruker = dokumentEierIdentifikator,
+            bytes = null,
+            navn = vedleggreferanse.navn + VedleggUtil.VEDLEGG_MANGLER_MELDING,
+            storrelse = null
         )
     }
 

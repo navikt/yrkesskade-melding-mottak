@@ -20,7 +20,7 @@ class ImageByteArray2PDFConverterTest {
     @Test
     fun jpeg_konverteres_til_Pdf() {
         assertThat(
-            isPdf(converter!!.convert("pdf/vedlegg-3.jpeg"))
+            isPdf(converter!!.convert("pdf/nav-logo.jpeg"))
         ).isTrue
     }
 
