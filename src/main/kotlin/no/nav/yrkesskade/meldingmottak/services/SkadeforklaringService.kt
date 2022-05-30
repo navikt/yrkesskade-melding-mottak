@@ -123,7 +123,7 @@ class SkadeforklaringService(
     }
 
     private fun vedleggManglerPdfFil(): ByteArray =
-        ClassPathResource("pdf/vedlegg-mangler.pdf").file.readBytes()
+        ClassPathResource("pdf/vedlegg-mangler.pdf").inputStream.readAllBytes()
 
     private fun mapSkadeforklaringTilOpprettJournalpostRequest(
         record: SkadeforklaringInnsendingHendelse,
