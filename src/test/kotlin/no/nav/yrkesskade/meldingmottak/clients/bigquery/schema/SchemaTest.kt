@@ -19,6 +19,7 @@ internal class SchemaTest {
             kilde = "digital",
             tidspunktMottatt = Instant.now(),
             spraak = Spraak.NB.toString(),
+            rolletype = "laerling",
             callId = "callId"
         )
 
@@ -27,6 +28,7 @@ internal class SchemaTest {
         assertThat(content["tidspunktMottatt"]).isEqualTo(payload.tidspunktMottatt.toString())
         assertThat(content["spraak"]).isEqualTo(payload.spraak)
         assertThat(content["callId"]).isEqualTo(payload.callId)
+        assertThat(content["rolletype"]).isEqualTo(payload.rolletype)
     }
 
     @Test
