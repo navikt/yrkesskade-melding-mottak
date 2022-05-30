@@ -113,6 +113,7 @@ class SkadeforklaringService(
     }
 
     private fun opprettBlobForManglendeVedlegg(vedleggreferanse: Vedleggreferanse, dokumentEierIdentifikator: String): Blob {
+        log.warn("Vedlegg ${vedleggreferanse.navn} finnes ikke! Oppretter et 'dummy' vedlegg med opprinnelig filnavn og melding til saksbehandler.")
         return Blob(
             id = "",
             bruker = dokumentEierIdentifikator,
