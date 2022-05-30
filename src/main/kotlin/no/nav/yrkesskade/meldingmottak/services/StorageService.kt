@@ -16,20 +16,15 @@ class StorageService(@Value("\${storage.type:MEMORY}") val storageType: String) 
         storage = StorageProvider.getStorage(StorageType.valueOf(storageType))
     }
 
-    fun hent(id: String, brukerIdentifikator: String): Blob? {
-        return try {
-            storage.getBlob(
-                Blob(
-                    id = id,
-                    bruker = brukerIdentifikator,
-                    null,
-                    null,
-                    null
-                )
+    fun hent(id: String, brukerIdentifikator: String): Blob? =
+        storage.getBlob(
+            Blob(
+                id = id,
+                bruker = brukerIdentifikator,
+                null,
+                null,
+                null
             )
-        } catch (npe: NullPointerException) {
-            null
-        }
-    }
+        )
 
 }

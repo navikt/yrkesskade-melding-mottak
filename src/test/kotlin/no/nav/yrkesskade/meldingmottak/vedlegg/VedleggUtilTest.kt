@@ -50,6 +50,11 @@ class VedleggUtilTest {
     }
 
     @Test
+    fun `skal gi null dersom det ikke går å utlede filtype av verken innhold eller filendelse`() {
+        assertThat(VedleggUtil.utledFiltype(byteArrayOf(), "dokument2")).isNull()
+    }
+
+    @Test
     fun `ignorer "vedlegg mangler" ved utleding av filtypen`() {
         assertThat(VedleggUtil.utledFiltype(byteArrayOf(), "vedlegg1.jpeg - VEDLEGG MANGLER, KONTAKT INNMELDER")).isEqualTo(Filtype.JPEG)
     }
