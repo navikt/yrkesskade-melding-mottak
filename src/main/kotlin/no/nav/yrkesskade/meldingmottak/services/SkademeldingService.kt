@@ -144,7 +144,8 @@ class SkademeldingService(
             kilde = record.metadata.kilde,
             tidspunktMottatt = record.metadata.tidspunktMottatt,
             spraak = record.metadata.spraak.toString(),
-            callId = record.metadata.navCallId
+            callId = record.metadata.navCallId,
+            rolletype = record.skademelding.skadelidt.dekningsforhold.rolletype
         )
         bigQueryClient.insert(
             skademelding_v1,

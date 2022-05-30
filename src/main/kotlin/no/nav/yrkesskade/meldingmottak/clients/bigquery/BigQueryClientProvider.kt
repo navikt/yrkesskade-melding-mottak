@@ -1,10 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.clients.bigquery
 
-import com.google.cloud.bigquery.BigQueryOptions
-import com.google.cloud.bigquery.DatasetId
-import com.google.cloud.bigquery.InsertAllRequest
-import com.google.cloud.bigquery.TableId
-import com.google.cloud.bigquery.TableInfo
+import com.google.cloud.bigquery.*
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.SchemaDefinition
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.schemaRegistry
 import no.nav.yrkesskade.meldingmottak.util.getLogger
@@ -14,11 +10,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 import java.lang.invoke.MethodHandles
 
+
 @Component
 class BigQueryClientProvider(
     @Value("\${spring.cloud.gcp.bigquery.project-id}") val bigQueryProjectId: String,
     @Value("\${spring.cloud.gcp.bigquery.dataset-name}") val bigQueryDatasetName: String
-    ) {
+) {
 
     @Bean
     @ConditionalOnProperty(
@@ -68,7 +65,7 @@ class DefaultBigQueryClient(private val datasetId: DatasetId) : BigQueryClient {
 
     override fun create(tableInfo: TableInfo): TableInfo {
         return bigQuery.create(tableInfo).also { createdTable ->
-            logger.info ("Opprettet tabell: '${createdTable.tableId.table}'")
+            logger.info("Opprettet tabell: '${createdTable.tableId.table}'")
         }
     }
 
@@ -90,13 +87,35 @@ class DefaultBigQueryClient(private val datasetId: DatasetId) : BigQueryClient {
 
     override fun migrate() {
         logger.info("Migrerer BigQuery")
+
+        // migrer ikke eksisterende tabell
         schemaRegistry
             .mapValues { it.value.toTableInfo(datasetId) }
             .filterValues { !tablePresent(it.tableId) }
             .forEach { (_, tableInfo) ->
                 bigQuery.create(tableInfo)
             }
+
+        // migrer felt i eksisterende tabell
+        schemaRegistry
+            .filterValues { tablePresent(it.toTableInfo(datasetId).tableId) }
+            .forEach {
+                migrateFields(it.value.define().fields, it.value.toTableInfo(datasetId).tableId)
+            }
         logger.info("Migrert BigQuery")
+    }
+
+    fun migrateFields(fieldList: FieldList, tableId: TableId) {
+        try {
+            val newSchema = Schema.of(fieldList)
+            val table  = bigQuery.getTable(tableId)
+            // Update the table with the new schema
+            val updatedTable = table.toBuilder().setDefinition(StandardTableDefinition.of(newSchema)).build()
+            updatedTable.update()
+            logger.info("${table.tableId.table} felter migrert $fieldList")
+        } catch (e: BigQueryException) {
+            logger.error("${tableId.table} ble ikke migrert. \n$e")
+        }
     }
 }
 
@@ -104,7 +123,7 @@ class BigQueryClientStub : BigQueryClient {
     val log = getLogger(MethodHandles.lookup().lookupClass())
 
     override fun tablePresent(tableId: TableId): Boolean {
-        log.info ("tablePresent(tableId) called with tableId: '$tableId'")
+        log.info("tablePresent(tableId) called with tableId: '$tableId'")
         return true
     }
 
