@@ -86,5 +86,6 @@ dokarkiv.url: https://dokarkiv.dev-fss-pub.nais.io
 SAF_APP_CLIENT_ID: dev-fss.teamdokumenthandtering.saf
 PDL_APP_CLIENT_ID: dev-fss.pdl.pdl-api
 DOKARKIV_CLIENT_ID: dev-fss.teamdokumenthandtering.dokarkiv-q1
+SKJERMEDE_PERSONER_CLIENT_ID: dev-gcp.nom.skjermede-personer-pip
 OPPGAVE_APP_CLIENT_ID: bef7cd4d-e65e-41f8-a743-b643e81f2aea
 TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851         # trygdeetaten.no
