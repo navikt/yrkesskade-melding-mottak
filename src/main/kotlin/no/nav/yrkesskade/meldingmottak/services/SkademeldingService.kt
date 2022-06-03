@@ -47,8 +47,9 @@ class SkademeldingService(
         val pdf = pdfService.lagPdf(record, PdfTemplate.SKADEMELDING_TRO_KOPI)
         val beriketPdf = lagBeriketPdf(record, PdfTemplate.SKADEMELDING_SAKSBEHANDLING)
         val opprettJournalpostRequest = mapSkademeldingTilOpprettJournalpostRequest(record, pdf, beriketPdf)
-        dokarkivClient.journalfoerDokument(opprettJournalpostRequest)
-        foerMetrikkIBigQuery(record)
+        dokarkivClient.journalfoerDokument(opprettJournalpostRequest)?.also {
+            foerMetrikkIBigQuery(record)
+        }
     }
 
 
