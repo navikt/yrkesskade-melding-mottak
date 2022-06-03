@@ -6,6 +6,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.postgresql.util.PSQLException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -89,6 +91,30 @@ class TaskDatabaseIT {
 
         val loggerResult = select.executeQuery()
         assertThat(loggerResult.next()).isTrue
+    }
+
+    @Test
+    fun `skal ikke kunne lagre to tasker med identisk payload`() {
+        assertThat(connection.isValid(0)).isTrue
+
+        val select = connection.prepareStatement("select * from task")
+        val emptyResultSet = select.executeQuery()
+        assertThat(emptyResultSet.next()).isFalse
+
+        val insert = connection.prepareStatement(
+            "insert into task " +
+                    "(id, payload, payload_hash, status, versjon, opprettet_tid, type, metadata, trigger_tid, avvikstype) " +
+                    "values(101, 'blabla', 'en fin hashverdi', 'FIN-FIN', 1, '2022-01-19', 'TYPE1', 'noen metadata', '2022-01-19', 'ANNET')"
+        )
+        insert.executeUpdate()
+
+        val insertForDuplisertTask = connection.prepareStatement(
+            "insert into task " +
+                    "(id, payload, payload_hash, status, versjon, opprettet_tid, type, metadata, trigger_tid, avvikstype) " +
+                    "values(102, 'blabla', 'en fin hashverdi', 'FIN-FIN', 1, '2022-01-19', 'TYPE1', 'noen metadata', '2022-01-19', 'ANNET')"
+        )
+        val thrown = assertThrows<PSQLException> { insertForDuplisertTask.executeUpdate() }
+        assertThat(thrown.message).contains("""duplicate key value violates unique constraint "payload_hash_key"""")
     }
 
     @AfterEach
