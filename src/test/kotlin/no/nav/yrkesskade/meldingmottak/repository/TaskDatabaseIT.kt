@@ -7,7 +7,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.postgresql.util.PSQLException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -16,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.transaction.annotation.Transactional
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.SQLException
 
 /**
  * Test at databasetabeller er opprettet for Task. Mer utførlige db-tester for task, finnes i kode-repository
@@ -113,7 +113,7 @@ class TaskDatabaseIT {
                     "(id, payload, payload_hash, status, versjon, opprettet_tid, type, metadata, trigger_tid, avvikstype) " +
                     "values(102, 'blabla', 'en fin hashverdi', 'FIN-FIN', 1, '2022-01-19', 'TYPE1', 'noen metadata', '2022-01-19', 'ANNET')"
         )
-        val thrown = assertThrows<PSQLException> { insertForDuplisertTask.executeUpdate() }
+        val thrown = assertThrows<SQLException> { insertForDuplisertTask.executeUpdate() }
         assertThat(thrown.message).contains("""duplicate key value violates unique constraint "payload_hash_key"""")
     }
 
