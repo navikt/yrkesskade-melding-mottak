@@ -95,7 +95,7 @@
         <dependency>
             <groupId>no.nav.yrkesskade</groupId>
             <artifactId>prosessering-jdbc</artifactId>
-            <version>1.20220318100229_f8cb856</version>
+            <version>1.20220603094306_96361ef</version>
         </dependency>
 
         <!-- Diverse -->
