@@ -32,7 +32,12 @@ data class PdfDekningsforhold(
     val navnPaaVirksomheten: Soknadsfelt<String?>,
     val virksomhetensAdresse: Soknadsfelt<PdfAdresse?>,
     val stillingstittelTilDenSkadelidte: Soknadsfelt<List<String>>,
-    val rolletype: Soknadsfelt<String>
+    val rolletype: Soknadsfelt<PdfRolletype>
+)
+
+data class PdfRolletype(
+    val kode: String,
+    val navn: String,
 )
 
 data class PdfSkade(

@@ -105,7 +105,9 @@ internal class PdfSkademeldingMapperTest {
             "Altmuligmann",
             "Agroteknikere"
         )
-        assertThat(skadelidt?.dekningsforhold?.rolletype?.verdi).isEqualTo("Arbeidstaker")
+        assertThat(skadelidt?.dekningsforhold?.rolletype?.verdi).isEqualTo(
+            PdfRolletype("arbeidstaker", "Arbeidstaker")
+        )
     }
 
     private fun assertSkade(skade: PdfSkade?) {

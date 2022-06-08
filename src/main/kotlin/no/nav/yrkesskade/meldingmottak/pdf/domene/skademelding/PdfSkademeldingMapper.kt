@@ -68,7 +68,7 @@ object PdfSkademeldingMapper {
             navnPaaVirksomheten = Soknadsfelt("Bedrift", dekningsforhold.navnPaaVirksomheten),
             virksomhetensAdresse = Soknadsfelt("Virksomhetens adresse", tilPdfAdresse(dekningsforhold.virksomhetensAdresse, kodeverkHolder)),
             stillingstittelTilDenSkadelidte = Soknadsfelt("Stilling", dekningsforhold.stillingstittelTilDenSkadelidte.orEmpty().map { kodeverkHolder.mapKodeTilVerdi(it, "stillingstittel") }),
-            rolletype = Soknadsfelt("Rolle", kodeverkHolder.mapKodeTilVerdi(dekningsforhold.rolletype, "rolletype")),
+            rolletype = Soknadsfelt("Rolle", PdfRolletype(dekningsforhold.rolletype, kodeverkHolder.mapKodeTilVerdi(dekningsforhold.rolletype, "rolletype"))),
         )
     }
 
