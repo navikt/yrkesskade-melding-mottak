@@ -38,6 +38,14 @@ fun okResponsPersonMedUkjentBostedFraPdl(): GraphQLClientResponse<HentPerson.Res
     )
 }
 
+fun okResponsPersonUtenBostedsadresseFraPdl(): GraphQLClientResponse<HentPerson.Result> {
+    return JacksonGraphQLResponse(
+        data = HentPerson.Result(gyldigPersonMedNavnMenUtenBostedsadresse()),
+        errors = null,
+        extensions = emptyMap()
+    )
+}
+
 fun okResponsPersonMedEnkelUtenlandskAdresseFraPdl(): GraphQLClientResponse<HentPerson.Result> {
     return JacksonGraphQLResponse(
         data = HentPerson.Result(gyldigPersonMedEnkelUtenlandskAdresse()),
