@@ -88,7 +88,7 @@ class PdlClient(
         }
 
         if (hentAdresse && kanHenteAdresse) {
-            val bostedsadresse = personResult.hentPerson?.bostedsadresse?.get(0)
+            val bostedsadresse = personResult.hentPerson?.bostedsadresse?.firstOrNull()
 
             if (bostedsadresse?.vegadresse?.matrikkelId != null || bostedsadresse?.matrikkeladresse?.matrikkelId != null) {
                 adresse = getAdresse(personResult, fodselsnummer)
