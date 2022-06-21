@@ -57,6 +57,15 @@ fun gyldigPersonMedUtenlandskAdresse(): Person {
     )
 }
 
+fun doedPerson(): Person {
+    return Person(
+        listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),
+        listOf(Navn("John", null, "Doe", "John Doe")),
+        listOf(Doedsfall("2019-11-13")),
+        listOf(bostedVegadresse())
+    )
+}
+
 fun gyldigFortroligPersonMedNavnOgVegadresse(): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG)),

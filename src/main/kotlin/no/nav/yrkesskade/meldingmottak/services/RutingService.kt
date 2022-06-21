@@ -5,16 +5,19 @@ import com.expediagroup.graphql.generated.enums.IdentGruppe
 import com.expediagroup.graphql.generated.hentperson.Adressebeskyttelse
 import com.expediagroup.graphql.generated.hentperson.Person
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
+import no.nav.yrkesskade.meldingmottak.clients.infotrygd.InfotrygdClient
 import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermedePersonerClient
 import org.springframework.stereotype.Service
 
 @Service
 class RutingService(
     private val pdlClient: PdlClient,
-    private val skjermedePersonerClient: SkjermedePersonerClient
+    private val skjermedePersonerClient: SkjermedePersonerClient,
+    private val infotrygdClient: InfotrygdClient
 ) {
 
     fun utfoerRuting(foedselsnummer: String): Rute {
+        check(foedselsnummer.isNotBlank()) { "Det må angis et fødselsnummer for å utføre ruting!" }
 
         //    TODO: Pass på at resultater caches.
 
@@ -24,16 +27,19 @@ class RutingService(
             return Rute.GOSYS_OG_INFOTRYGD
         }
 
-        val identerMedHistorikk = pdlClient.hentIdenter(foedselsnummer, listOf(IdentGruppe.FOLKEREGISTERIDENT), true)
-        if (harEksisterendeSak(foedselsnummer) || harPotensiellKommendeSak(foedselsnummer)) {
+
+
+        val foedselsnumreMedHistorikk = hentFoedselsnumreMedHistorikk(foedselsnummer)
+        if (harEksisterendeInfotrygdSak(foedselsnumreMedHistorikk) || harPotensiellKommendeSak(foedselsnummer)) {
             return Rute.GOSYS_OG_INFOTRYGD
         }
 
-        // Hopp videre ved første mulighet for å slippe unødvendige oppslag
-
-
-        return Rute.GOSYS_OG_INFOTRYGD
+        return Rute.GOSYS_OG_INFOTRYGD  // TODO: Test først at ulike forretningsregler gir riktig resultat i logger, åpne deretter for at ruting kan gå til nytt saksbehandlingssystem
     }
+
+
+
+    /* Hjelpefunksjoner */
 
     internal fun erDoed(person: Person): Boolean =
         person.doedsfall.isNotEmpty()
@@ -54,12 +60,22 @@ class RutingService(
         return response.skjermedePersonerMap[foedselsnummer] ?: false
     }
 
-    internal fun harEksisterendeSak(foedselsnummer: String): Boolean {
-        return false
+    internal fun harGenerellYrkesskadeSak(foedselsnummer: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    internal fun harEksisterendeInfotrygdSak(foedselsnumre: List<String>): Boolean {
+        return infotrygdClient.harEksisterendeSak(foedselsnumre)
     }
 
     internal fun harPotensiellKommendeSak(foedselsnummer: String): Boolean {
         TODO("Not yet implemented")
+    }
+
+    internal fun hentFoedselsnumreMedHistorikk(foedselsnummer: String): List<String> {
+        val identerMedHistorikk = pdlClient.hentIdenter(foedselsnummer, listOf(IdentGruppe.FOLKEREGISTERIDENT), true)
+
+        return identerMedHistorikk?.hentIdenter?.identer?.map { it.ident }?.toList() ?: listOf(foedselsnummer)
     }
 
 

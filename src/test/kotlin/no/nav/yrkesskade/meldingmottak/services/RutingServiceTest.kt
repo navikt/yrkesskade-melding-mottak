@@ -1,27 +1,34 @@
 package no.nav.yrkesskade.meldingmottak.services
 
 import com.expediagroup.graphql.generated.Date
+import com.expediagroup.graphql.generated.HentIdenter
 import com.expediagroup.graphql.generated.enums.AdressebeskyttelseGradering
 import com.expediagroup.graphql.generated.hentperson.*
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
+import no.nav.yrkesskade.meldingmottak.clients.infotrygd.InfotrygdClient
 import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermedePersonerClient
+import no.nav.yrkesskade.meldingmottak.fixtures.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+@Suppress("NonAsciiCharacters")
 class RutingServiceTest {
 
     private val pdlClientMock: PdlClient = mockk()
-    private val skjermedePersonerClient: SkjermedePersonerClient = mockk()
+    private val skjermedePersonerClientMock: SkjermedePersonerClient = mockk()
+    private val infotrygdClientMock: InfotrygdClient = mockk()
 
     lateinit var service: RutingService
+
+    private val foedselsnummer = "12345678901"
 
 
     @BeforeEach
     fun init() {
-        service = RutingService(pdlClientMock, skjermedePersonerClient)
+        service = RutingService(pdlClientMock, skjermedePersonerClientMock, infotrygdClientMock)
     }
 
     @Test
@@ -66,58 +73,127 @@ class RutingServiceTest {
 
     @Test
     fun `er egen ansatt, dvs skjermet person`() {
-        val foedselsnummer = "12345678901"
-        every { skjermedePersonerClient.erSkjermet(ofType(SkjermedePersonerClient.SkjermedePersonerRequest::class)) } answers
+        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermedePersonerRequest::class)) } answers
                 { SkjermedePersonerClient.SkjermedePersonerResponse(mapOf(foedselsnummer to true)) }
 
         assertThat(service.erEgenAnsatt(foedselsnummer)).isTrue
     }
 
     @Test
-    fun `er ikke egen ansatt - fnr i resultatet`() {
-        val foedselsnummer = "23456789012"
-        every { skjermedePersonerClient.erSkjermet(ofType(SkjermedePersonerClient.SkjermedePersonerRequest::class)) } answers
+    fun `er ikke egen ansatt - variant fnr i resultatet`() {
+        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermedePersonerRequest::class)) } answers
                 { SkjermedePersonerClient.SkjermedePersonerResponse(mapOf(foedselsnummer to false)) }
 
         assertThat(service.erEgenAnsatt(foedselsnummer)).isFalse
     }
 
     @Test
-    fun `er ikke egen ansatt - fnr ikke i resultatet`() {
-        val foedselsnummer = "34567890123"
-        every { skjermedePersonerClient.erSkjermet(ofType(SkjermedePersonerClient.SkjermedePersonerRequest::class)) } answers
+    fun `er ikke egen ansatt - variant fnr ikke i resultatet`() {
+        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermedePersonerRequest::class)) } answers
                 { SkjermedePersonerClient.SkjermedePersonerResponse(emptyMap()) }
 
         assertThat(service.erEgenAnsatt(foedselsnummer)).isFalse
     }
 
-//    @Test
-//    fun `sak eksisterer`() {
-//        assertThat(service.harEksisterendeSak("12345678901")).isTrue
-//    }
-//
-//    @Test
-//    fun `sak eksisterer ikke`() {
-//        assertThat(service.harEksisterendeSak("23456789012")).isFalse
-//    }
+    @Test
+    fun `skal returnere liste med foedselsnumre hvis hentIdenter har verdier`() {
+        every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
+
+        assertThat(service.hentFoedselsnumreMedHistorikk("33333333333")).isEqualTo(listOf("11111111111", "22222222222", "33333333333"))
+    }
+
+    @Test
+    fun `skal returnere liste med innsendt foedselsnummer hvis hentIdenter ikke har verdier`() {
+        every { pdlClientMock.hentIdenter(any(), any(), any()) } returns HentIdenter.Result(null)
+
+        assertThat(service.hentFoedselsnumreMedHistorikk("33333333333")).isEqualTo(listOf("33333333333"))
+    }
+
+    @Test
+    fun `infotrygdsak eksisterer`() {
+        every { infotrygdClientMock.harEksisterendeSak(any()) } returns true
+
+        assertThat(service.harEksisterendeInfotrygdSak(listOf("11111111111", "33333333333"))).isTrue
+    }
+
+    @Test
+    fun `infotrygdsak eksisterer ikke`() {
+        every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
+
+        assertThat(service.harEksisterendeInfotrygdSak(listOf("00000000000", "99999999999"))).isFalse
+    }
 
 
 
+
+    /* Test av ruting */
+
+    @Test
+    fun `hvis ingen person i pdl, rut til gammelt saksbehandlingssystem`() {
+        every { pdlClientMock.hentPerson(any()) } returns null
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+    }
+
+    @Test
+    fun `hvis person er død, rut til gammelt saksbehandlingssystem`() {
+        every { pdlClientMock.hentPerson(any()) } returns doedPerson()
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+    }
+
+    @Test
+    fun `hvis person er kode 7 fortrolig, rut til gammelt saksbehandlingssystem`() {
+        every { pdlClientMock.hentPerson(any()) } returns gyldigFortroligPersonMedNavnOgVegadresse()
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+    }
+
+    @Test
+    fun `hvis person er kode 6 strengt fortrolig, rut til gammelt saksbehandlingssystem`() {
+        every { pdlClientMock.hentPerson(any()) } returns gyldigStrengtFortroligPersonMedNavnOgVegadresse()
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+    }
+
+    @Test
+    fun `hvis person er egen ansatt, dvs ansatt i NAV, rut til gammelt saksbehandlingssystem`() {
+        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
+        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
+            mapOf(foedselsnummer to true)
+        )
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+    }
+
 //    @Test
-//    fun `hvis sak eksisterer i Infotrygd, rut til gammelt saksbehandlingssystem Gosys og Infotrygd`() {
-//        val foedselsnummer = "12345678901"
-//        service.utfoerRuting(foedselsnummer)
-//
-//        // spy i mockk
+//    fun `hvis generell YRK sak eksisterer, rut til gammelt saksbehandlingssystem`() {
+//        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
+//        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
+//            mapOf(foedselsnummer to false)
+//        )
+//        every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
+//        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.YRKESSKADE_SAKSBEHANDLING)
 //    }
-//
+
+    @Test
+    fun `hvis sak eksisterer i Infotrygd, rut til gammelt saksbehandlingssystem`() {
+        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
+        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
+            mapOf(foedselsnummer to false)
+        )
+        every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
+        every { infotrygdClientMock.harEksisterendeSak(any()) } returns true
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+    }
+
+
+
+
+
 //    @Test
 //    fun `hvis potensiell kommende sak, dvs nylig oppgave i Gosys, rut til gammelt saksbehandlingssystem Gosys og Infotrygd`() {
 //
 //    }
-//
+
+
 //    @Test
-//    fun `hvis ingen eksisterende sak, rut til Yrkesskade saksbehandlingssystem`() {
+//    fun `hvis ingen ingen eksisterende eller kommende sak, rut til Yrkesskade saksbehandlingssystem`() {
 //
 //    }
 
