@@ -34,7 +34,6 @@ class SkjermedePersonerClient(
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithSkjermedePersonerScope()}")
 				.header("Nav-Callid", MDCConstants.MDC_CALL_ID)
-//				.header("Nav-Consumer-Id", applicationName)
 				.bodyValue(request)
 				.retrieve()
 				.bodyToMono<SkjermedePersonerResponse>()
