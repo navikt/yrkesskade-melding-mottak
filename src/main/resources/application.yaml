@@ -78,10 +78,12 @@ kodeverk:
 
 YRKESSKADE_DOKGEN_API_URL: http://yrkesskade-dokgen.default
 YRKESSKADE_KODEVERK_API_URL: https://yrkesskade-kodeverk.dev.intern.nav.no
+YRKESSKADE_INFOTRYGD_API_URL: https://yrkesskade-infotrygd.dev.intern.nav.no # Eller må det benyttes noe a la https://yrkesskade-infotrygd.dev-fss-pub.nais.io?
 saf.graphql.url: https://saf.dev-fss-pub.nais.io/graphql
 pdl.graphql.url: https://pdl-api.dev-fss-pub.nais.io/graphql
 oppgave.url: https://oppgave-q1.dev-fss-pub.nais.io
 dokarkiv.url: https://dokarkiv.dev-fss-pub.nais.io
+skjermede-personer-pip.url: https://skjermede-personer-pip.dev.intern.nav.no
 
 SAF_APP_CLIENT_ID: dev-fss.teamdokumenthandtering.saf
 PDL_APP_CLIENT_ID: dev-fss.pdl.pdl-api
