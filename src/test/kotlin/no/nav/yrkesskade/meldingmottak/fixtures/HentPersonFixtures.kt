@@ -34,6 +34,7 @@ fun gyldigPersonMedNavnMenUtenBostedsadresse(): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),
         listOf(Navn("Kari", "Storm", "Hansen", "Kari S Hansen")),
+        emptyList(),
         emptyList()
     )
 }
