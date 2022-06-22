@@ -7,6 +7,7 @@ import com.expediagroup.graphql.generated.hentperson.*
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
+import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.infotrygd.InfotrygdClient
 import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermedePersonerClient
 import no.nav.yrkesskade.meldingmottak.fixtures.*
@@ -18,17 +19,18 @@ import org.junit.jupiter.api.Test
 class RutingServiceTest {
 
     private val pdlClientMock: PdlClient = mockk()
+    private val safClientMock: SafClient = mockk()
     private val skjermedePersonerClientMock: SkjermedePersonerClient = mockk()
     private val infotrygdClientMock: InfotrygdClient = mockk()
 
-    lateinit var service: RutingService
+    private lateinit var service: RutingService
 
     private val foedselsnummer = "12345678901"
 
 
     @BeforeEach
     fun init() {
-        service = RutingService(pdlClientMock, skjermedePersonerClientMock, infotrygdClientMock)
+        service = RutingService(pdlClientMock, safClientMock, skjermedePersonerClientMock, infotrygdClientMock)
     }
 
     @Test
@@ -161,15 +163,16 @@ class RutingServiceTest {
         assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
     }
 
-//    @Test
-//    fun `hvis generell YRK sak eksisterer, rut til gammelt saksbehandlingssystem`() {
-//        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
-//        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
-//            mapOf(foedselsnummer to false)
-//        )
-//        every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
-//        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.YRKESSKADE_SAKSBEHANDLING)
-//    }
+    @Test
+    fun `hvis åpen generell YRK sak eksisterer, rut til gammelt saksbehandlingssystem`() {
+        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
+        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
+            mapOf(foedselsnummer to false)
+        )
+        every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
+        every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedGenerellYrkesskadesak()
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+    }
 
     @Test
     fun `hvis sak eksisterer i Infotrygd, rut til gammelt saksbehandlingssystem`() {
@@ -178,12 +181,10 @@ class RutingServiceTest {
             mapOf(foedselsnummer to false)
         )
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
+        every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedGenerellYrkesskadesak()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns true
         assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
     }
-
-
-
 
 
 //    @Test

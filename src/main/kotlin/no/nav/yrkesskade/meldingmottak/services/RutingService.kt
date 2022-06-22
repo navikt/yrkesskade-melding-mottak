@@ -2,9 +2,12 @@ package no.nav.yrkesskade.meldingmottak.services
 
 import com.expediagroup.graphql.generated.enums.AdressebeskyttelseGradering
 import com.expediagroup.graphql.generated.enums.IdentGruppe
+import com.expediagroup.graphql.generated.enums.Sakstype
+import com.expediagroup.graphql.generated.enums.Tema
 import com.expediagroup.graphql.generated.hentperson.Adressebeskyttelse
 import com.expediagroup.graphql.generated.hentperson.Person
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
+import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.infotrygd.InfotrygdClient
 import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermedePersonerClient
 import org.springframework.stereotype.Service
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service
 @Service
 class RutingService(
     private val pdlClient: PdlClient,
+    private val safClient: SafClient,
     private val skjermedePersonerClient: SkjermedePersonerClient,
     private val infotrygdClient: InfotrygdClient
 ) {
@@ -23,11 +27,15 @@ class RutingService(
 
         val person = pdlClient.hentPerson(foedselsnummer)
 
-        if (person == null || erDoed(person) || erKode7Fortrolig(person) || erKode6StrengtFortrolig(person) || erEgenAnsatt(foedselsnummer)) {
+        if (person == null
+            || erDoed(person)
+            || erKode7Fortrolig(person)
+            || erKode6StrengtFortrolig(person)
+            || erEgenAnsatt(foedselsnummer)
+            || harAapenGenerellYrkesskadeSak(foedselsnummer)
+        ) {
             return Rute.GOSYS_OG_INFOTRYGD
         }
-
-
 
         val foedselsnumreMedHistorikk = hentFoedselsnumreMedHistorikk(foedselsnummer)
         if (harEksisterendeInfotrygdSak(foedselsnumreMedHistorikk) || harPotensiellKommendeSak(foedselsnummer)) {
@@ -60,8 +68,11 @@ class RutingService(
         return response.skjermedePersonerMap[foedselsnummer] ?: false
     }
 
-    internal fun harGenerellYrkesskadeSak(foedselsnummer: String): Boolean {
-        TODO("Not yet implemented")
+    internal fun harAapenGenerellYrkesskadeSak(foedselsnummer: String): Boolean {
+        val sakerForPerson = safClient.hentSakerForPerson(foedselsnummer)?.saker ?: emptyList()
+        val generelleYrkesskadesaker =
+            sakerForPerson.filter { sak -> sak?.tema == Tema.YRK && sak.sakstype == Sakstype.GENERELL_SAK }
+        return generelleYrkesskadesaker.isNotEmpty()
     }
 
     internal fun harEksisterendeInfotrygdSak(foedselsnumre: List<String>): Boolean {
