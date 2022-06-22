@@ -293,6 +293,7 @@
                             <schemaFile>${project.basedir}/src/main/resources/graphql/saf.graphqls</schemaFile>
                             <queryFiles>
                                 <queryFile>${project.basedir}/src/main/resources/graphql/journalpost.graphql</queryFile>
+                                <queryFile>${project.basedir}/src/main/resources/graphql/saker.graphql</queryFile>
                             </queryFiles>
                             <customScalars>
                                 <customScalar>
