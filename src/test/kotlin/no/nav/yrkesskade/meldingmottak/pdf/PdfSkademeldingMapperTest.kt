@@ -143,11 +143,11 @@ internal class PdfSkademeldingMapperTest {
         assertThat(skade?.skadedeDeler).containsExactlyInAnyOrder(
             PdfSkadetDel(
                 kroppsdel = Soknadsfelt("Hvor på kroppen er skaden", "Ansikt"),
-                skadeart = Soknadsfelt("Hva slags skade er det", "Etsing")
+                skadeart = Soknadsfelt("Hva slags skade eller sykdom er det", "Etsing")
             ),
             PdfSkadetDel(
                 kroppsdel = Soknadsfelt("Hvor på kroppen er skaden", "Arm/albue, venstre"),
-                skadeart = Soknadsfelt("Hva slags skade er det", "Bruddskade")
+                skadeart = Soknadsfelt("Hva slags skade eller sykdom er det", "Bruddskade")
             )
         )
         assertThat(skade?.antattSykefravaer?.verdi).isEqualTo("Kjent fravær mer enn 3 dager")
