@@ -73,6 +73,21 @@ internal class PdlClientTest {
     }
 
     @Test
+    fun `bostedsadresse på person mangler`() {
+        coEvery { graphQLWebClient.execute<HentPerson.Result>(ofType(HentPerson::class), any()) } returns okResponsPersonUtenBostedsadresseFraPdl()
+        coEvery { graphQLWebClient.execute<HentAdresse.Result>(ofType(HentAdresse::class), any()) } returns okResponsAdresseFraPdl()
+        val navnOgAdresse = client.hentNavnOgAdresse("12345678901", true)
+
+        val navn = navnOgAdresse.first
+        assertThat(navn?.fornavn).isEqualTo("Kari")
+        assertThat(navn?.mellomnavn).isEqualTo("Storm")
+        assertThat(navn?.etternavn).isEqualTo("Hansen")
+
+        val adresse = navnOgAdresse.second
+        assertThat(adresse).isNull()
+    }
+
+    @Test
     fun `skal hente adresse for kode7-personer`() {
         coEvery { graphQLWebClient.execute<HentPerson.Result>(ofType(HentPerson::class), any()) } returns okResponsFortroligPersonFraPdl()
         coEvery { graphQLWebClient.execute<HentAdresse.Result>(ofType(HentAdresse::class), any()) } returns okResponsAdresseFraPdl()

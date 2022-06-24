@@ -27,6 +27,14 @@ fun gyldigPersonMedUkjentBosted(): Person {
     )
 }
 
+fun gyldigPersonMedNavnMenUtenBostedsadresse(): Person {
+    return Person(
+        listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),
+        listOf(Navn("Kari", "Storm", "Hansen", "Kari S Hansen")),
+        emptyList()
+    )
+}
+
 fun gyldigPersonMedEnkelUtenlandskAdresse(): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),

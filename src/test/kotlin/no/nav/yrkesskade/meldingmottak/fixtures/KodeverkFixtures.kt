@@ -83,3 +83,9 @@ fun alvorlighetsgrad(): Map<String, KodeverdiDto> =
     mapOf(
         "livstruendeSykdomEllerSkade" to KodeverdiDto("livstruendeSykdomEllerSkade", "Livstruende sykdom/skade")
     )
+
+fun paavirkningsform(): Map<String, KodeverdiDto> =
+    mapOf(
+        "kjemikalierEllerLoesemidler" to KodeverdiDto("kjemikalierEllerLoesemidler", "Kjemikalier, løsemidler, gift, gass, væske o.l."),
+        "stoevpaavirkning" to KodeverdiDto("stoevpaavirkningstoevpaavirkning", "Støvpåvirkning, stenstøv, asbest o.l.")
+    )

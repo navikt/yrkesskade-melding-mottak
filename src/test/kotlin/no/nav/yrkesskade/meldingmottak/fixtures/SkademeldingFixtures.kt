@@ -6,15 +6,22 @@ import no.nav.yrkesskade.meldingmottak.domene.BeriketData
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.model.*
 import no.nav.yrkesskade.skademelding.model.*
-import java.time.LocalDateTime
-import java.time.Month
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
+import java.time.*
 
 fun enkelSkademeldingInnsendtHendelse(): SkademeldingInnsendtHendelse {
     return SkademeldingInnsendtHendelse(
         metadata = metadata(),
         skademelding = enkelSkademelding(),
+        beriketData = SkademeldingBeriketData(
+            innmeldersOrganisasjonsnavn = "NAV IT" to Systemkilde.ENHETSREGISTERET
+        )
+    )
+}
+
+fun skademeldingInnsendtHendelseForSykdom(): SkademeldingInnsendtHendelse {
+    return SkademeldingInnsendtHendelse(
+        metadata = metadata(),
+        skademelding = skademeldingSykdom(),
         beriketData = SkademeldingBeriketData(
             innmeldersOrganisasjonsnavn = "NAV IT" to Systemkilde.ENHETSREGISTERET
         )
@@ -27,6 +34,15 @@ private fun enkelSkademelding(): Skademelding {
         skadelidt = skadelidt(),
         skade = skade(),
         hendelsesfakta = hendelsesfakta()
+    )
+}
+
+private fun skademeldingSykdom(): Skademelding {
+    return Skademelding(
+        innmelder = innmelder(),
+        skadelidt = skadelidt(),
+        skade = skade(),
+        hendelsesfakta = hendelsesfaktaSykdom()
     )
 }
 
@@ -67,7 +83,7 @@ private fun skade(): Skade {
             SkadetDel("etsing", "ansikt"),
             SkadetDel("bruddskade", "venstreArmOgAlbue")
         ),
-        antattSykefravaerTabellH = "merEnnTreDager"
+        antattSykefravaer = "merEnnTreDager"
     )
 }
 
@@ -76,7 +92,7 @@ private fun hendelsesfakta(): Hendelsesfakta {
         tid = Tid(
             tidstype = Tidstype.tidspunkt,
             tidspunkt = OffsetDateTime.of(2022, Month.FEBRUARY.value, 28, 16, 15, 0, 0, ZoneOffset.UTC),
-            periode = null,
+            perioder = null,
             ukjent = false
         ),
         naarSkjeddeUlykken = "iAvtaltArbeidstid",
@@ -90,16 +106,63 @@ private fun hendelsesfakta(): Hendelsesfakta {
                 land = "SWE"
             )
         ),
-        aarsakUlykkeTabellAogE = listOf(
+        aarsakUlykke = listOf(
             "fallAvPerson",
             "velt"
         ),
-        bakgrunnsaarsakTabellBogG = listOf(
+        bakgrunnsaarsak = listOf(
             "defektUtstyr",
             "feilPlassering",
             "mangelfullOpplaering"
         ),
-        stedsbeskrivelseTabellF = "industriellVirksomhet",
+        stedsbeskrivelse = "industriellVirksomhet",
+        utfyllendeBeskrivelse = "Dette er en veldig lang utfyllende beskrivelse bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla"
+    )
+}
+
+private fun hendelsesfaktaSykdom(): Hendelsesfakta {
+    return Hendelsesfakta(
+        tid = Tid(
+            tidstype = Tidstype.periode,
+            tidspunkt = null,
+            perioder = listOf(
+                Periode(
+                    fra = LocalDate.of(2021, Month.OCTOBER, 1),
+                    til = LocalDate.of(2022, Month.JANUARY, 10)
+                ),
+                Periode(
+                    fra = LocalDate.of(2022, Month.MARCH, 13),
+                    til = LocalDate.of(2022, Month.MAY, 31)
+                )
+            ),
+            sykdomPaavist = LocalDate.of(2021, Month.OCTOBER, 20),
+            ukjent = false
+        ),
+        naarSkjeddeUlykken = "iAvtaltArbeidstid",
+        hvorSkjeddeUlykken = "arbeidsstedUte",
+        ulykkessted = Ulykkessted(
+            sammeSomVirksomhetensAdresse = true,
+            adresse = Adresse(
+                adresselinje1 = "Storgaten 13",
+                adresselinje2 = "2345 Småbygda",
+                adresselinje3 = null,
+                land = "SWE"
+            )
+        ),
+        paavirkningsform = listOf(
+            "stoevpaavirkning",
+            "kjemikalierEllerLoesemidler"
+        ),
+        aarsakUlykke = listOf(
+            "fallAvPerson",
+            "velt"
+        ),
+        bakgrunnsaarsak = listOf(
+            "defektUtstyr",
+            "feilPlassering",
+            "mangelfullOpplaering"
+        ),
+        stedsbeskrivelse = "industriellVirksomhet",
         utfyllendeBeskrivelse = "Dette er en veldig lang utfyllende beskrivelse bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla"
     )
 }

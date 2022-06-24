@@ -24,7 +24,7 @@ spring:
 kafka:
   topic:
     aapen-dok-journalfoering: teamdokumenthandtering.aapen-dok-journalfoering-q1
-    skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldinginnsendt
+    skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldinginnsendt-v2
     skadeforklaring-innsendt: yrkesskade.privat-yrkesskade-skadeforklaringinnsendt
 
 storage.type: GCP
