@@ -19,7 +19,7 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.kafka.test.utils.ContainerTestUtils
 
-private const val TOPIC = "yrkesskade.privat-yrkesskade-skademeldinginnsendt"
+private const val TOPIC = "yrkesskade.privat-yrkesskade-skademeldinginnsendt-v2"
 
 private const val NUM_BROKERS = 1
 
