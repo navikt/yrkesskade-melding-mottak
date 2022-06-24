@@ -2,10 +2,11 @@ package no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding
 
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
 import no.nav.yrkesskade.meldingmottak.domene.Navn
-import no.nav.yrkesskade.meldingmottak.pdf.domene.*
 import no.nav.yrkesskade.meldingmottak.pdf.domene.MapperUtil.datoFormatert
 import no.nav.yrkesskade.meldingmottak.pdf.domene.MapperUtil.jaNei
 import no.nav.yrkesskade.meldingmottak.pdf.domene.MapperUtil.klokkeslettFormatert
+import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfAdresse
+import no.nav.yrkesskade.meldingmottak.pdf.domene.Soknadsfelt
 import no.nav.yrkesskade.meldingmottak.util.kodeverk.KodeverkHolder
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import no.nav.yrkesskade.model.SkademeldingMetadata
@@ -23,8 +24,8 @@ object PdfSkademeldingMapper {
         val innmelder: PdfInnmelder? = tilPdfInnmelder(skademelding.innmelder, beriketData?.innmeldersNavn)
         val skadelidt: PdfSkadelidt? = tilPdfSkadelidt(skademelding.skadelidt, beriketData?.skadelidtsNavn, beriketData?.skadelidtsBostedsadresse, kodeverkHolder)
         val skade: PdfSkade? = tilPdfSkade(skademelding.skade, kodeverkHolder)
-        val hendelsesfakta: PdfHendelsesfakta? = tilPdfHendelsesfakta(skademelding.hendelsesfakta, kodeverkHolder)
-        val dokumentInfo: PdfDokumentInfo = lagPdfDokumentInfo(record.metadata)
+        val hendelsesfakta: PdfHendelsesfakta = tilPdfHendelsesfakta(skademelding.hendelsesfakta, kodeverkHolder)
+        val dokumentInfo: PdfDokumentInfo = lagPdfDokumentInfo(record.metadata, skademelding)
 
         return PdfSkademelding(innmelder, skadelidt, skade, hendelsesfakta, dokumentInfo)
     }
@@ -76,7 +77,7 @@ object PdfSkademeldingMapper {
         return PdfSkade(
             alvorlighetsgrad = Soknadsfelt("Hvor alvorlig var hendelsen", if (skade.alvorlighetsgrad == null) "" else kodeverkHolder.mapKodeTilVerdi(skade.alvorlighetsgrad!!, "alvorlighetsgrad")),
             skadedeDeler = tilPdfSkadedeDeler(skade.skadedeDeler, kodeverkHolder),
-            antattSykefravaerTabellH = Soknadsfelt("Har den skadelidte hatt fravær", if (skade.antattSykefravaerTabellH == null) "" else kodeverkHolder.mapKodeTilVerdi(skade.antattSykefravaerTabellH!!, "harSkadelidtHattFravaer"))
+            antattSykefravaer = Soknadsfelt("Har den skadelidte hatt fravær", if (skade.antattSykefravaer == null) "" else kodeverkHolder.mapKodeTilVerdi(skade.antattSykefravaer!!, "harSkadelidtHattFravaer"))
         )
     }
 
@@ -86,8 +87,10 @@ object PdfSkademeldingMapper {
 
     private fun tilPdfSkadetDel(skadetDel: SkadetDel, kodeverkHolder: KodeverkHolder): PdfSkadetDel {
         return PdfSkadetDel(
-            kroppsdelTabellD = Soknadsfelt("Hvor på kroppen er skaden", kodeverkHolder.mapKodeTilVerdi(skadetDel.kroppsdelTabellD, "skadetKroppsdel")),
-            skadeartTabellC = Soknadsfelt("Hva slags skade er det", kodeverkHolder.mapKodeTilVerdi(skadetDel.skadeartTabellC, "skadetype"))
+            kroppsdel = Soknadsfelt("Hvor på kroppen er skaden",
+                kodeverkHolder.mapKodeTilVerdi(skadetDel.kroppsdel, "skadetKroppsdel")),
+            skadeart = Soknadsfelt("Hva slags skade eller sykdom er det",
+                kodeverkHolder.mapKodeTilVerdi(skadetDel.skadeart, "skadetype"))
         )
     }
 
@@ -101,32 +104,43 @@ object PdfSkademeldingMapper {
                         klokkeslett = klokkeslettFormatert(hendelsesfakta.tid.tidspunkt)
                     )
                 ),
-                periode = Soknadsfelt("Når skjedde ulykken som skal meldes?",
-                    PdfPeriode(
-                        fra = datoFormatert(hendelsesfakta.tid.periode?.fra),
-                        til = datoFormatert(hendelsesfakta.tid.periode?.til)
-                    )
+                perioder = Soknadsfelt("Når skjedde ulykken som skal meldes?",
+                    hendelsesfakta.tid.perioder?.map { tilPdfPeriode(it) }
                 ),
+                sykdomPaavist = Soknadsfelt("Når ble sykdommen påvist?",
+                    if (hendelsesfakta.tid.sykdomPaavist != null) datoFormatert(hendelsesfakta.tid.sykdomPaavist) else null),
                 ukjent = Soknadsfelt("Når skjedde ulykken som skal meldes?", hendelsesfakta.tid.ukjent)
             ),
-            naarSkjeddeUlykken = Soknadsfelt("Innenfor hvilket tidsrom inntraff ulykken?", kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.naarSkjeddeUlykken, "tidsrom")),
-            hvorSkjeddeUlykken = Soknadsfelt("Hvor skjedde ulykken", kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.hvorSkjeddeUlykken, "hvorSkjeddeUlykken")),
+            naarSkjeddeUlykken = Soknadsfelt("Innenfor hvilket tidsrom inntraff ulykken?",
+                kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.naarSkjeddeUlykken, "tidsrom")),
+            hvorSkjeddeUlykken = Soknadsfelt("Hvor skjedde ulykken",
+                kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.hvorSkjeddeUlykken, "hvorSkjeddeUlykken")),
             ulykkessted = PdfUlykkessted(
                 sammeSomVirksomhetensAdresse = Soknadsfelt("Skjedde ulykken på samme adresse", jaNei(hendelsesfakta.ulykkessted.sammeSomVirksomhetensAdresse)),
                 adresse = Soknadsfelt("Adresse for ulykken", tilPdfAdresse(hendelsesfakta.ulykkessted.adresse, kodeverkHolder))
             ),
-            aarsakUlykkeTabellAogE = Soknadsfelt("Hva var årsaken til hendelsen og bakgrunn for årsaken", hendelsesfakta.aarsakUlykkeTabellAogE.map { kodeverkHolder.mapKodeTilVerdi(it, "aarsakOgBakgrunn") }),
-            bakgrunnsaarsakTabellBogG = Soknadsfelt("Hva var bakgrunnen til hendelsen", hendelsesfakta.bakgrunnsaarsakTabellBogG.map { kodeverkHolder.mapKodeTilVerdi(it, "bakgrunnForHendelsen") }),
-            stedsbeskrivelseTabellF = Soknadsfelt("Hvilken type arbeidsplass er det", typeArbeidsplass(hendelsesfakta, kodeverkHolder)),
+            paavirkningsform = Soknadsfelt("Hvilken skadelig påvirkning har personen vært utsatt for",
+                hendelsesfakta.paavirkningsform?.map { kodeverkHolder.mapKodeTilVerdi(it, "paavirkningsform") }),
+            aarsakUlykke = Soknadsfelt("Hva var årsaken til hendelsen og bakgrunn for årsaken",
+                hendelsesfakta.aarsakUlykke.map { kodeverkHolder.mapKodeTilVerdi(it, "aarsakOgBakgrunn") }),
+            bakgrunnsaarsak = Soknadsfelt("Hva var bakgrunnen til hendelsen",
+                hendelsesfakta.bakgrunnsaarsak.map { kodeverkHolder.mapKodeTilVerdi(it, "bakgrunnForHendelsen") }),
+            stedsbeskrivelse = Soknadsfelt("Hvilken type arbeidsplass er det", typeArbeidsplass(hendelsesfakta, kodeverkHolder)),
             utfyllendeBeskrivelse = Soknadsfelt("Utfyllende beskrivelse", hendelsesfakta.utfyllendeBeskrivelse)
         )
     }
 
+    private fun tilPdfPeriode(periode: Periode): PdfPeriode =
+        PdfPeriode(
+            fra = datoFormatert(periode.fra),
+            til = datoFormatert(periode.til),
+        )
+
     private fun typeArbeidsplass(hendelsesfakta: Hendelsesfakta, kodeverkHolder: KodeverkHolder): String? {
-        if (hendelsesfakta.stedsbeskrivelseTabellF == null) {
+        if (hendelsesfakta.stedsbeskrivelse == null) {
             return null
         }
-        return kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.stedsbeskrivelseTabellF!!, "typeArbeidsplass")
+        return kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.stedsbeskrivelse!!, "typeArbeidsplass")
     }
 
     private fun tilPdfAdresse(adresse: Adresse?, kodeverkHolder: KodeverkHolder): PdfAdresse? {
@@ -156,13 +170,14 @@ object PdfSkademeldingMapper {
         return kodeverkHolder.mapKodeTilVerdi(landkode, "landkoder")
     }
 
-    private fun lagPdfDokumentInfo(metadata: SkademeldingMetadata): PdfDokumentInfo {
+    private fun lagPdfDokumentInfo(metadata: SkademeldingMetadata, skademelding: Skademelding): PdfDokumentInfo {
         return PdfDokumentInfo(
             dokumentnavn = "Melding om yrkesskade eller yrkessykdom",
             dokumentnummer = "NAV 13",
             dokumentDatoPrefix = "Innsendt digitalt ",
             dokumentDato = datoFormatert(metadata.tidspunktMottatt),
-            tekster = lagPdfTekster()
+            tekster = lagPdfTekster(),
+            annet = lagPdfAnnet(skademelding)
         )
     }
 
@@ -175,6 +190,11 @@ object PdfSkademeldingMapper {
             omSkadenSeksjonstittel = "Om skaden",
             omSkadenFlereSkader = "Denne skademeldingen inneholder flere skader"
         )
+    }
+
+    private fun lagPdfAnnet(skademelding: Skademelding): PdfAnnet {
+        val erSykdom = skademelding.hendelsesfakta.tid.tidstype == Tidstype.periode
+        return PdfAnnet(erSykdom)
     }
 
 }

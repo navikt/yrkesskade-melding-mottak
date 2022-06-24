@@ -1,6 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.pdf.domene.skademelding
 
-import no.nav.yrkesskade.meldingmottak.pdf.domene.*
+import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfAdresse
+import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfData
+import no.nav.yrkesskade.meldingmottak.pdf.domene.Soknadsfelt
 
 data class PdfSkademelding(
     val innmelder: PdfInnmelder?,
@@ -43,12 +45,12 @@ data class PdfRolletype(
 data class PdfSkade(
     val alvorlighetsgrad: Soknadsfelt<String?>,
     val skadedeDeler: List<PdfSkadetDel>,
-    val antattSykefravaerTabellH: Soknadsfelt<String>
+    val antattSykefravaer: Soknadsfelt<String>
 )
 
 data class PdfSkadetDel(
-    val kroppsdelTabellD: Soknadsfelt<String>,
-    val skadeartTabellC: Soknadsfelt<String>
+    val kroppsdel: Soknadsfelt<String>,
+    val skadeart: Soknadsfelt<String>
 )
 
 data class PdfHendelsesfakta(
@@ -56,9 +58,10 @@ data class PdfHendelsesfakta(
     val naarSkjeddeUlykken: Soknadsfelt<String>,
     val hvorSkjeddeUlykken: Soknadsfelt<String>,
     val ulykkessted: PdfUlykkessted,
-    val aarsakUlykkeTabellAogE: Soknadsfelt<List<String>>,
-    val bakgrunnsaarsakTabellBogG: Soknadsfelt<List<String>>,
-    val stedsbeskrivelseTabellF: Soknadsfelt<String?>,
+    val paavirkningsform: Soknadsfelt<List<String>?>,
+    val aarsakUlykke: Soknadsfelt<List<String>>,
+    val bakgrunnsaarsak: Soknadsfelt<List<String>>,
+    val stedsbeskrivelse: Soknadsfelt<String?>,
     val utfyllendeBeskrivelse: Soknadsfelt<String?>
 )
 
@@ -67,3 +70,42 @@ data class PdfUlykkessted(
     val adresse: Soknadsfelt<PdfAdresse?>
 )
 
+data class PdfTid(
+    val tidstype: String,
+    val tidspunkt: Soknadsfelt<PdfTidspunkt>,
+    val perioder: Soknadsfelt<List<PdfPeriode>?>,
+    val sykdomPaavist: Soknadsfelt<String?>,
+    val ukjent: Soknadsfelt<Boolean?>
+)
+
+data class PdfTidspunkt(
+    val dato: String,
+    val klokkeslett: String
+)
+
+data class PdfPeriode(
+    val fra: String,
+    val til: String
+)
+
+data class PdfDokumentInfo(
+    val dokumentnavn: String,
+    val dokumentnummer: String,
+    val dokumentDatoPrefix: String,
+    val dokumentDato: String,
+    val tekster: PdfTekster,
+    val annet: PdfAnnet
+)
+
+data class PdfTekster(
+    val innmelderSeksjonstittel: String,
+    val tidOgStedSeksjonstittel: String,
+    val skadelidtSeksjonstittel: String,
+    val omUlykkenSeksjonstittel: String,
+    val omSkadenSeksjonstittel: String,
+    val omSkadenFlereSkader: String
+)
+
+data class PdfAnnet(
+    val erSykdom: Boolean
+)
