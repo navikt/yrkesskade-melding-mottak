@@ -41,7 +41,7 @@ private fun skademeldingSykdom(): Skademelding {
     return Skademelding(
         innmelder = innmelder(),
         skadelidt = skadelidt(),
-        skade = skadeSykdom(),
+        skade = skade(),
         hendelsesfakta = hendelsesfaktaSykdom()
     )
 }
@@ -84,17 +84,6 @@ private fun skade(): Skade {
             SkadetDel("bruddskade", "venstreArmOgAlbue")
         ),
         antattSykefravaer = "merEnnTreDager"
-    )
-}
-
-private fun skadeSykdom(): Skade {
-    return Skade(
-        alvorlighetsgrad = "livstruendeSykdomEllerSkade",
-        skadedeDeler = listOf(
-            SkadetDel("etsing", "ansikt"),
-            SkadetDel("bruddskade", "venstreArmOgAlbue")
-        ),
-        antattSykefravaer = null
     )
 }
 
@@ -164,9 +153,16 @@ private fun hendelsesfaktaSykdom(): Hendelsesfakta {
             "stoevpaavirkning",
             "kjemikalierEllerLoesemidler"
         ),
-        aarsakUlykke = null,
-        bakgrunnsaarsak = null,
-        stedsbeskrivelse = null,
+        aarsakUlykke = listOf(
+            "fallAvPerson",
+            "velt"
+        ),
+        bakgrunnsaarsak = listOf(
+            "defektUtstyr",
+            "feilPlassering",
+            "mangelfullOpplaering"
+        ),
+        stedsbeskrivelse = "industriellVirksomhet",
         utfyllendeBeskrivelse = "Dette er en veldig lang utfyllende beskrivelse bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla bla blabla"
     )
 }
