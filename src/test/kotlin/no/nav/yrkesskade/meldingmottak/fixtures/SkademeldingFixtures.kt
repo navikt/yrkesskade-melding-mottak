@@ -91,7 +91,7 @@ private fun skadeSykdom(): Skade {
     return Skade(
         alvorlighetsgrad = "livstruendeSykdomEllerSkade",
         skadedeDeler = listOf(
-            SkadetDel("etsing", "ansikt"),
+            SkadetDel("ondartetSvulst", "ansikt"),
             SkadetDel("bruddskade", "venstreArmOgAlbue")
         ),
         antattSykefravaer = null

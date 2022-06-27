@@ -68,6 +68,12 @@ fun skadetyper(): Map<String, KodeverdiDto> =
         "bruddskade" to KodeverdiDto("bruddskade", "Bruddskade")
     )
 
+fun sykdomstyper(): Map<String, KodeverdiDto> =
+    mapOf(
+        "hudsykdom" to KodeverdiDto("hudsykdom", "Hudsykdom"),
+        "ondartetSvulst" to KodeverdiDto("ondartetSvulst", "Ondartet svulst")
+    )
+
 fun skadetKroppsdel(): Map<String, KodeverdiDto> =
     mapOf(
         "ansikt" to KodeverdiDto("ansikt", "Ansikt"),
