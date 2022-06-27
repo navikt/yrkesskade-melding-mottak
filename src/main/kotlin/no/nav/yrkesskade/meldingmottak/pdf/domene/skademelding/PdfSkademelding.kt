@@ -45,7 +45,7 @@ data class PdfRolletype(
 data class PdfSkade(
     val alvorlighetsgrad: Soknadsfelt<String?>,
     val skadedeDeler: List<PdfSkadetDel>,
-    val antattSykefravaer: Soknadsfelt<String>
+    val antattSykefravaer: Soknadsfelt<String?>
 )
 
 data class PdfSkadetDel(
@@ -59,8 +59,8 @@ data class PdfHendelsesfakta(
     val hvorSkjeddeUlykken: Soknadsfelt<String>,
     val ulykkessted: PdfUlykkessted,
     val paavirkningsform: Soknadsfelt<List<String>?>,
-    val aarsakUlykke: Soknadsfelt<List<String>>,
-    val bakgrunnsaarsak: Soknadsfelt<List<String>>,
+    val aarsakUlykke: Soknadsfelt<List<String>?>,
+    val bakgrunnsaarsak: Soknadsfelt<List<String>?>,
     val stedsbeskrivelse: Soknadsfelt<String?>,
     val utfyllendeBeskrivelse: Soknadsfelt<String?>
 )
