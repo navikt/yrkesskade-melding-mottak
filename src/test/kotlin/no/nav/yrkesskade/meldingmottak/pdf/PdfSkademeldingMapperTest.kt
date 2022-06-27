@@ -63,7 +63,7 @@ internal class PdfSkademeldingMapperTest {
         assertPdfSkademelding(pdfSkademelding)
 
         val prettyJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pdfSkademelding)
-        println("Pretty JSON er \n$prettyJson") // Kommenter inn ved behov. Ved endringer kan json kopieres til eksempel-filer i yrkesskade-dokgen.
+        //println("Pretty JSON er \n$prettyJson") // Kommenter inn ved behov. Ved endringer kan json kopieres til eksempel-filer i yrkesskade-dokgen.
     }
 
     @Test
@@ -96,7 +96,7 @@ internal class PdfSkademeldingMapperTest {
         assertThat(skademeldingSykdom).isNotNull
         assertInnmelder(skademeldingSykdom.innmelder)
         assertSkadelidt(skademeldingSykdom.skadelidt)
-        assertSkade(skademeldingSykdom.skade)
+        assertSkadeSykdom(skademeldingSykdom.skade)
         assertHendelsesfaktaSykdom(skademeldingSykdom.hendelsesfakta)
         assertDokumentInfoSykdom(skademeldingSykdom.dokumentInfo)
     }
@@ -151,6 +151,21 @@ internal class PdfSkademeldingMapperTest {
             )
         )
         assertThat(skade?.antattSykefravaer?.verdi).isEqualTo("Kjent fravær mer enn 3 dager")
+    }
+
+    private fun assertSkadeSykdom(skade: PdfSkade?) {
+        assertThat(skade?.alvorlighetsgrad?.verdi).isEqualTo("Livstruende sykdom/skade")
+        assertThat(skade?.skadedeDeler).containsExactlyInAnyOrder(
+            PdfSkadetDel(
+                kroppsdel = Soknadsfelt("Hvor på kroppen er skaden", "Ansikt"),
+                skadeart = Soknadsfelt("Hva slags skade eller sykdom er det", "Etsing")
+            ),
+            PdfSkadetDel(
+                kroppsdel = Soknadsfelt("Hvor på kroppen er skaden", "Arm/albue, venstre"),
+                skadeart = Soknadsfelt("Hva slags skade eller sykdom er det", "Bruddskade")
+            )
+        )
+        assertThat(skade?.antattSykefravaer?.verdi).isNull()
     }
 
     private fun assertHendelsesfakta(hendelsesfakta: PdfHendelsesfakta?) {
@@ -224,16 +239,9 @@ internal class PdfSkademeldingMapperTest {
             "Støvpåvirkning, stenstøv, asbest o.l.",
             "Kjemikalier, løsemidler, gift, gass, væske o.l."
         )
-        assertThat(hendelsesfakta?.aarsakUlykke?.verdi).containsExactlyInAnyOrder(
-            "Velt",
-            "Fall av person"
-        )
-        assertThat(hendelsesfakta?.bakgrunnsaarsak?.verdi).containsExactlyInAnyOrder(
-            "Defekt utstyr",
-            "Feil plassering",
-            "Mangelfull opplæring"
-        )
-        assertThat(hendelsesfakta?.stedsbeskrivelse?.verdi).isEqualTo("Plass for industriell virksomhet")
+        assertThat(hendelsesfakta?.aarsakUlykke?.verdi).isNull()
+        assertThat(hendelsesfakta?.bakgrunnsaarsak?.verdi).isNull()
+        assertThat(hendelsesfakta?.stedsbeskrivelse?.verdi).isNull()
         assertThat(hendelsesfakta?.utfyllendeBeskrivelse?.verdi).contains("blabla bla ")
     }
 
