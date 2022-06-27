@@ -92,8 +92,16 @@ object PdfSkademeldingMapper {
             kroppsdel = Soknadsfelt("Hvor på kroppen er skaden",
                 kodeverkHolder.mapKodeTilVerdi(skadetDel.kroppsdel, "skadetKroppsdel")),
             skadeart = Soknadsfelt("Hva slags skade eller sykdom er det",
-                kodeverkHolder.mapKodeTilVerdi(skadetDel.skadeart, "skadetype"))
+                mapSkadetypeEllerSykdomstype(skadetDel.skadeart, kodeverkHolder))
         )
+    }
+
+    internal fun mapSkadetypeEllerSykdomstype(skadeart: String, kodeverkHolder: KodeverkHolder): String {
+        val skadetype = kodeverkHolder.mapKodeTilVerdi(skadeart, "skadetype")
+        if (skadetype == "Ukjent $skadeart") {
+            return kodeverkHolder.mapKodeTilVerdi(skadeart, "sykdomstype")
+        }
+        return skadetype
     }
 
     private fun tilPdfHendelsesfakta(hendelsesfakta: Hendelsesfakta, kodeverkHolder: KodeverkHolder): PdfHendelsesfakta {

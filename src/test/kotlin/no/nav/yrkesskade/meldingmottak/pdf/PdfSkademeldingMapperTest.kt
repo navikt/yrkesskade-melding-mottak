@@ -25,6 +25,9 @@ internal class PdfSkademeldingMapperTest {
 
     private val kodeverkService = mock(KodeverkService::class.java)
 
+    private lateinit var kodeverkHolder: KodeverkHolder
+
+
     @BeforeEach
     fun setUp() {
         `when`(kodeverkService.hentKodeverk(eq("landkoder"), eq(null), any())).thenReturn(noenLand())
@@ -33,6 +36,7 @@ internal class PdfSkademeldingMapperTest {
             rolletyper()
         )
         `when`(kodeverkService.hentKodeverk(eq("paavirkningsform"), eq(null), any())).thenReturn(paavirkningsform())
+        `when`(kodeverkService.hentKodeverk(eq("sykdomstype"), eq(null), any())).thenReturn(sykdomstyper())
         `when`(kodeverkService.hentKodeverk(eq("tidsrom"), any(), any())).thenReturn(
             tidsrom()
         )
@@ -47,11 +51,12 @@ internal class PdfSkademeldingMapperTest {
         `when`(kodeverkService.hentKodeverk(eq("bakgrunnForHendelsen"), any(), any())).thenReturn(bakgrunnForHendelsen())
         `when`(kodeverkService.hentKodeverk(eq("aarsakOgBakgrunn"), any(), any())).thenReturn(aarsakBakgrunn())
         `when`(kodeverkService.hentKodeverk(eq("alvorlighetsgrad"), any(), any())).thenReturn(alvorlighetsgrad())
+
+        kodeverkHolder = KodeverkHolder.init("arbeidstaker", kodeverkService)
     }
 
     @Test
     fun `skal mappe skademelding til PdfSkademelding`() {
-        val kodeverkHolder = KodeverkHolder.init("arbeidstaker", kodeverkService)
         val record = enkelSkademeldingInnsendtHendelse()
         println("skademeldingen er:\n $record")
         val beriketData = beriketData()
@@ -68,7 +73,6 @@ internal class PdfSkademeldingMapperTest {
 
     @Test
     fun `skal mappe skademelding for sykdom til PdfSkademelding`() {
-        val kodeverkHolder = KodeverkHolder.init("arbeidstaker", kodeverkService)
         val record = skademeldingInnsendtHendelseForSykdom()
         println("skademeldingen for sykdom er:\n $record")
         val beriketData = beriketData()
@@ -158,7 +162,7 @@ internal class PdfSkademeldingMapperTest {
         assertThat(skade?.skadedeDeler).containsExactlyInAnyOrder(
             PdfSkadetDel(
                 kroppsdel = Soknadsfelt("Hvor på kroppen er skaden", "Ansikt"),
-                skadeart = Soknadsfelt("Hva slags skade eller sykdom er det", "Etsing")
+                skadeart = Soknadsfelt("Hva slags skade eller sykdom er det", "Ondartet svulst")
             ),
             PdfSkadetDel(
                 kroppsdel = Soknadsfelt("Hvor på kroppen er skaden", "Arm/albue, venstre"),
@@ -259,5 +263,23 @@ internal class PdfSkademeldingMapperTest {
         assertThat(dokumentInfo.dokumentDatoPrefix).isEqualTo("Innsendt digitalt ")
         assertThat(dokumentInfo.dokumentDato).isEqualTo("28.02.2022")
         assertThat(dokumentInfo.annet.erSykdom).isTrue
+    }
+
+    @Test
+    fun `skal mappe skadeart for skade`() {
+        val skadetype = PdfSkademeldingMapper.mapSkadetypeEllerSykdomstype("bruddskade", kodeverkHolder)
+        assertThat(skadetype).isEqualTo("Bruddskade")
+    }
+
+    @Test
+    fun `skal mappe skadeart for sykdom`() {
+        val skadetype = PdfSkademeldingMapper.mapSkadetypeEllerSykdomstype("ondartetSvulst", kodeverkHolder)
+        assertThat(skadetype).isEqualTo("Ondartet svulst")
+    }
+
+    @Test
+    fun `skal gi Ukjent kode for ukjent skadeart`() {
+        val skadetype = PdfSkademeldingMapper.mapSkadetypeEllerSykdomstype("xxxUkjentSkadeart", kodeverkHolder)
+        assertThat(skadetype).isEqualTo("Ukjent xxxUkjentSkadeart")
     }
 }
