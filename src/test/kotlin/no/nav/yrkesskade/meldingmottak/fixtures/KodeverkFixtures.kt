@@ -68,6 +68,12 @@ fun skadetyper(): Map<String, KodeverdiDto> =
         "bruddskade" to KodeverdiDto("bruddskade", "Bruddskade")
     )
 
+fun sykdomstyper(): Map<String, KodeverdiDto> =
+    mapOf(
+        "hudsykdom" to KodeverdiDto("hudsykdom", "Hudsykdom"),
+        "ondartetSvulst" to KodeverdiDto("ondartetSvulst", "Ondartet svulst")
+    )
+
 fun skadetKroppsdel(): Map<String, KodeverdiDto> =
     mapOf(
         "ansikt" to KodeverdiDto("ansikt", "Ansikt"),
@@ -82,4 +88,10 @@ fun harSkadelidtHattFravaer(): Map<String, KodeverdiDto> =
 fun alvorlighetsgrad(): Map<String, KodeverdiDto> =
     mapOf(
         "livstruendeSykdomEllerSkade" to KodeverdiDto("livstruendeSykdomEllerSkade", "Livstruende sykdom/skade")
+    )
+
+fun paavirkningsform(): Map<String, KodeverdiDto> =
+    mapOf(
+        "kjemikalierEllerLoesemidler" to KodeverdiDto("kjemikalierEllerLoesemidler", "Kjemikalier, løsemidler, gift, gass, væske o.l."),
+        "stoevpaavirkning" to KodeverdiDto("stoevpaavirkningstoevpaavirkning", "Støvpåvirkning, stenstøv, asbest o.l.")
     )

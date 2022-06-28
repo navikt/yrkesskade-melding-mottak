@@ -13,7 +13,7 @@ class KodeverkHolder private constructor(private val kodeverkService: KodeverkSe
 
     fun hentKodeverk(kategorinavn: String?) {
         // kodeverk uten kategorier
-        listOf("rolletype", "landkoder", "fravaertype", "innmelderrolle").forEach {
+        listOf("rolletype", "landkoder", "fravaertype", "innmelderrolle", "paavirkningsform", "sykdomstype").forEach {
             kodeverk[it] = kodeverkService.hentKodeverk(it, null, "nb")
         }
 
