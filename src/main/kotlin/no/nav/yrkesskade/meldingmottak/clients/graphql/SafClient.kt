@@ -3,7 +3,10 @@ package no.nav.yrkesskade.meldingmottak.clients.graphql
 import com.expediagroup.graphql.client.spring.GraphQLWebClient
 import com.expediagroup.graphql.client.types.GraphQLClientResponse
 import com.expediagroup.graphql.generated.Journalpost
+import com.expediagroup.graphql.generated.Journalposter
 import com.expediagroup.graphql.generated.Saker
+import com.expediagroup.graphql.generated.enums.BrukerIdType
+import com.expediagroup.graphql.generated.enums.Journalstatus
 import kotlinx.coroutines.runBlocking
 import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
@@ -56,6 +59,37 @@ class SafClient(
             }
         }
         return oppdatertJournalpost
+    }
+
+    fun hentJournalposterForPerson(foedselsnummer: String): Journalposter.Result? {
+        val token = tokenUtil.getAppAccessTokenWithSafScope()
+        logger.info("Hentet token for Saf")
+        val journalposterQuery = Journalposter(
+            Journalposter.Variables(
+                foedselsnummer,
+                BrukerIdType.FNR,
+                listOf(Journalstatus.MOTTATT, Journalstatus.UNDER_ARBEID, Journalstatus.JOURNALFOERT)
+            )
+        )
+
+        logger.info("Henter journalposter for person på url $safGraphqlUrl")
+        secureLogger.info("Henter journalposter for personen $foedselsnummer på url $safGraphqlUrl")
+        val result: Journalposter.Result?
+        runBlocking {
+            val response: GraphQLClientResponse<Journalposter.Result> = client.execute(journalposterQuery) {
+                headers {
+                    it.add(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                    it.add("Nav-Callid", MDC.get(MDCConstants.MDC_CALL_ID))
+                    it.add("Nav-Consumer-Id", applicationName)
+                }
+            }
+            result = response.data
+            if (!response.errors.isNullOrEmpty()) {
+                secureLogger.error("Responsen fra SAF inneholder feil: ${response.errors}")
+                throw RuntimeException("Responsen fra SAF inneholder feil! Se securelogs")
+            }
+        }
+        return result
     }
 
     fun hentSakerForPerson(foedselsnummer: String): Saker.Result? {

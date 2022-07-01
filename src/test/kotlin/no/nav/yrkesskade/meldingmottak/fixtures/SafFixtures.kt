@@ -5,9 +5,13 @@ import com.expediagroup.graphql.client.jackson.types.JacksonGraphQLResponse
 import com.expediagroup.graphql.client.jackson.types.JacksonGraphQLSourceLocation
 import com.expediagroup.graphql.client.types.GraphQLClientResponse
 import com.expediagroup.graphql.generated.Journalpost
+import com.expediagroup.graphql.generated.Journalposter
 import com.expediagroup.graphql.generated.Saker
+import com.expediagroup.graphql.generated.enums.Journalposttype
+import com.expediagroup.graphql.generated.enums.Journalstatus
 import com.expediagroup.graphql.generated.enums.Sakstype
 import com.expediagroup.graphql.generated.enums.Tema
+import com.expediagroup.graphql.generated.journalposter.Dokumentoversikt
 import com.expediagroup.graphql.generated.saker.Sak
 import java.time.LocalDateTime
 import java.time.Month
@@ -50,8 +54,20 @@ fun okSakerResponse(): GraphQLClientResponse<Saker.Result> =
         extensions = null
     )
 
+fun sakerResult(): Saker.Result =
+    Saker.Result(saker())
+
 fun sakerResultMedGenerellYrkesskadesak(): Saker.Result =
     Saker.Result(sakerHvoravGenerellYrkesskadesak())
+
+fun journalposterResult(): Journalposter.Result =
+    Journalposter.Result(Dokumentoversikt(journalposter()))
+
+fun journalposterResultMedSak(): Journalposter.Result =
+    Journalposter.Result(Dokumentoversikt(journalposterMedSak()))
+
+fun saker(): List<Sak> =
+    listOf(fagsakAnnetTema())
 
 fun sakerHvoravGenerellYrkesskadesak(): List<Sak> =
     listOf(generellYrkesskadesak(), fagsakAnnetTema())
@@ -72,4 +88,33 @@ fun fagsakAnnetTema(): Sak =
         fagsaksystem = "A001",
         sakstype = Sakstype.FAGSAK,
         tema = Tema.BAR
+    )
+
+fun journalposter(): List<com.expediagroup.graphql.generated.journalposter.Journalpost?> =
+    listOf(journalpostMedSak(), journalpostUtenSak())
+
+fun journalposterMedSak(): List<com.expediagroup.graphql.generated.journalposter.Journalpost?> =
+    listOf(journalpostMedSak())
+
+fun journalpostMedSak(): com.expediagroup.graphql.generated.journalposter.Journalpost =
+    com.expediagroup.graphql.generated.journalposter.Journalpost(
+        journalpostId = "71",
+        tittel = "Melding om yrkesskade eller yrkessykdom",
+        journalposttype = Journalposttype.I,
+        journalstatus = Journalstatus.MOTTATT,
+        tema = Tema.YRK,
+        sak = com.expediagroup.graphql.generated.journalposter.Sak(
+            sakstype = Sakstype.FAGSAK,
+            tema = Tema.YRK
+        )
+    )
+
+fun journalpostUtenSak(): com.expediagroup.graphql.generated.journalposter.Journalpost =
+    com.expediagroup.graphql.generated.journalposter.Journalpost(
+        journalpostId = "71",
+        tittel = "Melding om yrkesskade eller yrkessykdom",
+        journalposttype = Journalposttype.I,
+        journalstatus = Journalstatus.MOTTATT,
+        tema = Tema.YRK,
+        sak = null
     )

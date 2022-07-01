@@ -181,22 +181,36 @@ class RutingServiceTest {
             mapOf(foedselsnummer to false)
         )
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
-        every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedGenerellYrkesskadesak()
+        every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns true
         assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
     }
 
+    @Test
+    fun `hvis potensiell kommende sak, dvs nylig oppgave i Gosys, rut til gammelt saksbehandlingssystem Gosys og Infotrygd`() {
+        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
+        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
+            mapOf(foedselsnummer to false)
+        )
+        every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
+        every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
+        every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
+        every { safClientMock.hentJournalposterForPerson(any()) } returns journalposterResult()
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+    }
 
-//    @Test
-//    fun `hvis potensiell kommende sak, dvs nylig oppgave i Gosys, rut til gammelt saksbehandlingssystem Gosys og Infotrygd`() {
-//
-//    }
-
-
-//    @Test
-//    fun `hvis ingen ingen eksisterende eller kommende sak, rut til Yrkesskade saksbehandlingssystem`() {
-//
-//    }
+    @Test
+    fun `hvis ingen ingen eksisterende eller kommende sak, rut til Yrkesskade saksbehandlingssystem`() {
+        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
+        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
+            mapOf(foedselsnummer to false)
+        )
+        every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
+        every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
+        every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
+        every { safClientMock.hentJournalposterForPerson(any()) } returns journalposterResultMedSak()
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD) // TODO: 01/07/2022 YSMOD-375 Skal rute til ny saksbehandling når det er klart
+    }
 
 
 
