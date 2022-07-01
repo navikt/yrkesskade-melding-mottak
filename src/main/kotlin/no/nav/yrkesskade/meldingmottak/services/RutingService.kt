@@ -72,6 +72,7 @@ class RutingService(
         val sakerForPerson = safClient.hentSakerForPerson(foedselsnummer)?.saker ?: emptyList()
         val generelleYrkesskadesaker =
             sakerForPerson.filter { sak -> sak?.tema == Tema.YRK && sak.sakstype == Sakstype.GENERELL_SAK }
+        // TODO: 30/06/2022 YSMOD-408 Hva er definisjonen av "åpen"? At saken er opprettet de siste x månedene?
         return generelleYrkesskadesaker.isNotEmpty()
     }
 
