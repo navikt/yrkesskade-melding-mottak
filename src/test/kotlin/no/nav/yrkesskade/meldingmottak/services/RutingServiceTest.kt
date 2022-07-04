@@ -195,7 +195,7 @@ class RutingServiceTest {
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
-        every { safClientMock.hentJournalposterForPerson(any()) } returns journalposterResult()
+        every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResult()
         assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
     }
 
@@ -208,7 +208,7 @@ class RutingServiceTest {
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
-        every { safClientMock.hentJournalposterForPerson(any()) } returns journalposterResultMedSak()
+        every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResultMedSak()
         assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD) // TODO: 01/07/2022 YSMOD-375 Skal rute til ny saksbehandling når det er klart
     }
 

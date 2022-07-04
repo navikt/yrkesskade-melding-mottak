@@ -7,8 +7,6 @@ import com.expediagroup.graphql.client.types.GraphQLClientResponse
 import com.expediagroup.graphql.generated.Journalpost
 import com.expediagroup.graphql.generated.Journalposter
 import com.expediagroup.graphql.generated.Saker
-import com.expediagroup.graphql.generated.enums.Journalposttype
-import com.expediagroup.graphql.generated.enums.Journalstatus
 import com.expediagroup.graphql.generated.enums.Sakstype
 import com.expediagroup.graphql.generated.enums.Tema
 import com.expediagroup.graphql.generated.journalposter.Dokumentoversikt
@@ -31,6 +29,25 @@ fun errorJournalpostRespons(): GraphQLClientResponse<Journalpost.Result> =
 fun okJournalpostRespons(): GraphQLClientResponse<Journalpost.Result> =
     JacksonGraphQLResponse(
         data = Journalpost.Result(gyldigJournalpostMedAktoerId()),
+        errors = null,
+        extensions = emptyMap()
+    )
+
+fun errorJournalposterRespons(): GraphQLClientResponse<Journalposter.Result> =
+    JacksonGraphQLResponse(
+        data = null,
+        errors = listOf(
+            JacksonGraphQLError(
+                message = "Validation error",
+                locations = listOf(JacksonGraphQLSourceLocation(line = 1, column = 1))
+            )
+        ),
+        extensions = emptyMap()
+    )
+
+fun okJournalposterRespons(): GraphQLClientResponse<Journalposter.Result> =
+    JacksonGraphQLResponse(
+        data = Journalposter.Result(Dokumentoversikt(journalposter())),
         errors = null,
         extensions = emptyMap()
     )
@@ -88,33 +105,4 @@ fun fagsakAnnetTema(): Sak =
         fagsaksystem = "A001",
         sakstype = Sakstype.FAGSAK,
         tema = Tema.BAR
-    )
-
-fun journalposter(): List<com.expediagroup.graphql.generated.journalposter.Journalpost?> =
-    listOf(journalpostMedSak(), journalpostUtenSak())
-
-fun journalposterMedSak(): List<com.expediagroup.graphql.generated.journalposter.Journalpost?> =
-    listOf(journalpostMedSak())
-
-fun journalpostMedSak(): com.expediagroup.graphql.generated.journalposter.Journalpost =
-    com.expediagroup.graphql.generated.journalposter.Journalpost(
-        journalpostId = "71",
-        tittel = "Melding om yrkesskade eller yrkessykdom",
-        journalposttype = Journalposttype.I,
-        journalstatus = Journalstatus.MOTTATT,
-        tema = Tema.YRK,
-        sak = com.expediagroup.graphql.generated.journalposter.Sak(
-            sakstype = Sakstype.FAGSAK,
-            tema = Tema.YRK
-        )
-    )
-
-fun journalpostUtenSak(): com.expediagroup.graphql.generated.journalposter.Journalpost =
-    com.expediagroup.graphql.generated.journalposter.Journalpost(
-        journalpostId = "71",
-        tittel = "Melding om yrkesskade eller yrkessykdom",
-        journalposttype = Journalposttype.I,
-        journalstatus = Journalstatus.MOTTATT,
-        tema = Tema.YRK,
-        sak = null
     )

@@ -61,14 +61,14 @@ class SafClient(
         return oppdatertJournalpost
     }
 
-    fun hentJournalposterForPerson(foedselsnummer: String): Journalposter.Result? {
+    fun hentJournalposterForPerson(foedselsnummer: String, journalstatuser: List<Journalstatus>): Journalposter.Result? {
         val token = tokenUtil.getAppAccessTokenWithSafScope()
         logger.info("Hentet token for Saf")
         val journalposterQuery = Journalposter(
             Journalposter.Variables(
                 foedselsnummer,
                 BrukerIdType.FNR,
-                listOf(Journalstatus.MOTTATT, Journalstatus.UNDER_ARBEID, Journalstatus.JOURNALFOERT)
+                journalstatuser
             )
         )
 

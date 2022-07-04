@@ -2,7 +2,9 @@ package no.nav.yrkesskade.meldingmottak.clients
 
 import com.expediagroup.graphql.client.spring.GraphQLWebClient
 import com.expediagroup.graphql.generated.Journalpost
+import com.expediagroup.graphql.generated.Journalposter
 import com.expediagroup.graphql.generated.Saker
+import com.expediagroup.graphql.generated.enums.Journalstatus
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -50,6 +52,21 @@ internal class SafClientTest {
         coEvery { graphQLWebClient.execute<Journalpost.Result>(any(), any()) } returns okJournalpostRespons()
         val journalpost = client.hentOppdatertJournalpost("1337")
         assertThat(journalpost).isEqualTo(journalpostResultWithBrukerAktoerid())
+    }
+
+    @Test
+    fun `hentJournalposterforPerson skal kaste exception naar SAF gir error response`() {
+        coEvery { graphQLWebClient.execute<Journalposter.Result>(any(), any()) } returns errorJournalposterRespons()
+        Assertions.assertThrows(RuntimeException::class.java) {
+            client.hentJournalposterForPerson("123123", listOf(Journalstatus.MOTTATT, Journalstatus.UNDER_ARBEID))
+        }
+    }
+
+    @Test
+    fun `hentJournalposterForPerson skal returnere responsen naar SAF gir ok til svar`() {
+        coEvery { graphQLWebClient.execute<Journalposter.Result>(any(), any()) } returns okJournalposterRespons()
+        val journalposter = client.hentJournalposterForPerson("1337", listOf(Journalstatus.MOTTATT, Journalstatus.MOTTATT))
+        assertThat(journalposter).isEqualTo(journalposterResult())
     }
 
     @Test

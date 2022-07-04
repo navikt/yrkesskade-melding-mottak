@@ -1,9 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.services
 
-import com.expediagroup.graphql.generated.enums.AdressebeskyttelseGradering
-import com.expediagroup.graphql.generated.enums.IdentGruppe
-import com.expediagroup.graphql.generated.enums.Sakstype
-import com.expediagroup.graphql.generated.enums.Tema
+import com.expediagroup.graphql.generated.enums.*
 import com.expediagroup.graphql.generated.hentperson.Adressebeskyttelse
 import com.expediagroup.graphql.generated.hentperson.Person
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
@@ -110,7 +107,10 @@ class RutingService(
      */
     internal fun harPotensiellKommendeSak(foedselsnummer: String): Boolean {
         val journalposterForPerson =
-            safClient.hentJournalposterForPerson(foedselsnummer)?.dokumentoversiktBruker?.journalposter ?: emptyList()
+            safClient.hentJournalposterForPerson(
+                foedselsnummer,
+                listOf(Journalstatus.MOTTATT, Journalstatus.UNDER_ARBEID)
+            )?.dokumentoversiktBruker?.journalposter ?: emptyList()
         val journalposterUtenSak = journalposterForPerson.filter { journalpost -> journalpost?.sak == null }
         // TODO: 01/07/2022 YSMOD-375 Avstem at logikken er riktig. Bør det angis datoer i oppslaget mot saf (fraDato og tilDato)?
         return journalposterUtenSak.isNotEmpty()
