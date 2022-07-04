@@ -24,6 +24,7 @@ class RutingServiceTest {
     private val infotrygdClientMock: InfotrygdClient = mockk()
 
     private lateinit var service: RutingService
+    private lateinit var status: RutingService.RutingStatus
 
     private val foedselsnummer = "12345678901"
 
@@ -31,46 +32,77 @@ class RutingServiceTest {
     @BeforeEach
     fun init() {
         service = RutingService(pdlClientMock, safClientMock, skjermedePersonerClientMock, infotrygdClientMock)
+        status = RutingService.RutingStatus()
     }
 
     @Test
     fun `er doed`() {
-        assertThat(service.erDoed(PersonBuilder().doedsfall("2022-15-20").build())).isTrue
-        assertThat(service.erDoed(PersonBuilder().doedsfallUtenDato().build())).isTrue
+        assertThat(service.erDoed(PersonBuilder().doedsfall("2022-15-20").build(), status)).isTrue
+        assertThat(service.erDoed(PersonBuilder().doedsfallUtenDato().build(), status)).isTrue
     }
 
     @Test
     fun `er levende`() {
         val person = Person(emptyList(), emptyList(), emptyList(), emptyList())
-        assertThat(service.erDoed(person)).isFalse
+        assertThat(service.erDoed(person, status)).isFalse
     }
 
     @Test
     fun `er kode 7 fortrolig`() {
-        assertThat(service.erKode7Fortrolig(PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG).build())).isTrue
+        assertThat(service.erKode7Fortrolig(
+            PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG).build(),
+            status
+        )).isTrue
     }
 
     @Test
     fun `er ikke kode 7 fortrolig`() {
-        assertThat(service.erKode7Fortrolig(PersonBuilder().build())).isFalse
-        assertThat(service.erKode7Fortrolig(PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG).build())).isFalse
-        assertThat(service.erKode7Fortrolig(PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND).build())).isFalse
-        assertThat(service.erKode7Fortrolig(PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT).build())).isFalse
-        assertThat(service.erKode7Fortrolig(PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.__UNKNOWN_VALUE).build())).isFalse
+        assertThat(service.erKode7Fortrolig(PersonBuilder().build(), status)).isFalse
+        assertThat(service.erKode7Fortrolig(
+            PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG).build(),
+            status
+        )).isFalse
+        assertThat(service.erKode7Fortrolig(
+            PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND).build(),
+            status
+        )).isFalse
+        assertThat(service.erKode7Fortrolig(
+            PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT).build(),
+            status
+        )).isFalse
+        assertThat(service.erKode7Fortrolig(
+            PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.__UNKNOWN_VALUE).build(),
+            status
+        )).isFalse
     }
 
     @Test
     fun `er kode 6 strengt fortrolig`() {
-        assertThat(service.erKode6StrengtFortrolig(PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG).build())).isTrue
-        assertThat(service.erKode6StrengtFortrolig(PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND).build())).isTrue
+        assertThat(service.erKode6StrengtFortrolig(
+            PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG).build(),
+            status
+        )).isTrue
+        assertThat(service.erKode6StrengtFortrolig(
+            PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND).build(),
+            status
+        )).isTrue
     }
 
     @Test
     fun `er ikke kode 6 strengt fortrolig`() {
-        assertThat(service.erKode6StrengtFortrolig(PersonBuilder().build())).isFalse
-        assertThat(service.erKode6StrengtFortrolig(PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG).build())).isFalse
-        assertThat(service.erKode6StrengtFortrolig(PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT).build())).isFalse
-        assertThat(service.erKode6StrengtFortrolig(PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.__UNKNOWN_VALUE).build())).isFalse
+        assertThat(service.erKode6StrengtFortrolig(PersonBuilder().build(), status)).isFalse
+        assertThat(service.erKode6StrengtFortrolig(
+            PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG).build(),
+            status
+        )).isFalse
+        assertThat(service.erKode6StrengtFortrolig(
+            PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT).build(),
+            status
+        )).isFalse
+        assertThat(service.erKode6StrengtFortrolig(
+            PersonBuilder().adressebeskyttelse(AdressebeskyttelseGradering.__UNKNOWN_VALUE).build(),
+            status
+        )).isFalse
     }
 
     @Test
@@ -78,7 +110,7 @@ class RutingServiceTest {
         every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermedePersonerRequest::class)) } answers
                 { SkjermedePersonerClient.SkjermedePersonerResponse(mapOf(foedselsnummer to true)) }
 
-        assertThat(service.erEgenAnsatt(foedselsnummer)).isTrue
+        assertThat(service.erEgenAnsatt(foedselsnummer, status)).isTrue
     }
 
     @Test
@@ -86,7 +118,7 @@ class RutingServiceTest {
         every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermedePersonerRequest::class)) } answers
                 { SkjermedePersonerClient.SkjermedePersonerResponse(mapOf(foedselsnummer to false)) }
 
-        assertThat(service.erEgenAnsatt(foedselsnummer)).isFalse
+        assertThat(service.erEgenAnsatt(foedselsnummer, status)).isFalse
     }
 
     @Test
@@ -94,7 +126,7 @@ class RutingServiceTest {
         every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermedePersonerRequest::class)) } answers
                 { SkjermedePersonerClient.SkjermedePersonerResponse(emptyMap()) }
 
-        assertThat(service.erEgenAnsatt(foedselsnummer)).isFalse
+        assertThat(service.erEgenAnsatt(foedselsnummer, status)).isFalse
     }
 
     @Test
@@ -115,14 +147,14 @@ class RutingServiceTest {
     fun `infotrygdsak eksisterer`() {
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns true
 
-        assertThat(service.harEksisterendeInfotrygdSak(listOf("11111111111", "33333333333"))).isTrue
+        assertThat(service.harEksisterendeInfotrygdSak(listOf("11111111111", "33333333333"), status)).isTrue
     }
 
     @Test
     fun `infotrygdsak eksisterer ikke`() {
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
 
-        assertThat(service.harEksisterendeInfotrygdSak(listOf("00000000000", "99999999999"))).isFalse
+        assertThat(service.harEksisterendeInfotrygdSak(listOf("00000000000", "99999999999"), status)).isFalse
     }
 
 

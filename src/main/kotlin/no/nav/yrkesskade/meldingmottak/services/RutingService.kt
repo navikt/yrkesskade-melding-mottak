@@ -37,67 +37,82 @@ class RutingService(
     fun utfoerRuting(foedselsnummer: String): Rute {
         check(foedselsnummer.isNotBlank()) { "Det må angis et fødselsnummer for å utføre ruting!" }
 
-        //    TODO: Pass på at resultater caches.
+        val status = RutingStatus()
+
+        val rute = ruting(foedselsnummer, status)
+            .also { log.info(status.toString()) }
+
+        // TODO: Test først at ulike forretningsregler gir riktig resultat i logger, åpne deretter for at ruting kan gå til nytt saksbehandlingssystem.
+        return Rute.GOSYS_OG_INFOTRYGD
+            .also { log.info("TEST: OVERSTYRER RUTE TIL $it") }
+    }
+
+    private fun ruting(foedselsnummer: String, status: RutingStatus): Rute {
 
         val person = pdlClient.hentPerson(foedselsnummer)
 
-        if (person == null
-            || erDoed(person)
-            || erKode7Fortrolig(person)
-            || erKode6StrengtFortrolig(person)
-            || erEgenAnsatt(foedselsnummer)
-            || harAapenGenerellYrkesskadeSak(foedselsnummer)
+        if (finnesIkkeIPdl(person, status)
+            || erDoed(person!!, status)
+            || erKode7Fortrolig(person, status)
+            || erKode6StrengtFortrolig(person, status)
+            || erEgenAnsatt(foedselsnummer, status)
+            || harAapenGenerellYrkesskadeSak(foedselsnummer, status)
         ) {
             return Rute.GOSYS_OG_INFOTRYGD
         }
 
         val foedselsnumreMedHistorikk = hentFoedselsnumreMedHistorikk(foedselsnummer)
-        if (harEksisterendeInfotrygdSak(foedselsnumreMedHistorikk) || harPotensiellKommendeSak(foedselsnummer)) {
+        if (harEksisterendeInfotrygdSak(foedselsnumreMedHistorikk, status)
+            || harPotensiellKommendeSak(foedselsnummer, status)
+        ) {
             return Rute.GOSYS_OG_INFOTRYGD
         }
 
-        // TODO: Test først at ulike forretningsregler gir riktig resultat i logger, åpne deretter for at ruting kan gå til nytt saksbehandlingssystem
-        return Rute.GOSYS_OG_INFOTRYGD
-            .also { log.info("Ingen av sjekkene har slått til, bruk default ruting: $it") }
+        return Rute.YRKESSKADE_SAKSBEHANDLING
     }
 
 
 
     /* Hjelpefunksjoner */
 
-    internal fun erDoed(person: Person): Boolean =
-        person.doedsfall.isNotEmpty()
+    internal fun finnesIkkeIPdl(person: Person?, status: RutingStatus): Boolean =
+        (person == null)
+            .also { status.finnesIkkeIPdl = it }
 
-    internal fun erKode7Fortrolig(person: Person): Boolean {
+    internal fun erDoed(person: Person, status: RutingStatus): Boolean =
+        person.doedsfall.isNotEmpty()
+            .also { status.doed = it }
+
+    internal fun erKode7Fortrolig(person: Person, status: RutingStatus): Boolean {
         return person.adressebeskyttelse.contains(Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG))
-            .also { if (it) log.info("Personen er Kode 7 Fortrolig") }
+            .also { status.kode7Fortrolig = it }
     }
 
-    internal fun erKode6StrengtFortrolig(person: Person): Boolean {
+    internal fun erKode6StrengtFortrolig(person: Person, status: RutingStatus): Boolean {
         return (person.adressebeskyttelse.contains(Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG)) ||
                 person.adressebeskyttelse.contains(Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND)))
-                    .also { if (it) log.info("Personen er Kode 6 Strengt fortrolig") }
+                    .also { status.kode6StrengtFortrolig = it }
     }
 
-    internal fun erEgenAnsatt(foedselsnummer: String): Boolean {
+    internal fun erEgenAnsatt(foedselsnummer: String, status: RutingStatus): Boolean {
         val request = SkjermedePersonerClient.SkjermedePersonerRequest(listOf(foedselsnummer))
         val response = skjermedePersonerClient.erSkjermet(request)
         return (response.skjermedePersonerMap[foedselsnummer] ?: false)
-            .also { if (it) log.info("Personen er skjermet/egen ansatt") }
+            .also { status.egenAnsatt = it }
     }
 
-    internal fun harAapenGenerellYrkesskadeSak(foedselsnummer: String): Boolean {
+    internal fun harAapenGenerellYrkesskadeSak(foedselsnummer: String, status: RutingStatus): Boolean {
         val sakerForPerson = safClient.hentSakerForPerson(foedselsnummer)?.saker ?: emptyList()
         val generelleYrkesskadesaker =
             sakerForPerson.filter { sak -> sak?.tema == Tema.YRK && sak.sakstype == Sakstype.GENERELL_SAK }
         // TODO: 30/06/2022 YSMOD-408 Hva er definisjonen av "åpen"? At saken er opprettet de siste x månedene?
         return generelleYrkesskadesaker.isNotEmpty()
-            .also { if (it) log.info("Personen har åpen generell sak med tema YRK") }
+            .also { status.aapenGenerellYrkesskadeSak = it }
     }
 
-    internal fun harEksisterendeInfotrygdSak(foedselsnumre: List<String>): Boolean {
+    internal fun harEksisterendeInfotrygdSak(foedselsnumre: List<String>, status: RutingStatus): Boolean {
         return infotrygdClient.harEksisterendeSak(foedselsnumre)
-            .also { if (it) log.info("Personen har eksisterende Infotrygd-sak") }
+            .also { status.eksisterendeInfotrygdSak = it }
     }
 
     /**
@@ -105,7 +120,7 @@ class RutingService(
      * å få en sak i Gosys/Infotrygd.
      * OBS! Denne kontrollen må komme etter kontrollene på om det finnes saker.
      */
-    internal fun harPotensiellKommendeSak(foedselsnummer: String): Boolean {
+    internal fun harPotensiellKommendeSak(foedselsnummer: String, status: RutingStatus): Boolean {
         val journalposterForPerson =
             safClient.hentJournalposterForPerson(
                 foedselsnummer,
@@ -114,7 +129,7 @@ class RutingService(
         val journalposterUtenSak = journalposterForPerson.filter { journalpost -> journalpost?.sak == null }
         // TODO: 01/07/2022 YSMOD-375 Avstem at logikken er riktig. Bør det angis datoer i oppslaget mot saf (fraDato og tilDato)?
         return journalposterUtenSak.isNotEmpty()
-            .also { if (it) log.info("Personen har potensiell kommende sak") }
+            .also { status.potensiellKommendeSak = it }
     }
 
     internal fun hentFoedselsnumreMedHistorikk(foedselsnummer: String): List<String> {
@@ -128,5 +143,37 @@ class RutingService(
         GOSYS_OG_INFOTRYGD,
         YRKESSKADE_SAKSBEHANDLING
     }
+
+    class RutingStatus (
+        var finnesIkkeIPdl: Boolean = false,
+        var doed: Boolean = false,
+        var kode7Fortrolig: Boolean = false,
+        var kode6StrengtFortrolig: Boolean = false,
+        var egenAnsatt: Boolean = false,
+        var aapenGenerellYrkesskadeSak: Boolean = false,
+        var eksisterendeInfotrygdSak: Boolean = false,
+        var potensiellKommendeSak: Boolean = false,
+        var rutingResult: Rute = Rute.GOSYS_OG_INFOTRYGD
+    ) {
+
+        override fun toString(): String {
+            val prefix = "Rutingstatus:"
+
+            if (finnesIkkeIPdl) return "$prefix Personen finnes ikke i PDL => $rutingResult"
+            if (doed) return "$prefix Personen er død => $rutingResult"
+            if (kode7Fortrolig) return "$prefix Personen er kode 7 - fortrolig => $rutingResult"
+            if (kode6StrengtFortrolig) return "$prefix Personen er kode 6 - strengt fortrolig => $rutingResult"
+            if (egenAnsatt) return "$prefix Personen er egen ansatt/skjermet => $rutingResult"
+            if (aapenGenerellYrkesskadeSak) return "$prefix Personen har en åpen generell YRK-sak => $rutingResult"
+            if (eksisterendeInfotrygdSak) return "$prefix Personen har en eksisterende Infotrygd-sak => $rutingResult"
+            if (potensiellKommendeSak) return "$prefix Personen har en potensiell kommende sak => $rutingResult"
+
+            return "$prefix Ingen av sjekkene har slått til, bruk default ruting => $rutingResult"
+        }
+
+    }
+
+
+
 
 }
