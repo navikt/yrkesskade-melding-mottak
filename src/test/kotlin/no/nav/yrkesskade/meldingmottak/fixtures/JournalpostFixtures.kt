@@ -8,6 +8,7 @@ import com.expediagroup.graphql.generated.enums.Kanal
 import com.expediagroup.graphql.generated.enums.Tema
 import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.DokumentInfo
+import no.nav.yrkesskade.meldingmottak.konstanter.BREVKODE_TANNLEGEERKLAERING
 import java.time.LocalDateTime
 
 fun gyldigJournalpostMedAktoerId(): com.expediagroup.graphql.generated.journalpost.Journalpost {
@@ -54,6 +55,18 @@ fun journalpostResultWithBrukerFnr(): Journalpost.Result {
             datoOpprettet = LocalDateTime.of(2022, 1, 1, 1, 1, 1, 1)
         )
     )
+}
+
+fun journalpostResultTannlegeerklaering(): Journalpost.Result {
+    val journalpostMedJournalstatusFeilregistrert = gyldigJournalpostMedAktoerId().copy(
+        dokumenter = listOf(
+            DokumentInfo(
+                "Tannlegeerklæring ved yrkesskade",
+                BREVKODE_TANNLEGEERKLAERING
+            )
+        )
+    )
+    return Journalpost.Result(journalpostMedJournalstatusFeilregistrert)
 }
 
 fun journalpostResultMedJournalstatusFeilregistrert(): Journalpost.Result {

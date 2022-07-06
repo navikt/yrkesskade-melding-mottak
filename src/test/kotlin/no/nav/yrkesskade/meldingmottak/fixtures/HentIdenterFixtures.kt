@@ -9,7 +9,13 @@ fun hentIdenterResultMedBrukerAktoerid(): HentIdenter.Result {
     return HentIdenter.Result(gyldigIdentlisteMedAktorId())
 }
 
+fun hentIdenterResultMedBrukerAktoeridOgFoedselsnummer(): HentIdenter.Result {
+    return HentIdenter.Result(gyldigIdentlisteMedAktorIdOgFoedselsnummer())
+}
+
 fun gyldigIdentlisteMedAktorId() = Identliste(listOf(gyldigIdentInformasjonMedAktoerId()))
+
+fun gyldigIdentlisteMedAktorIdOgFoedselsnummer() = Identliste(listOf(gyldigIdentInformasjonMedAktoerId(), identInformasjon_3_NyttFnr()))
 
 fun gyldigIdentInformasjonMedAktoerId(): IdentInformasjon {
     return IdentInformasjon(
