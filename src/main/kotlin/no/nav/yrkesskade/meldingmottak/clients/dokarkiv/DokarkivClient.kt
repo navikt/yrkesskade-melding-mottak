@@ -6,6 +6,7 @@ import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostResponse
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -42,7 +43,7 @@ class DokarkivClient(
                 }
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithDokarkivScope()}")
-                .header("Nav-Callid", MDCConstants.MDC_CALL_ID)
+                .header("Nav-Callid", MDC.get(MDCConstants.MDC_CALL_ID))
                 .header("Nav-Consumer-Id", applicationName)
                 .bodyValue(opprettJournalpostRequest)
                 .retrieve()

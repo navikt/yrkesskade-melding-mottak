@@ -20,14 +20,19 @@ import no.nav.yrkesskade.meldingmottak.clients.gosys.OpprettJournalfoeringOppgav
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Prioritet
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
+import no.nav.yrkesskade.meldingmottak.domene.Brevkode
+import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentBrevkode
+import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokument
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokumentTittel
 import no.nav.yrkesskade.meldingmottak.util.extensions.journalfoerendeEnhetEllerNull
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.prosessering.AsyncTaskStep
 import no.nav.yrkesskade.prosessering.TaskStepBeskrivelse
 import no.nav.yrkesskade.prosessering.domene.Task
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandling
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingMetadata
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -46,7 +51,8 @@ class ProsesserJournalfoeringHendelseTask(
     private val safClient: SafClient,
     private val pdlClient: PdlClient,
     private val oppgaveClient: OppgaveClient,
-    private val bigQueryClient: BigQueryClient
+    private val bigQueryClient: BigQueryClient,
+    private val dokumentTilSaksbehandlingClient: DokumentTilSaksbehandlingClient
 ) : AsyncTaskStep {
 
     val log: Logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
@@ -63,10 +69,23 @@ class ProsesserJournalfoeringHendelseTask(
         }
         validerJournalpost(journalpost)
 
-        opprettOppgave(journalpost).also { oppgave ->
-            log.info("Opprettet oppgave for journalpostId ${journalpost.journalpostId}")
-            foerMetrikkIBigQuery(journalpost, oppgave)
+        if (journalpostSkalTilNySaksbehandling(journalpost)) {
+            val dokumentTilSaksbehandling = DokumentTilSaksbehandling(
+                journalpostId = journalpost.journalpostId,
+                enhet = "9999",
+                metadata = DokumentTilSaksbehandlingMetadata(callId = MDC.get(MDCConstants.MDC_CALL_ID))
+            )
+            dokumentTilSaksbehandlingClient.sendTilSaksbehandling(dokumentTilSaksbehandling)
+        } else {
+            opprettOppgave(journalpost).also { oppgave ->
+                log.info("Opprettet oppgave for journalpostId ${journalpost.journalpostId}")
+                foerMetrikkIBigQuery(journalpost, oppgave)
+            }
         }
+    }
+
+    private fun journalpostSkalTilNySaksbehandling(journalpost: Journalpost): Boolean {
+        return journalpost.hentHovedDokument()?.brevkode == Brevkode.TANNLEGEERKLAERING.kode
     }
 
     /**
