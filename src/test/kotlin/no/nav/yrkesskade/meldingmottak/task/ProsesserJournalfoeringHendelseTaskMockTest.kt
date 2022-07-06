@@ -9,6 +9,7 @@ import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClientStub
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedBrevkodeTannlegeerklaering
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalposttypeUtgaaende
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalstatusFeilregistrert
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedTemaSYK
@@ -18,6 +19,7 @@ import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBrukerId
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenDokumenter
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerAktoerid
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerFnr
+import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
@@ -32,13 +34,15 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
 
     private val oppgaveClientMock: OppgaveClient = mockk(relaxed = true)
 
+    private val dokumentTilSaksbehandlingClient: DokumentTilSaksbehandlingClient = mockk(relaxed = true)
+
     private val bigQueryClientStub: BigQueryClient = BigQueryClientStub()
 
     private val journalpostId = "1337"
     private val task = ProsesserJournalfoeringHendelseTask.opprettTask(journalpostId)
 
     private val prosesserJournalfoeringHendelseTask: ProsesserJournalfoeringHendelseTask =
-        ProsesserJournalfoeringHendelseTask(safClientMock, pdlClientMock, oppgaveClientMock, bigQueryClientStub)
+        ProsesserJournalfoeringHendelseTask(safClientMock, pdlClientMock, oppgaveClientMock, bigQueryClientStub, dokumentTilSaksbehandlingClient)
 
     @BeforeEach
     fun init() {
@@ -138,6 +142,16 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
         prosesserJournalfoeringHendelseTask.doTask(task)
 
         verify(exactly = 0) { pdlClientMock.hentAktorId(any()) }
+    }
+
+    @Test
+    fun `skal sende til YS saksbehandling naar journalpost er tannlegeerklaering`() {
+        every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultMedBrevkodeTannlegeerklaering()
+
+        prosesserJournalfoeringHendelseTask.doTask(task)
+
+        verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
+        verify(exactly = 1) { dokumentTilSaksbehandlingClient.sendTilSaksbehandling(any()) }
     }
 
     @Test

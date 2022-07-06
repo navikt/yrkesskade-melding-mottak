@@ -8,6 +8,7 @@ import com.expediagroup.graphql.generated.enums.Kanal
 import com.expediagroup.graphql.generated.enums.Tema
 import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.DokumentInfo
+import no.nav.yrkesskade.meldingmottak.domene.Brevkode
 import java.time.LocalDateTime
 
 fun gyldigJournalpostMedAktoerId(): com.expediagroup.graphql.generated.journalpost.Journalpost {
@@ -103,4 +104,16 @@ fun journalpostResultMedJournalposttypeUtgaaende(): Journalpost.Result {
         journalposttype = Journalposttype.U
     )
     return Journalpost.Result(journalpostMedJournalposttypeUtgaaende)
+}
+
+fun journalpostResultMedBrevkodeTannlegeerklaering(): Journalpost.Result {
+    val journalpostMedBrevkodeTannlegeerklaering = gyldigJournalpostMedAktoerId().copy(
+        dokumenter = listOf(
+            DokumentInfo(
+                "Tannlegeerklæring ved yrkesskade",
+                Brevkode.TANNLEGEERKLAERING.kode
+            )
+        )
+    )
+    return Journalpost.Result(journalpostMedBrevkodeTannlegeerklaering)
 }
