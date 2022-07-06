@@ -42,12 +42,15 @@ class PdlClient(
         return extractAktorId(identerResult)
     }
 
-    fun hentIdenter(fodselsnummer: String, grupper: List<IdentGruppe>, historikk: Boolean): HentIdenter.Result? {
+    /**
+     * @param ident fødselsnummer eller aktørId
+     */
+    fun hentIdenter(ident: String, grupper: List<IdentGruppe>, historikk: Boolean = false): HentIdenter.Result? {
         val token = tokenUtil.getAppAccessTokenWithPdlScope()
         logger.info("Hentet token for Pdl")
         val hentIdenterQuery = HentIdenter(
             HentIdenter.Variables(
-                ident = fodselsnummer,
+                ident = ident,
                 grupper = grupper,
                 historikk = historikk
             )
@@ -56,7 +59,7 @@ class PdlClient(
         val identerResult: HentIdenter.Result?
         runBlocking {
             logger.info("Henter identer (grupper=$grupper, historikk=$historikk) fra PDL på url $pdlGraphqlUrl")
-            secureLogger.info("Henter identer (grupper=$grupper, historikk=$historikk) fra PDL for person med fnr $fodselsnummer på url $pdlGraphqlUrl")
+            secureLogger.info("Henter identer (grupper=$grupper, historikk=$historikk) fra PDL for person med ident $ident på url $pdlGraphqlUrl")
             val response: GraphQLClientResponse<HentIdenter.Result> = client.execute(hentIdenterQuery) {
                 headers {
                     it.add(HttpHeaders.AUTHORIZATION, "Bearer $token")
