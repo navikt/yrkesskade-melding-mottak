@@ -1,0 +1,36 @@
+name: Update Kafka Topics
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'dev'
+    paths:
+      - '.nais/*/dokument-til-saksbehandling-topic.yaml'
+
+jobs:
+  deploy-kafka-topics-dev:
+    name: Deploy to Aiven Dev
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          VAR: kafka-pool=nav-dev
+          RESOURCE: .nais/dev/dokument-til-saksbehandling-topic.yaml
+
+  deploy-kafka-topics-prod:
+    name: Deploy to Aiven Prod
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          VAR: kafka-pool=nav-prod
+          RESOURCE: .nais/prod/dokument-til-saksbehandling-topic.yaml
