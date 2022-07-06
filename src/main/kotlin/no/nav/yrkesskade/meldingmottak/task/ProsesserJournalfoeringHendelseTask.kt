@@ -75,7 +75,9 @@ class ProsesserJournalfoeringHendelseTask(
                 enhet = "9999",
                 metadata = DokumentTilSaksbehandlingMetadata(callId = MDC.get(MDCConstants.MDC_CALL_ID))
             )
-            dokumentTilSaksbehandlingClient.sendTilSaksbehandling(dokumentTilSaksbehandling)
+            dokumentTilSaksbehandlingClient.sendTilSaksbehandling(dokumentTilSaksbehandling).also {
+                log.info("Sendt dokument til ny saksbehandlingsløsning for journalpostId ${dokumentTilSaksbehandling.journalpostId}")
+            }
         } else {
             opprettOppgave(journalpost).also { oppgave ->
                 log.info("Opprettet oppgave for journalpostId ${journalpost.journalpostId}")
