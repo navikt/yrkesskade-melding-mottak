@@ -11,7 +11,6 @@ on:
 jobs:
   deploy-kafka-topics-dev:
     name: Deploy to Aiven Dev
-    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.4.0
