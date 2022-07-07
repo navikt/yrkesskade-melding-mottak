@@ -1,9 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.task
 
-import com.expediagroup.graphql.generated.enums.BrukerIdType
-import com.expediagroup.graphql.generated.enums.Journalposttype
-import com.expediagroup.graphql.generated.enums.Journalstatus
-import com.expediagroup.graphql.generated.enums.Tema
+import com.expediagroup.graphql.generated.enums.*
 import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.Journalpost
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -20,6 +17,8 @@ import no.nav.yrkesskade.meldingmottak.clients.gosys.OpprettJournalfoeringOppgav
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Prioritet
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
+import no.nav.yrkesskade.meldingmottak.domene.Brevkode
+import no.nav.yrkesskade.meldingmottak.services.RutingService
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentBrevkode
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokumentTittel
@@ -45,6 +44,7 @@ import java.lang.invoke.MethodHandles
 class ProsesserJournalfoeringHendelseTask(
     private val safClient: SafClient,
     private val pdlClient: PdlClient,
+    private val rutingService: RutingService,
     private val oppgaveClient: OppgaveClient,
     private val bigQueryClient: BigQueryClient
 ) : AsyncTaskStep {
@@ -63,10 +63,33 @@ class ProsesserJournalfoeringHendelseTask(
         }
         validerJournalpost(journalpost)
 
-        opprettOppgave(journalpost).also { oppgave ->
-            log.info("Opprettet oppgave for journalpostId ${journalpost.journalpostId}")
-            foerMetrikkIBigQuery(journalpost, oppgave)
+        val foedselsnummer = hentFoedselsnummer(journalpost.bruker, payloadDto.journalpostId)
+
+        if (foedselsnummer != null &&
+            journalpostErKandidatForYsSaksbehandling(journalpost) &&
+            skalRutesTilYsSaksbehandling(foedselsnummer)
+        ) {
+            // TODO: legg melding på kafka
+            log.info("===|> TODO: Legg melding på kafka og send til nytt saksbehandlingssystem, Kompys...")
+            log.info("MIDLERTIDIG: Oppretter task og senere oppgave for behandling i gammelt saksbehandlingssystem, Gosys og Infotrygd")
+
+//            val dokumentTilSaksbehandling = DokumentTilSaksbehandling(
+//                journalpostId = journalpost.journalpostId,
+//                enhet = "9999",
+//                metadata = DokumentTilSaksbehandlingMetadata(callId = MDC.get(MDCConstants.MDC_CALL_ID))
+//            )
+//            dokumentTilSaksbehandlingClient.sendTilSaksbehandling(dokumentTilSaksbehandling).also {
+//                log.info("Sendt dokument til ny saksbehandlingsløsning for journalpostId ${dokumentTilSaksbehandling.journalpostId}")
+//            }
+
         }
+//        else {
+            opprettOppgave(journalpost).also { oppgave ->
+                log.info("Opprettet oppgave for journalpostId ${journalpost.journalpostId}")
+                foerMetrikkIBigQuery(journalpost, oppgave)
+            }
+//        }
+
     }
 
     /**
@@ -121,6 +144,33 @@ class ProsesserJournalfoeringHendelseTask(
         return true
     }
 
+    /**
+     * Bestemmer om en journalpost er av en type som KAN sendes til nytt saksbehandlingssystem for yrkesskade/-sykdom.
+     */
+    private fun journalpostErKandidatForYsSaksbehandling(journalpost: Journalpost): Boolean {
+        return erTannlegeerklaering(journalpost)
+    }
+
+    /**
+     * Bestemmer om en journalpost, for en person, SKAL sendes til nytt saksbehandlingssystem for yrkesskade/-sykdom.
+     */
+    private fun skalRutesTilYsSaksbehandling(foedselsnummer: String) =
+        rutingService.utfoerRuting(foedselsnummer) == RutingService.Rute.YRKESSKADE_SAKSBEHANDLING
+
+    /**
+     * Bestemmer om en journalpost fra en Kafka-record er en tannlegeerklæring.
+     */
+    private fun erTannlegeerklaering(journalpost: Journalpost): Boolean =
+        (journalpost.hentBrevkode() == Brevkode.TANNLEGEERKLAERING.kode)
+            .also {
+                if (it) {
+                    log.info("Juhuuu, dette er en tannlegeerklæring (º-vv-º) , brevkode er ${journalpost.hentBrevkode()}")
+                }
+                else {
+                    log.info("Dette er ingen tannlegeerklæring, brevkode er ${journalpost.hentBrevkode()}")
+                }
+            }
+
     @Throws(RuntimeException::class)
     private fun hentJournalpostFraSaf(journalpostId: String): Journalpost {
         val safResultat = safClient.hentOppdatertJournalpost(journalpostId)
@@ -142,6 +192,44 @@ class ProsesserJournalfoeringHendelseTask(
                         ", datoOpprettet ${it.datoOpprettet}"
             )
         }
+    }
+
+    private fun hentFoedselsnummer(bruker: Bruker?, journalpostId: String): String? {
+        if (bruker?.id.isNullOrEmpty() || bruker?.type == null) {
+            return null
+        }
+
+        return when (bruker.type) {
+            BrukerIdType.FNR -> bruker.id.also {
+                log.info("Hentet fødselsnummer fra bruker på jounalposten")
+                secureLogger.info("Hentet fødselsnummer ${bruker.id} fra bruker på journalposten")
+            }
+            BrukerIdType.AKTOERID -> hentFoedselsnummerFraPdl(bruker.id!!, journalpostId).also {
+                log.info("Hentet fødselsnummer fra pdl")
+                secureLogger.info("Hentet fødselsnummer $it fra pdl for aktørId ${bruker.id}")
+            }
+            else -> {
+                log.info("Bruker på journalpost med id $journalpostId er ikke en person!")
+                secureLogger.info("Bruker ${bruker.id} på journalpost med id $journalpostId er ikke en person!")
+                throw java.lang.RuntimeException("Bruker på journalpost med id $journalpostId er ikke en person!")
+            }
+        }
+    }
+
+    @Throws(RuntimeException::class)
+    private fun hentFoedselsnummerFraPdl(aktorId: String, journalpostId: String): String {
+        val identerResult = pdlClient.hentIdenter(aktorId, listOf(IdentGruppe.FOLKEREGISTERIDENT))
+
+        val foedselsnummer = identerResult?.hentIdenter?.identer?.filter { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT }
+            ?.getOrNull(0)?.ident
+
+        if (foedselsnummer == null) {
+            log.error("Fant ikke fødselsnummer for bruker på journalpost med id $journalpostId")
+            secureLogger.error("Fant ikke fødselsnummer for bruker på journalpost med id $journalpostId og med aktørId $aktorId")
+            throw RuntimeException("Fant ikke fødselsnummer for bruker på journalpost med id $journalpostId")
+        }
+
+        return foedselsnummer
     }
 
     private fun hentAktoerId(bruker: Bruker?): String? {
