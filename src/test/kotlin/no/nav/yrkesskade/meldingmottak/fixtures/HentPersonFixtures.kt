@@ -7,6 +7,7 @@ fun gyldigPersonMedNavnOgVegadresse(): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),
         listOf(Navn("Ola", null, "Normann", "Ola Normann")),
+        emptyList(),
         listOf(bostedVegadresse())
     )
 }
@@ -15,6 +16,7 @@ fun gyldigPersonMedNavnOgMatrikkeladresse(): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),
         listOf(Navn("Kari", "Storm", "Hansen", "Kari S Hansen")),
+        emptyList(),
         listOf(bostedMatrikkeladresse())
     )
 }
@@ -23,6 +25,7 @@ fun gyldigPersonMedUkjentBosted(): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),
         listOf(Navn("Espen", null, "Uteligger", "Espen Uteligger")),
+        emptyList(),
         listOf(bostedUkjentBosted())
     )
 }
@@ -31,6 +34,7 @@ fun gyldigPersonMedNavnMenUtenBostedsadresse(): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),
         listOf(Navn("Kari", "Storm", "Hansen", "Kari S Hansen")),
+        emptyList(),
         emptyList()
     )
 }
@@ -39,6 +43,7 @@ fun gyldigPersonMedEnkelUtenlandskAdresse(): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),
         listOf(Navn("Ida", null, "Nilsson", "Ida Nilsson")),
+        emptyList(),
         listOf(bostedEnkelUtenlandskAdresse())
     )
 }
@@ -47,7 +52,17 @@ fun gyldigPersonMedUtenlandskAdresse(): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),
         listOf(Navn("Lasse", "Medel", "Svensson", "Lasse Medel Svensson")),
+        emptyList(),
         listOf(bostedUtenlandskAdresse())
+    )
+}
+
+fun doedPerson(): Person {
+    return Person(
+        listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),
+        listOf(Navn("John", null, "Doe", "John Doe")),
+        listOf(Doedsfall("2019-11-13")),
+        listOf(bostedVegadresse())
     )
 }
 
@@ -55,6 +70,7 @@ fun gyldigFortroligPersonMedNavnOgVegadresse(): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG)),
         listOf(Navn("Fortrolig", null, "Person", "Fortrolig Person")),
+        emptyList(),
         listOf(bostedVegadresse())
     )
 }
@@ -63,6 +79,7 @@ fun gyldigStrengtFortroligPersonMedNavnOgVegadresse(): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG)),
         listOf(Navn("Strengt", "Fortrolig", "Person", "Strengt Fortrolig Person")),
+        emptyList(),
         listOf(bostedVegadresse())
     )
 }

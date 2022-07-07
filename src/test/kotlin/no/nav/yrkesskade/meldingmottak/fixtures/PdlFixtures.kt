@@ -63,6 +63,17 @@ fun okResponsPersonMedUtenlandskAdresseFraPdl(): GraphQLClientResponse<HentPerso
 }
 
 /**
+ * Response med død person
+ */
+fun okResponsDoedPersonFraPdl(): GraphQLClientResponse<HentPerson.Result> {
+    return JacksonGraphQLResponse(
+        data = HentPerson.Result(doedPerson()),
+        errors = null,
+        extensions = emptyMap()
+    )
+}
+
+/**
  * Response med fortrolig person (kode 7)
  */
 fun okResponsFortroligPersonFraPdl(): GraphQLClientResponse<HentPerson.Result> {

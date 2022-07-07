@@ -34,4 +34,10 @@ class TokenUtil(
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
         return response.accessToken
     }
+
+    fun getAppAccessTokenWithSkjermedePersonerScope(): String {
+        val clientProperties = clientConfigurationProperties.registration["skjermede-personer-maskintilmaskin"]
+        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
+        return response.accessToken
+    }
 }

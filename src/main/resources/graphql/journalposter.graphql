@@ -1,0 +1,23 @@
+query($ident: String!, $idtype: BrukerIdType!, $journalstatuser: [Journalstatus]) {
+  dokumentoversiktBruker(
+    brukerId: {
+      id: $ident,
+      type: $idtype
+    },
+    tema: [YRK],
+    journalstatuser: $journalstatuser,
+    foerste: 100
+  ) {
+    journalposter {
+      journalpostId
+      tittel
+      journalposttype
+      journalstatus
+      tema
+      sak {
+        sakstype
+        tema
+      }
+    }
+  }
+}

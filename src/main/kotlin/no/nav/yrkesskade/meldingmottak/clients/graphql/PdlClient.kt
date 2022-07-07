@@ -7,6 +7,7 @@ import com.expediagroup.graphql.generated.HentIdenter
 import com.expediagroup.graphql.generated.HentPerson
 import com.expediagroup.graphql.generated.Long
 import com.expediagroup.graphql.generated.enums.IdentGruppe
+import com.expediagroup.graphql.generated.hentperson.Person
 import kotlinx.coroutines.runBlocking
 import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.domene.Adresse
@@ -37,14 +38,28 @@ class PdlClient(
     private val client = GraphQLWebClient(url = pdlGraphqlUrl)
 
     fun hentAktorId(fodselsnummer: String): String? {
+        val identerResult = hentIdenter(fodselsnummer, listOf(IdentGruppe.AKTORID), false)
+        return extractAktorId(identerResult)
+    }
+
+    /**
+     * @param ident fødselsnummer eller aktørId
+     */
+    fun hentIdenter(ident: String, grupper: List<IdentGruppe>, historikk: Boolean = false): HentIdenter.Result? {
         val token = tokenUtil.getAppAccessTokenWithPdlScope()
         logger.info("Hentet token for Pdl")
-        val hentIdenterQuery = HentIdenter(HentIdenter.Variables(fodselsnummer))
+        val hentIdenterQuery = HentIdenter(
+            HentIdenter.Variables(
+                ident = ident,
+                grupper = grupper,
+                historikk = historikk
+            )
+        )
 
         val identerResult: HentIdenter.Result?
         runBlocking {
-            logger.info("Henter aktørId fra PDL på url $pdlGraphqlUrl")
-            secureLogger.info("Henter aktørId fra PDL for person med fnr $fodselsnummer på url $pdlGraphqlUrl")
+            logger.info("Henter identer (grupper=$grupper, historikk=$historikk) fra PDL på url $pdlGraphqlUrl")
+            secureLogger.info("Henter identer (grupper=$grupper, historikk=$historikk) fra PDL for person med ident $ident på url $pdlGraphqlUrl")
             val response: GraphQLClientResponse<HentIdenter.Result> = client.execute(hentIdenterQuery) {
                 headers {
                     it.add(HttpHeaders.AUTHORIZATION, "Bearer $token")
@@ -61,9 +76,12 @@ class PdlClient(
             }
         }
 
-        return extractAktorId(identerResult)
+        return identerResult
     }
 
+    fun hentPerson(foedselsnummer: String): Person? {
+        return hentPersonResult(foedselsnummer)?.hentPerson
+    }
 
     fun hentNavn(fodselsnummer: String): Navn? {
         val navnOgAdresse = hentNavnOgAdresse(fodselsnummer, false)
@@ -71,7 +89,7 @@ class PdlClient(
     }
 
     fun hentNavnOgAdresse(fodselsnummer: String, hentAdresse: Boolean = true): Pair<Navn?, Adresse?> {
-        val personResult = hentPerson(fodselsnummer)
+        val personResult = hentPersonResult(fodselsnummer)
 
         if (personResult == null) {
             logger.info("Fant ikke navn på person")
@@ -131,7 +149,7 @@ class PdlClient(
             ?.filter { identInfo -> identInfo.gruppe == IdentGruppe.AKTORID }?.findFirst()?.get()?.ident
     }
 
-    private fun hentPerson(fodselsnummer: String): HentPerson.Result? {
+    private fun hentPersonResult(fodselsnummer: String): HentPerson.Result? {
         val token = tokenUtil.getAppAccessTokenWithPdlScope()
         logger.info("Hentet token for Pdl")
         val hentPersonQuery = HentPerson(HentPerson.Variables(fodselsnummer))
