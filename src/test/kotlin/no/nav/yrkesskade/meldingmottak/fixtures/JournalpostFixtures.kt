@@ -8,7 +8,7 @@ import com.expediagroup.graphql.generated.enums.Kanal
 import com.expediagroup.graphql.generated.enums.Tema
 import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.DokumentInfo
-import no.nav.yrkesskade.meldingmottak.konstanter.BREVKODE_TANNLEGEERKLAERING
+import no.nav.yrkesskade.meldingmottak.domene.Brevkode
 import java.time.LocalDateTime
 
 fun gyldigJournalpostMedAktoerId(): com.expediagroup.graphql.generated.journalpost.Journalpost {
@@ -62,7 +62,7 @@ fun journalpostResultTannlegeerklaering(): Journalpost.Result {
         dokumenter = listOf(
             DokumentInfo(
                 "Tannlegeerklæring ved yrkesskade",
-                BREVKODE_TANNLEGEERKLAERING
+                Brevkode.TANNLEGEERKLAERING.kode
             )
         )
     )

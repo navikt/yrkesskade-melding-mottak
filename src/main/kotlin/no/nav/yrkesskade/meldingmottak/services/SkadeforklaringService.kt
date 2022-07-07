@@ -6,7 +6,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.domene.*
-import no.nav.yrkesskade.meldingmottak.konstanter.BREVKODE_DIGITAL_SKADEFORKLARING
 import no.nav.yrkesskade.meldingmottak.konstanter.TEMA_YRKESSKADE
 import no.nav.yrkesskade.meldingmottak.konstanter.TITTEL_DIGITAL_SKADEFORKLARING
 import no.nav.yrkesskade.meldingmottak.konstanter.TITTEL_DIGITAL_SKADEFORKLARING_ARKIV
@@ -151,7 +150,7 @@ class SkadeforklaringService(
             eksternReferanseId = record.metadata.navCallId,
             dokumenter = listOf(
                 Dokument(
-                    brevkode = BREVKODE_DIGITAL_SKADEFORKLARING,
+                    brevkode = Brevkode.DIGITAL_SKADEFORKLARING.kode,
                     tittel = TITTEL_DIGITAL_SKADEFORKLARING,
                     dokumentvarianter = listOf(
                         Dokumentvariant(
@@ -162,7 +161,7 @@ class SkadeforklaringService(
                     )
                 ),
                 Dokument(
-                    brevkode = BREVKODE_DIGITAL_SKADEFORKLARING,
+                    brevkode = Brevkode.DIGITAL_SKADEFORKLARING.kode,
                     tittel = TITTEL_DIGITAL_SKADEFORKLARING_ARKIV,
                     dokumentvarianter = listOf(
                         Dokumentvariant(

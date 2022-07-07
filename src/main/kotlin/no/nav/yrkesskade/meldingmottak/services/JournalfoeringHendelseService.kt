@@ -9,9 +9,9 @@ import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgavetype
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
+import no.nav.yrkesskade.meldingmottak.domene.Brevkode
 import no.nav.yrkesskade.meldingmottak.domene.Journalpoststatus
 import no.nav.yrkesskade.meldingmottak.domene.Kanal
-import no.nav.yrkesskade.meldingmottak.konstanter.BREVKODE_TANNLEGEERKLAERING
 import no.nav.yrkesskade.meldingmottak.konstanter.TEMA_YRKESSKADE
 import no.nav.yrkesskade.meldingmottak.task.ProsesserJournalfoeringHendelseTask
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentBrevkode
@@ -68,7 +68,7 @@ class JournalfoeringHendelseService(
             val journalpost = hentJournalpostFraSaf(record.journalpostId.toString())
             val foedselsnummer = hentFoedselsnummer(journalpost.bruker, record.journalpostId.toString())
 
-            if (erTannlegeerklaering(journalpost) && rutingService.utfoerRuting(foedselsnummer) == RutingService.Rute.YRKESSKADE_SAKSBEHANDLING) {
+            if (journalpostSkalTilNySaksbehandling(journalpost) && rutingService.utfoerRuting(foedselsnummer) == RutingService.Rute.YRKESSKADE_SAKSBEHANDLING) {
                 // TODO: legg melding på kafka
                 log.info("===|> TODO: Legg melding på kafka og send til nytt saksbehandlingssystem, Kompys...")
                 log.info("MIDLERTIDIG: Oppretter task og senere oppgave for behandling i gammelt saksbehandlingssystem, Gosys og Infotrygd")
@@ -103,10 +103,17 @@ class JournalfoeringHendelseService(
             .contains(record.mottaksKanal)
 
     /**
+     * Bestemmer om en journalpost skal sendes til nytt saksbehandlingssystem for yrkesskade/-sykdom.
+     */
+    private fun journalpostSkalTilNySaksbehandling(journalpost: Journalpost): Boolean {
+        return erTannlegeerklaering(journalpost)
+    }
+
+    /**
      * Bestemmer om en journalpost fra en Kafka-record er en tannlegeerklæring.
      */
     private fun erTannlegeerklaering(journalpost: Journalpost): Boolean =
-        (journalpost.hentBrevkode() == BREVKODE_TANNLEGEERKLAERING)
+        (journalpost.hentBrevkode() == Brevkode.TANNLEGEERKLAERING.kode)
             .also {
                 if (it) {
                     log.info("Juhuuu, dette er en tannlegeerklæring (º-vv-º) , brevkode er ${journalpost.hentBrevkode()}")
