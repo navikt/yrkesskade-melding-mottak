@@ -3,10 +3,10 @@ name: Update Kafka Topics
 on:
   push:
     branches:
-      - master
-      - dev
+      - 'master'
+      - 'dev'
     paths:
-      - .nais/*/dokument-til-saksbehandling-topic.yaml
+      - '.nais/*/dokument-til-saksbehandling-topic.yaml'
 
 jobs:
   deploy-kafka-topics-dev:
