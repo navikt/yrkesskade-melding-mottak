@@ -40,7 +40,7 @@ class RutingService(
         val status = RutingStatus()
 
         val rute = ruting(foedselsnummer, status)
-            .also { log.info(status.toString()) }
+            .also { log.info(status.resultatSomTekst()) }
 
         // TODO: Test først at ulike forretningsregler gir riktig resultat i logger, åpne deretter for at ruting kan gå til nytt saksbehandlingssystem.
         return Rute.GOSYS_OG_INFOTRYGD
@@ -156,7 +156,7 @@ class RutingService(
         var rutingResult: Rute = Rute.GOSYS_OG_INFOTRYGD
     ) {
 
-        override fun toString(): String {
+        fun resultatSomTekst(): String {
             val prefix = "Rutingstatus:"
 
             if (finnesIkkeIPdl) return "$prefix Personen finnes ikke i PDL => $rutingResult"
