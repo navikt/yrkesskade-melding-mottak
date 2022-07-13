@@ -32,6 +32,7 @@ import no.nav.yrkesskade.prosessering.AsyncTaskStep
 import no.nav.yrkesskade.prosessering.TaskStepBeskrivelse
 import no.nav.yrkesskade.prosessering.domene.Task
 import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandling
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingHendelse
 import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingMetadata
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -70,13 +71,15 @@ class ProsesserJournalfoeringHendelseTask(
         validerJournalpost(journalpost)
 
         if (journalpostSkalTilNySaksbehandling(journalpost)) {
-            val dokumentTilSaksbehandling = DokumentTilSaksbehandling(
-                journalpostId = journalpost.journalpostId,
-                enhet = "9999",
+            val dokumentTilSaksbehandlingHendelse = DokumentTilSaksbehandlingHendelse(
+                DokumentTilSaksbehandling(
+                    journalpostId = journalpost.journalpostId,
+                    enhet = "9999",
+                ),
                 metadata = DokumentTilSaksbehandlingMetadata(callId = MDC.get(MDCConstants.MDC_CALL_ID))
             )
-            dokumentTilSaksbehandlingClient.sendTilSaksbehandling(dokumentTilSaksbehandling).also {
-                log.info("Sendt dokument til ny saksbehandlingsløsning for journalpostId ${dokumentTilSaksbehandling.journalpostId}")
+            dokumentTilSaksbehandlingClient.sendTilSaksbehandling(dokumentTilSaksbehandlingHendelse).also {
+                log.info("Sendt dokument til ny saksbehandlingsløsning for journalpostId ${dokumentTilSaksbehandlingHendelse.dokumentTilSaksbehandling.journalpostId}")
             }
         } else {
             opprettOppgave(journalpost).also { oppgave ->

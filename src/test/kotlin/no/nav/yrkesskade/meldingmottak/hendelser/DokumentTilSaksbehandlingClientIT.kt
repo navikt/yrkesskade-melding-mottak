@@ -1,8 +1,8 @@
 package no.nav.yrkesskade.meldingmottak.hendelser
 
 import no.nav.yrkesskade.meldingmottak.BaseSpringBootTestClass
-import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandling
-import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingMetadata
+import no.nav.yrkesskade.meldingmottak.fixtures.dokumentTilSaksbehandlingHendelse
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingHendelse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -17,7 +17,6 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.kafka.test.utils.ContainerTestUtils
 import org.springframework.stereotype.Component
-import java.util.UUID
 
 private const val TOPIC = "yrkesskade.privat-yrkesskade-dokument-til-saksbehandling"
 
@@ -51,15 +50,11 @@ class DokumentTilSaksbehandlingClientIT : BaseSpringBootTestClass() {
 
     @Test
     fun `send melding til saksbehandling`() {
-        val dokumentTilSaksbehandling = DokumentTilSaksbehandling(
-            journalpostId = "1234",
-            enhet = "9999",
-            metadata = DokumentTilSaksbehandlingMetadata(UUID.randomUUID().toString())
-        )
-        dokumentTilSaksbehandlingClient.sendTilSaksbehandling(dokumentTilSaksbehandling)
+        val dokumentTilSaksbehandlingHendelse = dokumentTilSaksbehandlingHendelse()
+        dokumentTilSaksbehandlingClient.sendTilSaksbehandling(dokumentTilSaksbehandlingHendelse)
         Mockito.verify(dokumentTilSaksbehandlingConsumer, timeout(20000L).times(1)).receive(any())
 
-        assertThat(dokumentTilSaksbehandlingConsumer.getPayload()).isEqualTo(dokumentTilSaksbehandling)
+        assertThat(dokumentTilSaksbehandlingConsumer.getPayload()).isEqualTo(dokumentTilSaksbehandlingHendelse)
     }
 }
 
@@ -67,15 +62,15 @@ class DokumentTilSaksbehandlingClientIT : BaseSpringBootTestClass() {
 @Component
 class DokumentTilSaksbehandlingConsumer {
 
-    private lateinit var payload: DokumentTilSaksbehandling
+    private lateinit var payload: DokumentTilSaksbehandlingHendelse
 
     @KafkaListener(
         topics = ["\${kafka.topic.dokument-til-saksbehandling}"],
-        containerFactory = "dokumentTilSaksbehandlingListenerContainerFactory",
+        containerFactory = "dokumentTilSaksbehandlingHendelseListenerContainerFactory",
         id = "dokument-til-saksbehandling",
         idIsGroup = false
     )
-    fun receive(record: DokumentTilSaksbehandling) {
+    fun receive(record: DokumentTilSaksbehandlingHendelse) {
         payload = record
     }
 

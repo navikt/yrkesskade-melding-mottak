@@ -4,7 +4,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
-import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandling
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingHendelse
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
@@ -32,23 +32,17 @@ private const val ETT_SEKUND = 1000L
 class KafkaConfig {
 
     @Bean
-    fun producerProperties(kafkaProperties: KafkaProperties): Map<String, Any> {
-        val props: MutableMap<String, Any> = HashMap(kafkaProperties.buildProducerProperties())
-        return props
-    }
-
-    @Bean
-    fun dokumentTilSaksbehandlingProducerFactory(
-        producerProperties: Map<String, Any>
-    ): ProducerFactory<String, DokumentTilSaksbehandling> {
-        return DefaultKafkaProducerFactory(producerProperties)
+    fun dokumentTilSaksbehandlingHendelseProducerFactory(
+        kafkaProperties: KafkaProperties
+    ): ProducerFactory<String, DokumentTilSaksbehandlingHendelse> {
+        return DefaultKafkaProducerFactory(kafkaProperties.buildProducerProperties())
     }
 
     @Bean
     fun dokumentTilSaksbehandlingKafkaTemplate(
-        dokumentTilSaksbehandlingProducerFactory: ProducerFactory<String, DokumentTilSaksbehandling>
-    ): KafkaTemplate<String, DokumentTilSaksbehandling> {
-        return KafkaTemplate(dokumentTilSaksbehandlingProducerFactory)
+        dokumentTilSaksbehandlingHendelseProducerFactory: ProducerFactory<String, DokumentTilSaksbehandlingHendelse>
+    ): KafkaTemplate<String, DokumentTilSaksbehandlingHendelse> {
+        return KafkaTemplate(dokumentTilSaksbehandlingHendelseProducerFactory)
     }
 
     @Bean
