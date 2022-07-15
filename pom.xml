@@ -117,7 +117,7 @@
         <dependency>
             <groupId>no.nav.yrkesskade</groupId>
             <artifactId>saksbehandling</artifactId>
-            <version>7cfb5f49_202207051304</version>
+            <version>9d1ea0d6_202207131457</version>
         </dependency>
         <dependency>
             <groupId>com.expediagroup</groupId>

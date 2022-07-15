@@ -6,7 +6,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
-import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandling
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingHendelse
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
@@ -41,12 +41,6 @@ class KafkaConfig {
     }
 
     @Bean
-    fun producerProperties(kafkaProperties: KafkaProperties): Map<String, Any> {
-        val props: MutableMap<String, Any> = HashMap(kafkaProperties.buildProducerProperties())
-        return props
-    }
-
-    @Bean
     fun kafkaAvroConsumerFactory(
         properties: KafkaProperties,
         schemaRegistryClient: MockSchemaRegistryClient
@@ -65,15 +59,15 @@ class KafkaConfig {
 
     @Bean
     fun dokumentTilSaksbehandlingProducerFactory(
-        producerProperties: Map<String, Any>
-    ): ProducerFactory<String, DokumentTilSaksbehandling> {
-        return DefaultKafkaProducerFactory(producerProperties)
+        kafkaProperties: KafkaProperties
+    ): ProducerFactory<String, DokumentTilSaksbehandlingHendelse> {
+        return DefaultKafkaProducerFactory(kafkaProperties.buildProducerProperties())
     }
 
     @Bean
-    fun dokumentTilSaksbehandlingConsumerFactory(
+    fun dokumentTilSaksbehandlingHendelseConsumerFactory(
         kafkaProperties: KafkaProperties
-    ): ConsumerFactory<String, DokumentTilSaksbehandling> {
+    ): ConsumerFactory<String, DokumentTilSaksbehandlingHendelse> {
         val consumerProperties = kafkaProperties.buildConsumerProperties().apply {
             this["spring.json.trusted.packages"] = "no.nav.yrkesskade.saksbehandling.model"
             this[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java
@@ -82,11 +76,12 @@ class KafkaConfig {
     }
 
     @Bean
-    fun dokumentTilSaksbehandlingListenerContainerFactory(dokumentTilSaksbehandlingConsumerFactory: ConsumerFactory<String, DokumentTilSaksbehandling>):
-            ConcurrentKafkaListenerContainerFactory<String, DokumentTilSaksbehandling> {
+    fun dokumentTilSaksbehandlingHendelseListenerContainerFactory(
+        dokumentTilSaksbehandlingHendelseConsumerFactory: ConsumerFactory<String, DokumentTilSaksbehandlingHendelse>
+    ): ConcurrentKafkaListenerContainerFactory<String, DokumentTilSaksbehandlingHendelse> {
 
-        return ConcurrentKafkaListenerContainerFactory<String, DokumentTilSaksbehandling>().apply {
-            this.setConsumerFactory(dokumentTilSaksbehandlingConsumerFactory)
+        return ConcurrentKafkaListenerContainerFactory<String, DokumentTilSaksbehandlingHendelse>().apply {
+            this.setConsumerFactory(dokumentTilSaksbehandlingHendelseConsumerFactory)
             this.setErrorHandler(ContainerStoppingErrorHandler())
             this.setRetryTemplate(retryTemplate())
         }
@@ -186,9 +181,9 @@ class KafkaConfig {
     ): KafkaTemplate<String, SkadeforklaringInnsendingHendelse> = KafkaTemplate(skadeforklaringProducerFactory)
 
     @Bean
-    fun dokumentTilSaksbehandlingKafkaTemplate(
-        dokumentTilSaksbehandlingProducerFactory: ProducerFactory<String, DokumentTilSaksbehandling>
-    ): KafkaTemplate<String, DokumentTilSaksbehandling> {
+    fun dokumentTilSaksbehandlingHendelseKafkaTemplate(
+        dokumentTilSaksbehandlingProducerFactory: ProducerFactory<String, DokumentTilSaksbehandlingHendelse>
+    ): KafkaTemplate<String, DokumentTilSaksbehandlingHendelse> {
         return KafkaTemplate(dokumentTilSaksbehandlingProducerFactory)
     }
 }
