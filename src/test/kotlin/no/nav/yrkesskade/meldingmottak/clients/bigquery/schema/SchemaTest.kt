@@ -20,7 +20,8 @@ internal class SchemaTest {
             tidspunktMottatt = Instant.now(),
             spraak = Spraak.NB.toString(),
             rolletype = "laerling",
-            callId = "callId"
+            callId = "callId",
+            tidstype = "Tidspunkt"
         )
 
         val content = skademelding_v1.transform(objectMapper.valueToTree(payload)).content
@@ -29,6 +30,7 @@ internal class SchemaTest {
         assertThat(content["spraak"]).isEqualTo(payload.spraak)
         assertThat(content["callId"]).isEqualTo(payload.callId)
         assertThat(content["rolletype"]).isEqualTo(payload.rolletype)
+        assertThat(content["tidstype"]).isEqualTo(payload.tidstype)
     }
 
     @Test
