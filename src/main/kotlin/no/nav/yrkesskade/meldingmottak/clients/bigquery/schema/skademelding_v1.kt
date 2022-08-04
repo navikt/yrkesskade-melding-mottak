@@ -33,6 +33,10 @@ val skademelding_v1 = object : SchemaDefinition {
             nullable()
             description("Rolletype for innmeldt skademelding")
         }
+        string("tidstype") {
+            nullable()
+            description("Tidstype for innmeldt skademelding")
+        }
         timestamp("opprettet") {
             required()
             description("Tidsstempel for lagring av hendelsen")
@@ -48,6 +52,7 @@ val skademelding_v1 = object : SchemaDefinition {
                 "spraak" to skademeldingPayload.spraak,
                 "callId" to skademeldingPayload.callId,
                 "rolletype" to skademeldingPayload.rolletype,
+                "tidstype" to skademeldingPayload.tidstype,
                 "opprettet" to "AUTO"
             )
         )
@@ -60,4 +65,5 @@ data class SkademeldingPayload(
     val spraak: String,
     val callId: String,
     val rolletype: String,
+    val tidstype: String,
 )
