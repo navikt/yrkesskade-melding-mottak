@@ -186,16 +186,16 @@ internal class PdfSkademeldingMapperTest {
         ))
         assertThat(hendelsesfakta?.tid?.ukjent?.verdi).isFalse
         assertThat(hendelsesfakta?.naarSkjeddeUlykken?.verdi).isEqualTo("I avtalt arbeidstid")
-        assertThat(hendelsesfakta?.hvorSkjeddeUlykken?.verdi).isEqualTo("På arbeidsstedet ute")
+        assertThat(hendelsesfakta?.hvorSkjeddeUlykken).isEqualTo(Soknadsfelt("Hvor skjedde ulykken", "På arbeidsstedet ute"))
         assertThat(hendelsesfakta?.ulykkessted?.sammeSomVirksomhetensAdresse?.verdi).isEqualTo("Ja")
-        assertThat(hendelsesfakta?.ulykkessted?.adresse?.verdi).isEqualTo(
+        assertThat(hendelsesfakta?.ulykkessted?.adresse).isEqualTo(Soknadsfelt("Adresse for ulykken",
             PdfAdresse(
                 adresselinje1 = "Storgaten 13",
                 adresselinje2 = "2345 Småbygda",
                 adresselinje3 = null,
                 land = "SVERIGE"
             )
-        )
+        ))
         assertThat(hendelsesfakta?.paavirkningsform?.verdi).isNull()
         assertThat(hendelsesfakta?.aarsakUlykke?.verdi).containsExactlyInAnyOrder(
             "Velt",
@@ -229,16 +229,16 @@ internal class PdfSkademeldingMapperTest {
         assertThat(hendelsesfakta?.tid?.sykdomPaavist?.verdi).isEqualTo("20.10.2021")
         assertThat(hendelsesfakta?.tid?.ukjent?.verdi).isFalse
         assertThat(hendelsesfakta?.naarSkjeddeUlykken?.verdi).isEqualTo("I avtalt arbeidstid")
-        assertThat(hendelsesfakta?.hvorSkjeddeUlykken?.verdi).isEqualTo("På arbeidsstedet ute")
+        assertThat(hendelsesfakta?.hvorSkjeddeUlykken).isEqualTo(Soknadsfelt("Hvor skjedde hendelsen", "På arbeidsstedet ute"))
         assertThat(hendelsesfakta?.ulykkessted?.sammeSomVirksomhetensAdresse?.verdi).isEqualTo("Ja")
-        assertThat(hendelsesfakta?.ulykkessted?.adresse?.verdi).isEqualTo(
+        assertThat(hendelsesfakta?.ulykkessted?.adresse).isEqualTo(Soknadsfelt("Adresse hvor den skadelige påvirkningen har skjedd",
             PdfAdresse(
                 adresselinje1 = "Storgaten 13",
                 adresselinje2 = "2345 Småbygda",
                 adresselinje3 = null,
                 land = "SVERIGE"
             )
-        )
+        ))
         assertThat(hendelsesfakta?.paavirkningsform?.verdi).containsExactlyInAnyOrder(
             "Støvpåvirkning, stenstøv, asbest o.l.",
             "Kjemikalier, løsemidler, gift, gass, væske o.l."

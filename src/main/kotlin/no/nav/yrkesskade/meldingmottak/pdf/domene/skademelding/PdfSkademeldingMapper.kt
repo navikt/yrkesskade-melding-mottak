@@ -26,7 +26,7 @@ object PdfSkademeldingMapper {
         val innmelder: PdfInnmelder? = tilPdfInnmelder(skademelding.innmelder, beriketData?.innmeldersNavn)
         val skadelidt: PdfSkadelidt? = tilPdfSkadelidt(skademelding.skadelidt, beriketData?.skadelidtsNavn, beriketData?.skadelidtsBostedsadresse, kodeverkHolder)
         val skade: PdfSkade? = tilPdfSkade(skademelding.skade, kodeverkHolder)
-        val hendelsesfakta: PdfHendelsesfakta = tilPdfHendelsesfakta(skademelding.hendelsesfakta, kodeverkHolder)
+        val hendelsesfakta: PdfHendelsesfakta = tilPdfHendelsesfakta(skademelding.hendelsesfakta, erSykdom, kodeverkHolder)
         val dokumentInfo: PdfDokumentInfo = lagPdfDokumentInfo(record.metadata, erSykdom)
 
         return PdfSkademelding(innmelder, skadelidt, skade, hendelsesfakta, dokumentInfo)
@@ -104,7 +104,7 @@ object PdfSkademeldingMapper {
         return skadetype
     }
 
-    private fun tilPdfHendelsesfakta(hendelsesfakta: Hendelsesfakta, kodeverkHolder: KodeverkHolder): PdfHendelsesfakta {
+    private fun tilPdfHendelsesfakta(hendelsesfakta: Hendelsesfakta, erSykdom: Boolean, kodeverkHolder: KodeverkHolder): PdfHendelsesfakta {
         return PdfHendelsesfakta(
             tid = PdfTid(
                 tidstype = hendelsesfakta.tid.tidstype.value,
@@ -123,11 +123,16 @@ object PdfSkademeldingMapper {
             ),
             naarSkjeddeUlykken = Soknadsfelt("Innenfor hvilket tidsrom inntraff ulykken?",
                 kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.naarSkjeddeUlykken, "tidsrom")),
-            hvorSkjeddeUlykken = Soknadsfelt("Hvor skjedde ulykken",
-                kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.hvorSkjeddeUlykken, "hvorSkjeddeUlykken")),
+            hvorSkjeddeUlykken = Soknadsfelt(
+                if (erSykdom) "Hvor skjedde hendelsen" else "Hvor skjedde ulykken",
+                kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.hvorSkjeddeUlykken, "hvorSkjeddeUlykken")
+            ),
             ulykkessted = PdfUlykkessted(
                 sammeSomVirksomhetensAdresse = Soknadsfelt("Skjedde ulykken på samme adresse", jaNei(hendelsesfakta.ulykkessted.sammeSomVirksomhetensAdresse)),
-                adresse = Soknadsfelt("Adresse for ulykken", tilPdfAdresse(hendelsesfakta.ulykkessted.adresse, kodeverkHolder))
+                adresse = Soknadsfelt(
+                    if (erSykdom) "Adresse hvor den skadelige påvirkningen har skjedd" else "Adresse for ulykken",
+                    tilPdfAdresse(hendelsesfakta.ulykkessted.adresse, kodeverkHolder)
+                )
             ),
             paavirkningsform = Soknadsfelt("Hvilken skadelig påvirkning har personen vært utsatt for",
                 hendelsesfakta.paavirkningsform?.map { kodeverkHolder.mapKodeTilVerdi(it, "paavirkningsform") }),
