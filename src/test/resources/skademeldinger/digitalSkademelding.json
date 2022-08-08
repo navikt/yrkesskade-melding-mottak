@@ -23,19 +23,22 @@
     "alvorlighetsgrad": "Alvorlig kreftsykdom",
     "skadedeDeler": [
       {
-        "skadeartTabellC": "Varmeskade",
-        "kroppsdelTabellD": "Tenner"
+        "skadeart": "Varmeskade",
+        "kroppsdel": "Tenner"
       }
     ],
-    "antattSykefravaerTabellH": "Kjent fravær mindre enn 3 dager"
+    "antattSykefravaer": "Kjent fravær mindre enn 3 dager"
   },
   "hendelsesfakta": {
     "tid": {
       "tidspunkt": "2022-02-25T14:24:02.880Z",
-      "periode": {
-        "fra": "2022-02-25",
-        "til": "2022-02-25"
-      },
+      "perioder": [
+        {
+          "fra": "2022-02-25",
+          "til": "2022-02-28"
+        }
+      ],
+      "sykdomPaavist": null,
       "ukjent": false,
       "tidstype": "Tidspunkt"
     },
@@ -50,14 +53,15 @@
         "land": "DENMARK"
       }
     },
-    "aarsakUlykkeTabellAogE": [
+    "paavirkningsform": null,
+    "aarsakUlykke": [
       "Fall av person"
     ],
-    "bakgrunnsaarsakTabellBogG": [
+    "bakgrunnsaarsak": [
       "Utilstrekkelig sikring",
       "Verneutstyr fjernet"
     ],
     "utfyllendeBeskrivelse": "Fabrikklokalet var mørkt og rotete. 1000 tegn",
-    "stedsbeskrivelseTabellF": "Plass for industriell virksomhet"
+    "stedsbeskrivelse": "Plass for industriell virksomhet"
   }
 }

@@ -2,7 +2,6 @@ package no.nav.yrkesskade.meldingmottak.pdf.domene.skadeforklaring
 
 import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfAdresse
 import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfData
-import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfTid
 import no.nav.yrkesskade.meldingmottak.pdf.domene.Soknadsfelt
 
 data class PdfSkadeforklaring(
@@ -54,4 +53,21 @@ data class PdfTeksterSkadeforklaring(
     val omUlykkenSeksjonstittel: String,
     val omSkadenSeksjonstittel: String,
     val vedleggSeksjonstittel: String
+)
+
+data class PdfTid(
+    val tidstype: String,
+    val tidspunkt: Soknadsfelt<PdfTidspunkt>,
+    val periode: Soknadsfelt<PdfPeriode>,
+    val ukjent: Soknadsfelt<Boolean?>
+)
+
+data class PdfTidspunkt(
+    val dato: String,
+    val klokkeslett: String
+)
+
+data class PdfPeriode(
+    val fra: String,
+    val til: String
 )
