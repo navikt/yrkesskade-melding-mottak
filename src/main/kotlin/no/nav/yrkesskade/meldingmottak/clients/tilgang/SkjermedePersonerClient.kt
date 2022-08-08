@@ -48,7 +48,7 @@ class SkjermedePersonerClient(
 			return function.invoke()
 		} catch (ex: WebClientResponseException) {
 			secureLogger.error(
-				"Klarte ikke å hente skjermet person bolk. Got a {} error calling Pdf Dokgen {} {} with message {}",
+				"Klarte ikke å hente skjermet person bolk. Got a {} error calling Skjermede Personer {} {} with message {}",
 				ex.statusCode,
 				ex.request?.method ?: "-",
 				ex.request?.uri ?: "-",
@@ -56,7 +56,7 @@ class SkjermedePersonerClient(
 			)
 			throw ex
 		} catch (rtex: RuntimeException) {
-			log.warn("Caught RuntimeException while calling Pdf Dokgen", rtex)
+			log.warn("Caught RuntimeException while calling Skjermede Personer", rtex)
 			throw rtex
 		} finally {
 			val end: Long = System.currentTimeMillis()
