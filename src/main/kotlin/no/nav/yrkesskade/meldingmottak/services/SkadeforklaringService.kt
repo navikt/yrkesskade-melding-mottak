@@ -6,6 +6,9 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.domene.*
+import no.nav.yrkesskade.meldingmottak.konstanter.TEMA_YRKESSKADE
+import no.nav.yrkesskade.meldingmottak.konstanter.TITTEL_DIGITAL_SKADEFORKLARING
+import no.nav.yrkesskade.meldingmottak.konstanter.TITTEL_DIGITAL_SKADEFORKLARING_ARKIV
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.meldingmottak.vedlegg.AttachmentTypeUnsupportedException
 import no.nav.yrkesskade.meldingmottak.vedlegg.Image2PDFConverter
@@ -22,13 +25,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.invoke.MethodHandles
 
-private const val TEMA_YRKESSKADE = "YRK"
-
-private const val DIGITAL_SKADEFORKLARING_ARKIV_TITTEL = "Arkivlogg fra innsending"
-
-private const val DIGITAL_SKADEFORKLARING_TITTEL = "Skadeforklaring ved arbeidsulykke"
-
-private const val DIGITAL_SKADEFORKLARING_BREVKODE = "NAV 13-00.21"
 
 @Suppress("SameParameterValue")
 @Service
@@ -137,7 +133,7 @@ class SkadeforklaringService(
         val skadeforklaringJson = objectMapper.writeValueAsString(skadeforklaring)
 
         return OpprettJournalpostRequest(
-            tittel = DIGITAL_SKADEFORKLARING_TITTEL,
+            tittel = TITTEL_DIGITAL_SKADEFORKLARING,
             journalposttype = Journalposttype.INNGAAENDE,
             avsenderMottaker = AvsenderMottaker(
                 navn = beriketData.innmeldersNavn.toString(),
@@ -154,8 +150,8 @@ class SkadeforklaringService(
             eksternReferanseId = record.metadata.navCallId,
             dokumenter = listOf(
                 Dokument(
-                    brevkode = DIGITAL_SKADEFORKLARING_BREVKODE,
-                    tittel = DIGITAL_SKADEFORKLARING_TITTEL,
+                    brevkode = Brevkode.DIGITAL_SKADEFORKLARING.kode,
+                    tittel = TITTEL_DIGITAL_SKADEFORKLARING,
                     dokumentvarianter = listOf(
                         Dokumentvariant(
                             filtype = Filtype.PDFA,
@@ -165,8 +161,8 @@ class SkadeforklaringService(
                     )
                 ),
                 Dokument(
-                    brevkode = DIGITAL_SKADEFORKLARING_BREVKODE,
-                    tittel = DIGITAL_SKADEFORKLARING_ARKIV_TITTEL,
+                    brevkode = Brevkode.DIGITAL_SKADEFORKLARING.kode,
+                    tittel = TITTEL_DIGITAL_SKADEFORKLARING_ARKIV,
                     dokumentvarianter = listOf(
                         Dokumentvariant(
                             filtype = Filtype.JSON,

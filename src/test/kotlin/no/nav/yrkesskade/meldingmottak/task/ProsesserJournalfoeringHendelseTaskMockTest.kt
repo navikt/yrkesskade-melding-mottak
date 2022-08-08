@@ -20,6 +20,7 @@ import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenDokumenter
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerAktoerid
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerFnr
 import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
+import no.nav.yrkesskade.meldingmottak.services.RutingService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
@@ -32,6 +33,8 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
 
     private val pdlClientMock: PdlClient = mockk(relaxed = true)
 
+    private val rutingServiceMock: RutingService = mockk()
+
     private val oppgaveClientMock: OppgaveClient = mockk(relaxed = true)
 
     private val dokumentTilSaksbehandlingClient: DokumentTilSaksbehandlingClient = mockk(relaxed = true)
@@ -42,11 +45,12 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
     private val task = ProsesserJournalfoeringHendelseTask.opprettTask(journalpostId)
 
     private val prosesserJournalfoeringHendelseTask: ProsesserJournalfoeringHendelseTask =
-        ProsesserJournalfoeringHendelseTask(safClientMock, pdlClientMock, oppgaveClientMock, bigQueryClientStub, dokumentTilSaksbehandlingClient)
+        ProsesserJournalfoeringHendelseTask(safClientMock, pdlClientMock, rutingServiceMock, oppgaveClientMock, bigQueryClientStub, dokumentTilSaksbehandlingClient)
 
     @BeforeEach
     fun init() {
         MDC.put(MDCConstants.MDC_CALL_ID, "mock")
+        every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedBrukerAktoeridOgFoedselsnummer()
     }
 
     @Test
@@ -71,6 +75,26 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
 
         prosesserJournalfoeringHendelseTask.doTask(task)
         verify(exactly = 0) { pdlClientMock.hentAktorId(any()) }
+    }
+
+    @Test
+    fun `skal lage oppgave naar tannlegeerklaering kommer inn, men rutes til gammelt saksbehandlingssystem Gosys pga eksisterende sak el,l`() {
+        every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultTannlegeerklaering()
+        every { rutingServiceMock.utfoerRuting(any()) } returns RutingService.Rute.GOSYS_OG_INFOTRYGD
+
+        prosesserJournalfoeringHendelseTask.doTask(task)
+        verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) }
+    }
+
+    @Test
+    fun `skal IKKE lage oppgave naar tannlegeerklaering kommer inn, og record rutes til yrkesskade saksbehandlingssystem`() {
+        every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultTannlegeerklaering()
+        every { rutingServiceMock.utfoerRuting(any()) } returns RutingService.Rute.YRKESSKADE_SAKSBEHANDLING
+
+        prosesserJournalfoeringHendelseTask.doTask(task)
+//        verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
+        verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) } // TODO: YSMOD-370 Lar meldinger midlertidig gå til gammel saksbehandlingsløsning i Gosys/Infotrygd
+//        verify(exactly = 1) { dokumentTilSaksbehandlingClient.sendTilSaksbehandling(any()) }
     }
 
     @Test
@@ -142,16 +166,6 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
         prosesserJournalfoeringHendelseTask.doTask(task)
 
         verify(exactly = 0) { pdlClientMock.hentAktorId(any()) }
-    }
-
-    @Test
-    fun `skal sende til YS saksbehandling naar journalpost er tannlegeerklaering`() {
-        every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultMedBrevkodeTannlegeerklaering()
-
-        prosesserJournalfoeringHendelseTask.doTask(task)
-
-        verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
-        verify(exactly = 1) { dokumentTilSaksbehandlingClient.sendTilSaksbehandling(any()) }
     }
 
     @Test

@@ -1,0 +1,10 @@
+# saf - Gir en liste over brukers saker
+query($ident: String!) {
+  saker(brukerId: { id: $ident, type: FNR }) {
+    datoOpprettet
+    fagsakId
+    fagsaksystem
+    sakstype
+    tema
+  }
+}

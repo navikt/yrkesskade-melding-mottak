@@ -57,6 +57,18 @@ fun journalpostResultWithBrukerFnr(): Journalpost.Result {
     )
 }
 
+fun journalpostResultTannlegeerklaering(): Journalpost.Result {
+    val journalpostMedJournalstatusFeilregistrert = gyldigJournalpostMedAktoerId().copy(
+        dokumenter = listOf(
+            DokumentInfo(
+                "Tannlegeerklæring ved yrkesskade",
+                Brevkode.TANNLEGEERKLAERING.kode
+            )
+        )
+    )
+    return Journalpost.Result(journalpostMedJournalstatusFeilregistrert)
+}
+
 fun journalpostResultMedJournalstatusFeilregistrert(): Journalpost.Result {
     val journalpostMedJournalstatusFeilregistrert = gyldigJournalpostMedAktoerId().copy(
         journalstatus = Journalstatus.FEILREGISTRERT

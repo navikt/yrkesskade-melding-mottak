@@ -9,6 +9,9 @@ query($ident: ID!) {
             etternavn,
             forkortetNavn
         },
+        doedsfall {
+          doedsdato
+        },
 
     	bostedsadresse {
             vegadresse {

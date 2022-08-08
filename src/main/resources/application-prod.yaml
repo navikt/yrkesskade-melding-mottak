@@ -72,10 +72,12 @@ no.nav.security.jwt:
 
 YRKESSKADE_DOKGEN_API_URL: https://yrkesskade-dokgen.intern.nav.no
 YRKESSKADE_KODEVERK_API_URL: https://yrkesskade-kodeverk.intern.nav.no
+YRKESSKADE_INFOTRYGD_API_URL: https://yrkesskade-infotrygd.prod-fss-pub.nais.io
 saf.graphql.url: https://saf.prod-fss-pub.nais.io/graphql
 pdl.graphql.url: https://pdl-api.prod-fss-pub.nais.io/graphql
 oppgave.url: https://oppgave.prod-fss-pub.nais.io
 dokarkiv.url: https://dokarkiv.prod-fss-pub.nais.io
+skjermede-personer-pip.url: https://skjermede-personer-pip.intern.nav.no
 
 SAF_APP_CLIENT_ID: prod-fss.teamdokumenthandtering.saf
 PDL_APP_CLIENT_ID: prod-fss.pdl.pdl-api
