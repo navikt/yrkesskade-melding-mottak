@@ -25,7 +25,10 @@ class SkjermedePersonerClient(
 
 	@Retryable
 	fun erSkjermet(request: SkjermedePersonerRequest): SkjermedePersonerResponse {
-		secureLogger.info("Kontrollerer om personer er skjermet/egne ansatte: ${request.personIdenter}")
+		secureLogger.info("Kontrollerer om personer er skjermet/egne ansatte: ${request.personidenter}")
+		if (request.personidenter == null || request.personidenter.isEmpty()) {
+			secureLogger.error("Personident mangler i SkjermedePersonerRequest")
+		}
 		return logTimingAndWebClientResponseException("erSkjermet") {
 			skjermedePersonerWebClient.post()
 				.uri { uriBuilder ->
@@ -66,7 +69,7 @@ class SkjermedePersonerClient(
 
 
 	data class SkjermedePersonerRequest(
-		val personIdenter: List<String>
+		val personidenter: List<String>
 	)
 
 	data class SkjermedePersonerResponse(
