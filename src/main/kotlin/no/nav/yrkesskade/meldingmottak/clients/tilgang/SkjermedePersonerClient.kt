@@ -25,7 +25,10 @@ class SkjermedePersonerClient(
 
 	@Retryable
 	fun erSkjermet(request: SkjermedePersonerRequest): SkjermedePersonerResponse {
-		secureLogger.info("Kontrollerer om personer er skjermet/egne ansatte: ${request.personIdenter}")
+		secureLogger.info("Kontrollerer om personer er skjermet/egne ansatte: ${request.personidenter}")
+		if (request.personidenter == null || request.personidenter.isEmpty()) {
+			secureLogger.error("Personident mangler i SkjermedePersonerRequest")
+		}
 		return logTimingAndWebClientResponseException("erSkjermet") {
 			skjermedePersonerWebClient.post()
 				.uri { uriBuilder ->
@@ -48,7 +51,7 @@ class SkjermedePersonerClient(
 			return function.invoke()
 		} catch (ex: WebClientResponseException) {
 			secureLogger.error(
-				"Klarte ikke å hente skjermet person bolk. Got a {} error calling Pdf Dokgen {} {} with message {}",
+				"Klarte ikke å hente skjermet person bolk. Got a {} error calling Skjermede Personer {} {} with message {}",
 				ex.statusCode,
 				ex.request?.method ?: "-",
 				ex.request?.uri ?: "-",
@@ -56,7 +59,7 @@ class SkjermedePersonerClient(
 			)
 			throw ex
 		} catch (rtex: RuntimeException) {
-			log.warn("Caught RuntimeException while calling Pdf Dokgen", rtex)
+			log.warn("Caught RuntimeException while calling Skjermede Personer", rtex)
 			throw rtex
 		} finally {
 			val end: Long = System.currentTimeMillis()
@@ -66,7 +69,7 @@ class SkjermedePersonerClient(
 
 
 	data class SkjermedePersonerRequest(
-		val personIdenter: List<String>
+		val personidenter: List<String>
 	)
 
 	data class SkjermedePersonerResponse(
