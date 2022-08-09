@@ -39,12 +39,8 @@ class RutingService(
 
         val status = RutingStatus()
 
-        val rute = ruting(foedselsnummer, status)
+        return ruting(foedselsnummer, status)
             .also { log.info(status.resultatSomTekst()) }
-
-        // TODO: Test først at ulike forretningsregler gir riktig resultat i logger, åpne deretter for at ruting kan gå til nytt saksbehandlingssystem.
-        return Rute.GOSYS_OG_INFOTRYGD
-            .also { log.info("TEST: OVERSTYRER RUTE TIL $it") }
     }
 
     private fun ruting(foedselsnummer: String, status: RutingStatus): Rute {

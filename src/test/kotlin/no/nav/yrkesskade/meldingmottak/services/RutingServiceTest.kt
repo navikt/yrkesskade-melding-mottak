@@ -241,7 +241,7 @@ class RutingServiceTest {
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResultMedSak()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD) // TODO: 01/07/2022 YSMOD-375 Skal rute til ny saksbehandling når det er klart
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.YRKESSKADE_SAKSBEHANDLING)
     }
 
 
