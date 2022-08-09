@@ -39,12 +39,8 @@ class RutingService(
 
         val status = RutingStatus()
 
-        val rute = ruting(foedselsnummer, status)
+        return ruting(foedselsnummer, status)
             .also { log.info(status.resultatSomTekst()) }
-
-        // TODO: Test først at ulike forretningsregler gir riktig resultat i logger, åpne deretter for at ruting kan gå til nytt saksbehandlingssystem.
-        return Rute.GOSYS_OG_INFOTRYGD
-            .also { log.info("TEST: OVERSTYRER RUTE TIL $it") }
     }
 
     private fun ruting(foedselsnummer: String, status: RutingStatus): Rute {
@@ -55,7 +51,7 @@ class RutingService(
             || erDoed(person!!, status)
             || erKode7Fortrolig(person, status)
             || erKode6StrengtFortrolig(person, status)
-            || erEgenAnsatt(foedselsnummer, status)
+//            || erEgenAnsatt(foedselsnummer, status) // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om egen ansatt (skjerming)
             || harAapenGenerellYrkesskadeSak(foedselsnummer, status)
         ) {
             return Rute.GOSYS_OG_INFOTRYGD

@@ -186,14 +186,15 @@ class RutingServiceTest {
         assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
     }
 
-    @Test
-    fun `hvis person er egen ansatt, dvs ansatt i NAV, rut til gammelt saksbehandlingssystem`() {
-        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
-        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
-            mapOf(foedselsnummer to true)
-        )
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
-    }
+    // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om egen ansatt (skjerming)
+//    @Test
+//    fun `hvis person er egen ansatt, dvs ansatt i NAV, rut til gammelt saksbehandlingssystem`() {
+//        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
+//        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
+//            mapOf(foedselsnummer to true)
+//        )
+//        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+//    }
 
     @Test
     fun `hvis åpen generell YRK sak eksisterer, rut til gammelt saksbehandlingssystem`() {
@@ -241,7 +242,7 @@ class RutingServiceTest {
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResultMedSak()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD) // TODO: 01/07/2022 YSMOD-375 Skal rute til ny saksbehandling når det er klart
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.YRKESSKADE_SAKSBEHANDLING)
     }
 
 
