@@ -51,7 +51,7 @@ class RutingService(
             || erDoed(person!!, status)
             || erKode7Fortrolig(person, status)
             || erKode6StrengtFortrolig(person, status)
-//            || erEgenAnsatt(foedselsnummer, status) // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om egen ansatt (skjerming)
+            || erEgenAnsatt(foedselsnummer, status)
             || harAapenGenerellYrkesskadeSak(foedselsnummer, status)
         ) {
             return Rute.GOSYS_OG_INFOTRYGD
@@ -91,10 +91,13 @@ class RutingService(
     }
 
     internal fun erEgenAnsatt(foedselsnummer: String, status: RutingStatus): Boolean {
-        val request = SkjermedePersonerClient.SkjermedePersonerRequest(listOf(foedselsnummer))
-        val response = skjermedePersonerClient.erSkjermet(request)
-        return (response.skjermedePersonerMap[foedselsnummer] ?: false)
-            .also { status.egenAnsatt = it }
+        // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om egen ansatt (skjerming)
+        return false
+            .also { log.info("MIDLERTIDIG: HOPPER OVER SJEKK OM PERSONEN ER EGEN ANSATT (SKJERMING)") }
+//        val request = SkjermedePersonerClient.SkjermedePersonerRequest(listOf(foedselsnummer))
+//        val response = skjermedePersonerClient.erSkjermet(request)
+//        return (response.skjermedePersonerMap[foedselsnummer] ?: false)
+//            .also { status.egenAnsatt = it }
     }
 
     internal fun harAapenGenerellYrkesskadeSak(foedselsnummer: String, status: RutingStatus): Boolean {
@@ -107,8 +110,11 @@ class RutingService(
     }
 
     internal fun harEksisterendeInfotrygdSak(foedselsnumre: List<String>, status: RutingStatus): Boolean {
-        return infotrygdClient.harEksisterendeSak(foedselsnumre)
-            .also { status.eksisterendeInfotrygdSak = it }
+        // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om eksisterende sak i Infotrygd
+        return false
+            .also { log.info("MIDLERTIDIG: HOPPER OVER SJEKK OM PERSONEN HAR EN EKSISTERENDE SAK I INFOTRYGD") }
+//        return infotrygdClient.harEksisterendeSak(foedselsnumre)
+//            .also { status.eksisterendeInfotrygdSak = it }
     }
 
     /**
