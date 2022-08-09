@@ -186,14 +186,15 @@ class RutingServiceTest {
         assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
     }
 
-    @Test
-    fun `hvis person er egen ansatt, dvs ansatt i NAV, rut til gammelt saksbehandlingssystem`() {
-        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
-        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
-            mapOf(foedselsnummer to true)
-        )
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
-    }
+    // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om egen ansatt (skjerming)
+//    @Test
+//    fun `hvis person er egen ansatt, dvs ansatt i NAV, rut til gammelt saksbehandlingssystem`() {
+//        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
+//        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
+//            mapOf(foedselsnummer to true)
+//        )
+//        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+//    }
 
     @Test
     fun `hvis åpen generell YRK sak eksisterer, rut til gammelt saksbehandlingssystem`() {

@@ -51,7 +51,7 @@ class RutingService(
             || erDoed(person!!, status)
             || erKode7Fortrolig(person, status)
             || erKode6StrengtFortrolig(person, status)
-            || erEgenAnsatt(foedselsnummer, status)
+//            || erEgenAnsatt(foedselsnummer, status) // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om egen ansatt (skjerming)
             || harAapenGenerellYrkesskadeSak(foedselsnummer, status)
         ) {
             return Rute.GOSYS_OG_INFOTRYGD
