@@ -47,6 +47,11 @@ spec:
             {{/each}}
           {{/if}}
       {{/each}}
+    outbound:
+      rules:
+        - application: yrkesskade-infotrygd
+          namespace: yrkesskade
+          cluster: {{fss-cluster}}
   resources:
     limits:
       cpu: 2000m
