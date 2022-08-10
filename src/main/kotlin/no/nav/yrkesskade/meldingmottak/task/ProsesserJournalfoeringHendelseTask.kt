@@ -1,6 +1,7 @@
 package no.nav.yrkesskade.meldingmottak.task
 
 import com.expediagroup.graphql.generated.enums.BrukerIdType
+import com.expediagroup.graphql.generated.enums.IdentGruppe
 import com.expediagroup.graphql.generated.enums.Journalposttype
 import com.expediagroup.graphql.generated.enums.Journalstatus
 import com.expediagroup.graphql.generated.enums.Tema

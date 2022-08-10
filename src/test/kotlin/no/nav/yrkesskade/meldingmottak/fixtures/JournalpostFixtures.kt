@@ -117,15 +117,3 @@ fun journalpostResultMedJournalposttypeUtgaaende(): Journalpost.Result {
     )
     return Journalpost.Result(journalpostMedJournalposttypeUtgaaende)
 }
-
-fun journalpostResultMedBrevkodeTannlegeerklaering(): Journalpost.Result {
-    val journalpostMedBrevkodeTannlegeerklaering = gyldigJournalpostMedAktoerId().copy(
-        dokumenter = listOf(
-            DokumentInfo(
-                "Tannlegeerklæring ved yrkesskade",
-                Brevkode.TANNLEGEERKLAERING.kode
-            )
-        )
-    )
-    return Journalpost.Result(journalpostMedBrevkodeTannlegeerklaering)
-}

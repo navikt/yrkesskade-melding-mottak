@@ -9,11 +9,12 @@ import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClientStub
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedBrevkodeTannlegeerklaering
+import no.nav.yrkesskade.meldingmottak.fixtures.hentIdenterResultMedBrukerAktoeridOgFoedselsnummer
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalposttypeUtgaaende
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalstatusFeilregistrert
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedTemaSYK
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedUgyldigBrukerIdType
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultTannlegeerklaering
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBruker
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBrukerId
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenDokumenter
