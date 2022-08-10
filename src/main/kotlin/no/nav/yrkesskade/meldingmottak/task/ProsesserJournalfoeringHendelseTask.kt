@@ -1,6 +1,9 @@
 package no.nav.yrkesskade.meldingmottak.task
 
-import com.expediagroup.graphql.generated.enums.*
+import com.expediagroup.graphql.generated.enums.BrukerIdType
+import com.expediagroup.graphql.generated.enums.Journalposttype
+import com.expediagroup.graphql.generated.enums.Journalstatus
+import com.expediagroup.graphql.generated.enums.Tema
 import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.Journalpost
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -18,15 +21,20 @@ import no.nav.yrkesskade.meldingmottak.clients.gosys.Prioritet
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.domene.Brevkode
+import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
 import no.nav.yrkesskade.meldingmottak.services.RutingService
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentBrevkode
+import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokument
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokumentTittel
 import no.nav.yrkesskade.meldingmottak.util.extensions.journalfoerendeEnhetEllerNull
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.prosessering.AsyncTaskStep
 import no.nav.yrkesskade.prosessering.TaskStepBeskrivelse
 import no.nav.yrkesskade.prosessering.domene.Task
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandling
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingHendelse
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingMetadata
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -46,7 +54,8 @@ class ProsesserJournalfoeringHendelseTask(
     private val pdlClient: PdlClient,
     private val rutingService: RutingService,
     private val oppgaveClient: OppgaveClient,
-    private val bigQueryClient: BigQueryClient
+    private val bigQueryClient: BigQueryClient,
+    private val dokumentTilSaksbehandlingClient: DokumentTilSaksbehandlingClient
 ) : AsyncTaskStep {
 
     val log: Logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())

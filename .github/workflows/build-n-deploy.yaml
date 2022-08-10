@@ -46,7 +46,7 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: .nais/nais.yaml
-          VARS: .nais/dev.yaml
+          VARS: .nais/dev/dev.yaml
   deployAlertsToDev:
     if: github.ref == 'refs/heads/dev'
     name: Deploy alerts to dev
@@ -59,8 +59,8 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: .nais/alerts-dev.yaml
-          VARS: .nais/dev.yaml
+          RESOURCE: .nais/dev/alerts-dev.yaml
+          VARS: .nais/dev/dev.yaml
   deployAppToProd:
     if: github.ref == 'refs/heads/master'
     name: Deploy app to prod
@@ -74,7 +74,7 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           RESOURCE: .nais/nais.yaml
-          VARS: .nais/prod.yaml
+          VARS: .nais/prod/prod.yaml
   deployAlertsToProd:
     if: github.ref == 'refs/heads/master'
     name: Deploy alerts to prod
@@ -87,5 +87,5 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          RESOURCE: .nais/alerts-prod.yaml
-          VARS: .nais/prod.yaml
+          RESOURCE: .nais/prod/alerts-prod.yaml
+          VARS: .nais/prod/prod.yaml

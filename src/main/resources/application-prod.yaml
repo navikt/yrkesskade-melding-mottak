@@ -26,6 +26,7 @@ kafka:
     aapen-dok-journalfoering: teamdokumenthandtering.aapen-dok-journalfoering
     skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldinginnsendt
     skadeforklaring-innsendt: yrkesskade.privat-yrkesskade-skadeforklaringinnsendt
+    dokument-til-saksbehandling: yrkesskade.privat-yrkesskade-dokument-til-saksbehandling
 
 storage.type: GCP
 

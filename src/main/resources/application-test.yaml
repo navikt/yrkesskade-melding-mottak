@@ -18,6 +18,7 @@ kafka:
     aapen-dok-journalfoering: test
     skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldinginnsendt
     skadeforklaring-innsendt: yrkesskade.privat-yrkesskade-skadeforklaringinnsendt
+    dokument-til-saksbehandling: yrkesskade.privat-yrkesskade-dokument-til-saksbehandling
 
 funksjonsbrytere:
   enabled: false

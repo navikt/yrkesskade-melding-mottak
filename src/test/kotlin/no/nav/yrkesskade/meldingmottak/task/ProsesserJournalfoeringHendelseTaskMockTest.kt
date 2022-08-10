@@ -9,7 +9,17 @@ import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClientStub
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
-import no.nav.yrkesskade.meldingmottak.fixtures.*
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedBrevkodeTannlegeerklaering
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalposttypeUtgaaende
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalstatusFeilregistrert
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedTemaSYK
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedUgyldigBrukerIdType
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBruker
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBrukerId
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenDokumenter
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerAktoerid
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerFnr
+import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
 import no.nav.yrkesskade.meldingmottak.services.RutingService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -27,13 +37,15 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
 
     private val oppgaveClientMock: OppgaveClient = mockk(relaxed = true)
 
+    private val dokumentTilSaksbehandlingClient: DokumentTilSaksbehandlingClient = mockk(relaxed = true)
+
     private val bigQueryClientStub: BigQueryClient = BigQueryClientStub()
 
     private val journalpostId = "1337"
     private val task = ProsesserJournalfoeringHendelseTask.opprettTask(journalpostId)
 
     private val prosesserJournalfoeringHendelseTask: ProsesserJournalfoeringHendelseTask =
-        ProsesserJournalfoeringHendelseTask(safClientMock, pdlClientMock, rutingServiceMock, oppgaveClientMock, bigQueryClientStub)
+        ProsesserJournalfoeringHendelseTask(safClientMock, pdlClientMock, rutingServiceMock, oppgaveClientMock, bigQueryClientStub, dokumentTilSaksbehandlingClient)
 
     @BeforeEach
     fun init() {
@@ -82,7 +94,7 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
         prosesserJournalfoeringHendelseTask.doTask(task)
 //        verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
         verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) } // TODO: YSMOD-370 Lar meldinger midlertidig gå til gammel saksbehandlingsløsning i Gosys/Infotrygd
-//        verify(exactly = 1) { sendTilYSSaksbehandlingClient.send(any()) }
+//        verify(exactly = 1) { dokumentTilSaksbehandlingClient.send(any()) }
     }
 
     @Test

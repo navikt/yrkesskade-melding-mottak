@@ -115,6 +115,11 @@
             <version>${yrkesskade-felles-backend.version}</version>
         </dependency>
         <dependency>
+            <groupId>no.nav.yrkesskade</groupId>
+            <artifactId>saksbehandling</artifactId>
+            <version>9d1ea0d6_202207131457</version>
+        </dependency>
+        <dependency>
             <groupId>com.expediagroup</groupId>
             <artifactId>graphql-kotlin-spring-client</artifactId>
             <version>${graphql-kotlin.version}</version>
