@@ -105,27 +105,26 @@ class RutingServiceTest {
         )).isFalse
     }
 
-    // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om egen ansatt (skjerming)
-//    @Test
-//    fun `er egen ansatt, dvs skjermet person`() {
-//        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermedePersonerRequest::class)) } answers
-//                { SkjermedePersonerClient.SkjermedePersonerResponse(mapOf(foedselsnummer to true)) }
-//
-//        assertThat(service.erEgenAnsatt(foedselsnummer, status)).isTrue
-//    }
+    @Test
+    fun `er egen ansatt, dvs skjermet person`() {
+        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermetPersonRequest::class)) } answers
+                { true }
+
+        assertThat(service.erEgenAnsatt(foedselsnummer, status)).isTrue
+    }
 
     @Test
     fun `er ikke egen ansatt - variant fnr i resultatet`() {
-        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermedePersonerRequest::class)) } answers
-                { SkjermedePersonerClient.SkjermedePersonerResponse(mapOf(foedselsnummer to false)) }
+        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermetPersonRequest::class)) } answers
+                { false }
 
         assertThat(service.erEgenAnsatt(foedselsnummer, status)).isFalse
     }
 
     @Test
     fun `er ikke egen ansatt - variant fnr ikke i resultatet`() {
-        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermedePersonerRequest::class)) } answers
-                { SkjermedePersonerClient.SkjermedePersonerResponse(emptyMap()) }
+        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermetPersonRequest::class)) } answers
+                { false }
 
         assertThat(service.erEgenAnsatt(foedselsnummer, status)).isFalse
     }
@@ -188,22 +187,17 @@ class RutingServiceTest {
         assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
     }
 
-    // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om egen ansatt (skjerming)
-//    @Test
-//    fun `hvis person er egen ansatt, dvs ansatt i NAV, rut til gammelt saksbehandlingssystem`() {
-//        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
-//        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
-//            mapOf(foedselsnummer to true)
-//        )
-//        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
-//    }
+    @Test
+    fun `hvis person er egen ansatt, dvs ansatt i NAV, rut til gammelt saksbehandlingssystem`() {
+        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
+        every { skjermedePersonerClientMock.erSkjermet(any()) } returns true
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+    }
 
     @Test
     fun `hvis åpen generell YRK sak eksisterer, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
-        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
-            mapOf(foedselsnummer to false)
-        )
+        every { skjermedePersonerClientMock.erSkjermet(any()) } returns false
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedGenerellYrkesskadesak()
         assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
@@ -225,9 +219,7 @@ class RutingServiceTest {
     @Test
     fun `hvis potensiell kommende sak, dvs nylig oppgave i Gosys, rut til gammelt saksbehandlingssystem Gosys og Infotrygd`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
-        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
-            mapOf(foedselsnummer to false)
-        )
+        every { skjermedePersonerClientMock.erSkjermet(any()) } returns false
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
@@ -238,9 +230,7 @@ class RutingServiceTest {
     @Test
     fun `hvis ingen ingen eksisterende eller kommende sak, rut til Yrkesskade saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
-        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
-            mapOf(foedselsnummer to false)
-        )
+        every { skjermedePersonerClientMock.erSkjermet(any()) } returns false
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false

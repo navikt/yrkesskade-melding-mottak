@@ -91,13 +91,9 @@ class RutingService(
     }
 
     internal fun erEgenAnsatt(foedselsnummer: String, status: RutingStatus): Boolean {
-        // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om egen ansatt (skjerming)
-        return false
-            .also { log.info("MIDLERTIDIG: HOPPER OVER SJEKK OM PERSONEN ER EGEN ANSATT (SKJERMING)") }
-//        val request = SkjermedePersonerClient.SkjermedePersonerRequest(listOf(foedselsnummer))
-//        val response = skjermedePersonerClient.erSkjermet(request)
-//        return (response.skjermedePersonerMap[foedselsnummer] ?: false)
-//            .also { status.egenAnsatt = it }
+        val request = SkjermedePersonerClient.SkjermetPersonRequest(foedselsnummer)
+        return skjermedePersonerClient.erSkjermet(request)
+            .also { status.egenAnsatt = it }
     }
 
     internal fun harAapenGenerellYrkesskadeSak(foedselsnummer: String, status: RutingStatus): Boolean {
