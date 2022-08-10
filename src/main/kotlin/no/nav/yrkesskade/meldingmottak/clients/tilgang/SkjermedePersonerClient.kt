@@ -24,23 +24,20 @@ class SkjermedePersonerClient(
 	}
 
 	@Retryable
-	fun erSkjermet(request: SkjermedePersonerRequest): SkjermedePersonerResponse {
-		secureLogger.info("Kontrollerer om personer er skjermet/egne ansatte: ${request.personidenter}")
-		if (request.personidenter == null || request.personidenter.isEmpty()) {
-			secureLogger.error("Personident mangler i SkjermedePersonerRequest")
-		}
+	fun erSkjermet(request: SkjermetPersonRequest): Boolean {
+		secureLogger.info("Kontrollerer om person er skjermet/egen ansatt: ${request.personident}")
 		return logTimingAndWebClientResponseException("erSkjermet") {
 			skjermedePersonerWebClient.post()
 				.uri { uriBuilder ->
-					uriBuilder.pathSegment("skjermetBulk").build()
+					uriBuilder.pathSegment("skjermet").build()
 				}
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithSkjermedePersonerScope()}")
 				.header("Nav-Callid", MDCConstants.MDC_CALL_ID)
 				.bodyValue(request)
 				.retrieve()
-				.bodyToMono<SkjermedePersonerResponse>()
-				.block() ?: throw RuntimeException("Kunne ikke kontrollere om personer er skjermet")
+				.bodyToMono<Boolean>()
+				.block() ?: throw RuntimeException("Kunne ikke kontrollere om person er skjermet")
 		}
 	}
 
@@ -68,11 +65,8 @@ class SkjermedePersonerClient(
 	}
 
 
-	data class SkjermedePersonerRequest(
-		val personidenter: List<String>
+	data class SkjermetPersonRequest(
+		val personident: String
 	)
 
-	data class SkjermedePersonerResponse(
-		val skjermedePersonerMap: Map<String, Boolean>
-	)
 }
