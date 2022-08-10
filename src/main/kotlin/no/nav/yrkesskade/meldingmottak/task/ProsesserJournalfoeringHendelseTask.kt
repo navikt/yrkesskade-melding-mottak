@@ -1,6 +1,10 @@
 package no.nav.yrkesskade.meldingmottak.task
 
-import com.expediagroup.graphql.generated.enums.*
+import com.expediagroup.graphql.generated.enums.BrukerIdType
+import com.expediagroup.graphql.generated.enums.IdentGruppe
+import com.expediagroup.graphql.generated.enums.Journalposttype
+import com.expediagroup.graphql.generated.enums.Journalstatus
+import com.expediagroup.graphql.generated.enums.Tema
 import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.Journalpost
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

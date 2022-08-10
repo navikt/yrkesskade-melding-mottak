@@ -9,7 +9,17 @@ import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClientStub
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
-import no.nav.yrkesskade.meldingmottak.fixtures.*
+import no.nav.yrkesskade.meldingmottak.fixtures.hentIdenterResultMedBrukerAktoeridOgFoedselsnummer
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalposttypeUtgaaende
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalstatusFeilregistrert
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedTemaSYK
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedUgyldigBrukerIdType
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultTannlegeerklaering
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBruker
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBrukerId
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenDokumenter
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerAktoerid
+import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerFnr
 import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
 import no.nav.yrkesskade.meldingmottak.services.RutingService
 import org.assertj.core.api.Assertions.assertThat
@@ -85,7 +95,7 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
         prosesserJournalfoeringHendelseTask.doTask(task)
 //        verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
         verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) } // TODO: YSMOD-370 Lar meldinger midlertidig gå til gammel saksbehandlingsløsning i Gosys/Infotrygd
-//        verify(exactly = 1) { dokumentTilSaksbehandlingClient.sendTilSaksbehandling(any()) }
+//        verify(exactly = 1) { dokumentTilSaksbehandlingClient.send(any()) }
     }
 
     @Test
