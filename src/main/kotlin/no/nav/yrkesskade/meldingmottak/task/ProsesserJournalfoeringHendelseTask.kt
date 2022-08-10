@@ -26,7 +26,6 @@ import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
 import no.nav.yrkesskade.meldingmottak.services.RutingService
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentBrevkode
-import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokument
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokumentTittel
 import no.nav.yrkesskade.meldingmottak.util.extensions.journalfoerendeEnhetEllerNull
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
@@ -79,26 +78,24 @@ class ProsesserJournalfoeringHendelseTask(
             journalpostErKandidatForYsSaksbehandling(journalpost) &&
             skalRutesTilYsSaksbehandling(foedselsnummer)
         ) {
-            // TODO: legg melding på kafka
-            log.info("===|> TODO: Legg melding på kafka og send til nytt saksbehandlingssystem, Kompys...")
-            log.info("MIDLERTIDIG: Oppretter task og senere oppgave for behandling i gammelt saksbehandlingssystem, Gosys og Infotrygd")
-
-//            val dokumentTilSaksbehandling = DokumentTilSaksbehandling(
-//                journalpostId = journalpost.journalpostId,
-//                enhet = "9999",
-//                metadata = DokumentTilSaksbehandlingMetadata(callId = MDC.get(MDCConstants.MDC_CALL_ID))
-//            )
-//            dokumentTilSaksbehandlingClient.sendTilSaksbehandling(dokumentTilSaksbehandling).also {
-//                log.info("Sendt dokument til ny saksbehandlingsløsning for journalpostId ${dokumentTilSaksbehandling.journalpostId}")
-//            }
+            val dokumentTilSaksbehandlingHendelse = DokumentTilSaksbehandlingHendelse(
+                DokumentTilSaksbehandling(
+                    journalpostId = journalpost.journalpostId,
+                    enhet = "9999",
+                ),
+                metadata = DokumentTilSaksbehandlingMetadata(callId = MDC.get(MDCConstants.MDC_CALL_ID))
+            )
+            dokumentTilSaksbehandlingClient.sendTilSaksbehandling(dokumentTilSaksbehandlingHendelse).also {
+                log.info("Sendt dokument til ny saksbehandlingsløsning for journalpostId ${dokumentTilSaksbehandlingHendelse.dokumentTilSaksbehandling.journalpostId}")
+            }
 
         }
-//        else {
+        else {
             opprettOppgave(journalpost).also { oppgave ->
                 log.info("Opprettet oppgave for journalpostId ${journalpost.journalpostId}")
                 foerMetrikkIBigQuery(journalpost, oppgave)
             }
-//        }
+        }
 
     }
 

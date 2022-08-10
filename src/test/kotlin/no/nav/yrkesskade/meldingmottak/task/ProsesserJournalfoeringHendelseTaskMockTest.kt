@@ -93,9 +93,8 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
         every { rutingServiceMock.utfoerRuting(any()) } returns RutingService.Rute.YRKESSKADE_SAKSBEHANDLING
 
         prosesserJournalfoeringHendelseTask.doTask(task)
-//        verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
-        verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) } // TODO: YSMOD-370 Lar meldinger midlertidig gå til gammel saksbehandlingsløsning i Gosys/Infotrygd
-//        verify(exactly = 1) { dokumentTilSaksbehandlingClient.send(any()) }
+        verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
+        verify(exactly = 1) { dokumentTilSaksbehandlingClient.sendTilSaksbehandling(any()) }
     }
 
     @Test
