@@ -171,7 +171,7 @@ class ProsesserJournalfoeringHendelseTask(
         (journalpost.hentBrevkode() == Brevkode.TANNLEGEERKLAERING.kode)
             .also {
                 if (it) {
-                    log.info("Juhuuu, dette er en tannlegeerklæring (º-vv-º) , brevkode er ${journalpost.hentBrevkode()}")
+                    log.info("Dette er en tannlegeerklæring, brevkode er ${journalpost.hentBrevkode()}")
                 }
                 else {
                     log.info("Dette er ingen tannlegeerklæring, brevkode er ${journalpost.hentBrevkode()}")

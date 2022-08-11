@@ -151,27 +151,49 @@ class RutingService(
         var aapenGenerellYrkesskadeSak: Boolean = false,
         var eksisterendeInfotrygdSak: Boolean = false,
         var potensiellKommendeSak: Boolean = false,
-        var rutingResult: Rute = Rute.GOSYS_OG_INFOTRYGD
+        var rutingResult: Rute = Rute.YRKESSKADE_SAKSBEHANDLING
     ) {
 
         fun resultatSomTekst(): String {
-            val prefix = "Rutingstatus:"
+            val builder: StringBuilder = java.lang.StringBuilder("Rutingstatus for person:\n")
+            builder.append("------------------------------------------\n")
+            leggTilStatusLinje("Finnes ikke i PDL", finnesIkkeIPdl, builder)
+            leggTilStatusLinje("Er død", doed, builder)
+            leggTilStatusLinje("Er fortrolig (kode 7)", kode7Fortrolig, builder)
+            leggTilStatusLinje("Er strengt fortrolig (kode 6)", kode6StrengtFortrolig, builder)
+            leggTilStatusLinje("Er egen ansatt/skjermet person", egenAnsatt, builder)
+            leggTilStatusLinje("Har åpen generell YRK-sak", aapenGenerellYrkesskadeSak, builder)
+            leggTilStatusLinje("Har eksisterende Infotrygd-sak", eksisterendeInfotrygdSak, builder)
+            leggTilStatusLinje("Har potensiell kommende sak", potensiellKommendeSak, builder)
 
-            if (finnesIkkeIPdl) return "$prefix Personen finnes ikke i PDL => $rutingResult"
-            if (doed) return "$prefix Personen er død => $rutingResult"
-            if (kode7Fortrolig) return "$prefix Personen er kode 7 - fortrolig => $rutingResult"
-            if (kode6StrengtFortrolig) return "$prefix Personen er kode 6 - strengt fortrolig => $rutingResult"
-            if (egenAnsatt) return "$prefix Personen er egen ansatt/skjermet => $rutingResult"
-            if (aapenGenerellYrkesskadeSak) return "$prefix Personen har en åpen generell YRK-sak => $rutingResult"
-            if (eksisterendeInfotrygdSak) return "$prefix Personen har en eksisterende Infotrygd-sak => $rutingResult"
-            if (potensiellKommendeSak) return "$prefix Personen har en potensiell kommende sak => $rutingResult"
+            if (!enSjekkHarSlaattTil()) {
+                builder.append("Ingen av sjekkene har slått til, bruk default ruting\n")
+            }
+            builder.append("Resultat:  $rutingResult")
 
-            return "$prefix Ingen av sjekkene har slått til, bruk default ruting => $rutingResult"
+            return builder.toString()
+        }
+
+        private fun leggTilStatusLinje(ledetekst: String, bool: Boolean, builder: StringBuilder) {
+            builder.append(ledetekst + jaNeiTekst(bool, ledetekst.length) + "\n")
+        }
+
+        private fun jaNeiTekst(p: Boolean, ledetekstlengde: Int): String {
+            val jaNei = if (p) "[Ja]" else "[Nei]"
+            return jaNei.padStart(50 - ledetekstlengde)
+        }
+
+        private fun enSjekkHarSlaattTil(): Boolean {
+            return finnesIkkeIPdl ||
+                    doed ||
+                    kode7Fortrolig ||
+                    kode6StrengtFortrolig ||
+                    egenAnsatt ||
+                    aapenGenerellYrkesskadeSak ||
+                    eksisterendeInfotrygdSak ||
+                    potensiellKommendeSak
         }
 
     }
-
-
-
 
 }
