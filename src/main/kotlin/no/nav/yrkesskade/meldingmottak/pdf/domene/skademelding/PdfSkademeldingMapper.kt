@@ -201,7 +201,7 @@ object PdfSkademeldingMapper {
             innmelderSeksjonstittel = "Om innmelder",
             tidOgStedSeksjonstittel = "Tid og sted",
             skadelidtSeksjonstittel = "Den skadelidte",
-            omUlykkenSeksjonstittel = if (erSykdom) "Om den skadelige påvirkningen" else "Om ulykken",
+            omUlykkenSeksjonstittel = if (erSykdom) "Om den skadelige påvirkningen" else "Ulykkessted og om ulykken",
             omSkadenSeksjonstittel = "Om skaden",
             omSkadenFlereSkader = "Denne skademeldingen inneholder flere skader"
         )
