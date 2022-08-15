@@ -1,6 +1,9 @@
 package no.nav.yrkesskade.meldingmottak.util.extensions
 
+import com.expediagroup.graphql.generated.journalpost.DokumentInfo
+import no.nav.yrkesskade.meldingmottak.domene.Brevkode
 import no.nav.yrkesskade.meldingmottak.fixtures.gyldigJournalpostMedAktoerId
+import no.nav.yrkesskade.meldingmottak.konstanter.ENHET_YRKESSYKDOM
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -26,5 +29,21 @@ internal class JournalpostExtKtTest {
             journalfoerendeEnhet = "0889"
         )
         assertThat(journalpostMedNedlagtEnhet.journalfoerendeEnhetEllerNull()).isNull()
+    }
+
+    @Test
+    fun `journalfoerendeEnhetEllerNull gir yrkessykdomsenheten naar brevkoden er arbeidstilsynsmeldingskopi`() {
+        val journalpostMedEnhetForArbeidstilsynsmeldingKopi = gyldigJournalpostMedAktoerId().copy(
+            dokumenter = listOf(
+                DokumentInfo(
+                    "Melding om yrkesskade eller yrkessykdom som er påført under tjeneste på skip eller under fiske/fangst",
+                    Brevkode.ARBEIDSTILSYNSMELDING_KOPI.kode
+                )
+            )
+        )
+
+        assertThat(
+            journalpostMedEnhetForArbeidstilsynsmeldingKopi.journalfoerendeEnhetEllerNull()
+        ).isEqualTo(ENHET_YRKESSYKDOM)
     }
 }
