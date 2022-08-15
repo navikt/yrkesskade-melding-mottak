@@ -17,17 +17,11 @@ fun Journalpost.hentBrevkode(): String  = hentHovedDokument()?.brevkode.orEmpty(
  *
  */
 fun Journalpost.journalfoerendeEnhetEllerNull(): String? {
-    if (hentBrevkode() == Brevkode.ARBEIDSTILSYNSMELDING_KOPI.kode) {
-        return ENHET_YRKESSYKDOM
-    }
-
-    if (journalfoerendeEnhet == null) {
-        return null
-    }
-
     val nedlagteEnheter = listOf("0889", "4203", "0289", "2089", "1664", "0189", "1789", "4417", "0389", "1688", "1812")
-    if (nedlagteEnheter.contains(journalfoerendeEnhet)) {
-        return null
+
+    return when {
+        hentBrevkode() == Brevkode.ARBEIDSTILSYNSMELDING_KOPI.kode -> ENHET_YRKESSYKDOM
+        nedlagteEnheter.contains(journalfoerendeEnhet) -> null
+        else -> journalfoerendeEnhet
     }
-    return journalfoerendeEnhet
 }
