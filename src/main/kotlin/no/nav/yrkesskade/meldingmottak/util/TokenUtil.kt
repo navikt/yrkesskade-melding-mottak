@@ -40,4 +40,10 @@ class TokenUtil(
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
         return response.accessToken
     }
+
+    fun getAppAccessTokenWithYrkesskadeInfotrygdScope(): String {
+        val clientProperties = clientConfigurationProperties.registration["yrkesskade-infotrygd-maskintilmaskin"]
+        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
+        return response.accessToken
+    }
 }

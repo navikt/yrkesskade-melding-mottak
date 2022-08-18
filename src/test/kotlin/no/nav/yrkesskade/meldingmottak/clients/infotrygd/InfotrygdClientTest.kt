@@ -2,9 +2,13 @@ package no.nav.yrkesskade.meldingmottak.clients.infotrygd
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.coEvery
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpStatus
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
@@ -13,11 +17,15 @@ import reactor.core.publisher.Mono
 import kotlin.test.assertFailsWith
 
 @Suppress("PrivatePropertyName", "NonAsciiCharacters")
+@ExtendWith(MockKExtension::class)
 class InfotrygdClientTest {
 
     private var infotrygdWebClientMock: WebClient = mockk()
 
     private lateinit var client: InfotrygdClient
+
+    @MockK(relaxed = true)
+    lateinit var tokenUtilMock: TokenUtil
 
     private val `d-nummer` = "11111111111"
     private val foedselsnummer = "22222222222"
@@ -28,7 +36,8 @@ class InfotrygdClientTest {
             createShortCircuitWebClientWithStatus(
                 jacksonObjectMapper().writeValueAsString(opprettInfotrygdEksisterendeSakOKResponse(true)),
                 HttpStatus.OK
-            )
+            ),
+            tokenUtilMock
         )
         assertThat(client.harEksisterendeSak(listOf(`d-nummer`, foedselsnummer))).isTrue
     }
@@ -39,7 +48,8 @@ class InfotrygdClientTest {
             createShortCircuitWebClientWithStatus(
                 jacksonObjectMapper().writeValueAsString(opprettInfotrygdEksisterendeSakOKResponse(false)),
                 HttpStatus.OK
-            )
+            ),
+            tokenUtilMock
         )
         assertThat(client.harEksisterendeSak(listOf(`d-nummer`, foedselsnummer))).isFalse
     }
@@ -51,7 +61,7 @@ class InfotrygdClientTest {
                     HttpStatus.INTERNAL_SERVER_ERROR.value(), "En feilmelding", null, null, null
                 )
 
-        client = InfotrygdClient(infotrygdWebClientMock)
+        client = InfotrygdClient(infotrygdWebClientMock, tokenUtilMock)
 
         val exception = assertFailsWith<WebClientResponseException>(
             block = {
