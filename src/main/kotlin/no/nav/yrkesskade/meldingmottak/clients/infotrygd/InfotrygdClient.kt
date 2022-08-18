@@ -1,5 +1,7 @@
 package no.nav.yrkesskade.meldingmottak.clients.infotrygd
 
+import no.nav.familie.log.mdc.MDCConstants
+import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
@@ -11,7 +13,8 @@ import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
 class InfotrygdClient(
-    private val infotrygdWebClient: WebClient
+    private val infotrygdWebClient: WebClient,
+    private val tokenUtil: TokenUtil
 ) {
 
     companion object {
@@ -33,6 +36,8 @@ class InfotrygdClient(
                         .build()
                 }
                 .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithYrkesskadeInfotrygdScope()}")
+                .header("Nav-Callid", MDCConstants.MDC_CALL_ID)
                 .bodyValue(fodselsnumre)
                 .retrieve()
                 .bodyToMono<InfotrygdEksisterendeSakResponse>()
