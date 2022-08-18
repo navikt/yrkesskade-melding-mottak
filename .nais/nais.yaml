@@ -48,10 +48,8 @@ spec:
           {{/if}}
       {{/each}}
     outbound:
-      rules:
-        - application: yrkesskade-infotrygd
-          namespace: yrkesskade
-          cluster: {{fss-cluster}}
+      external:
+        - host: yrkesskade-infotrygd.dev-fss-pub.nais.io
   resources:
     limits:
       cpu: 2000m
