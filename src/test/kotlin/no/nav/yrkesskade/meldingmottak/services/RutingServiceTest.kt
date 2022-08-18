@@ -143,13 +143,12 @@ class RutingServiceTest {
         assertThat(service.hentFoedselsnumreMedHistorikk("33333333333")).isEqualTo(listOf("33333333333"))
     }
 
-    // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om personen har en eksisterende sak i Infotrygd
-//    @Test
-//    fun `infotrygdsak eksisterer`() {
-//        every { infotrygdClientMock.harEksisterendeSak(any()) } returns true
-//
-//        assertThat(service.harEksisterendeInfotrygdSak(listOf("11111111111", "33333333333"), status)).isTrue
-//    }
+    @Test
+    fun `infotrygdsak eksisterer`() {
+        every { infotrygdClientMock.harEksisterendeSak(any()) } returns true
+
+        assertThat(service.harEksisterendeInfotrygdSak(listOf("11111111111", "33333333333"), status)).isTrue
+    }
 
     @Test
     fun `infotrygdsak eksisterer ikke`() {
@@ -203,18 +202,15 @@ class RutingServiceTest {
         assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
     }
 
-    // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om personen har en eksisterende sak i Infotrygd
-//    @Test
-//    fun `hvis sak eksisterer i Infotrygd, rut til gammelt saksbehandlingssystem`() {
-//        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
-//        every { skjermedePersonerClientMock.erSkjermet(any()) } returns SkjermedePersonerClient.SkjermedePersonerResponse(
-//            mapOf(foedselsnummer to false)
-//        )
-//        every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
-//        every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
-//        every { infotrygdClientMock.harEksisterendeSak(any()) } returns true
-//        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
-//    }
+    @Test
+    fun `hvis sak eksisterer i Infotrygd, rut til gammelt saksbehandlingssystem`() {
+        every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
+        every { skjermedePersonerClientMock.erSkjermet(any()) } returns false
+        every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
+        every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
+        every { infotrygdClientMock.harEksisterendeSak(any()) } returns true
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+    }
 
     @Test
     fun `hvis potensiell kommende sak, dvs nylig oppgave i Gosys, rut til gammelt saksbehandlingssystem Gosys og Infotrygd`() {

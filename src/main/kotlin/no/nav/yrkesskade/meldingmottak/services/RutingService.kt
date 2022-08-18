@@ -106,11 +106,8 @@ class RutingService(
     }
 
     internal fun harEksisterendeInfotrygdSak(foedselsnumre: List<String>, status: RutingStatus): Boolean {
-        // TODO: 09/08/2022 YSMOD-459 Midlertidig utkommentert sjekk om eksisterende sak i Infotrygd
-        return false
-            .also { log.info("MIDLERTIDIG: HOPPER OVER SJEKK OM PERSONEN HAR EN EKSISTERENDE SAK I INFOTRYGD") }
-//        return infotrygdClient.harEksisterendeSak(foedselsnumre)
-//            .also { status.eksisterendeInfotrygdSak = it }
+        return infotrygdClient.harEksisterendeSak(foedselsnumre)
+            .also { status.eksisterendeInfotrygdSak = it }
     }
 
     /**
