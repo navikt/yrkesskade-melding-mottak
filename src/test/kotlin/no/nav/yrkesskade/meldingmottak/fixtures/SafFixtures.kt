@@ -13,6 +13,8 @@ import com.expediagroup.graphql.generated.journalposter.Dokumentoversikt
 import com.expediagroup.graphql.generated.saker.Sak
 import java.time.LocalDateTime
 import java.time.Month
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 fun errorJournalpostRespons(): GraphQLClientResponse<Journalpost.Result> =
     JacksonGraphQLResponse(
@@ -77,8 +79,14 @@ fun sakerResult(): Saker.Result =
 fun sakerResultMedGenerellYrkesskadesak(): Saker.Result =
     Saker.Result(sakerHvoravGenerellYrkesskadesak())
 
+fun sakerResultMedForGammelGenerellYrkesskadesak(): Saker.Result =
+    Saker.Result(sakerMedForGammelGenerellYrkesskadesak())
+
 fun journalposterResult(): Journalposter.Result =
     Journalposter.Result(Dokumentoversikt(journalposter()))
+
+fun forGamleJournalposterResult(): Journalposter.Result =
+    Journalposter.Result(Dokumentoversikt(forGamleJournalposter()))
 
 fun journalposterResultMedSak(): Journalposter.Result =
     Journalposter.Result(Dokumentoversikt(journalposterMedSak()))
@@ -87,12 +95,24 @@ fun saker(): List<Sak> =
     listOf(fagsakAnnetTema())
 
 fun sakerHvoravGenerellYrkesskadesak(): List<Sak> =
-    listOf(generellYrkesskadesak(), fagsakAnnetTema())
+    listOf(generellYrkesskadesak(), fagsakAnnetTema(), generellYrkesskadesakEldreEnn24Mnd())
+
+fun sakerMedForGammelGenerellYrkesskadesak(): List<Sak> =
+    listOf(fagsakAnnetTema(), generellYrkesskadesakEldreEnn24Mnd())
 
 fun generellYrkesskadesak(): Sak =
     Sak(
-        datoOpprettet = LocalDateTime.of(2022, Month.MARCH, 8, 11, 0, 0),
-        fagsakId = null,
+        datoOpprettet = LocalDateTime.now(ZoneId.of("Europe/Oslo")).minusMonths(2).truncatedTo(ChronoUnit.DAYS),
+        fagsakId = "62",
+        fagsaksystem = "FS22",
+        sakstype = Sakstype.GENERELL_SAK,
+        tema = Tema.YRK
+    )
+
+fun generellYrkesskadesakEldreEnn24Mnd(): Sak =
+    Sak(
+        datoOpprettet = LocalDateTime.now(ZoneId.of("Europe/Oslo")).minusMonths(24).minusDays(1).truncatedTo(ChronoUnit.DAYS),
+        fagsakId = "61",
         fagsaksystem = "FS22",
         sakstype = Sakstype.GENERELL_SAK,
         tema = Tema.YRK

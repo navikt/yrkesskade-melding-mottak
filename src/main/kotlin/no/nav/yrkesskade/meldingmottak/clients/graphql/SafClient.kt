@@ -61,6 +61,10 @@ class SafClient(
         return oppdatertJournalpost
     }
 
+    /**
+     * Saf-tjenesten "dokumentoversiktBruker" returnerer en liste over alle dokumentene/journalpostene tilknyttet en bruker, på alle brukers nåværende og tidligere identer (dnr, fnr og aktørid).
+     * Se beskrivelse av [saf - Tjenester](https://confluence.adeo.no/display/BOA/Query%3A+dokumentoversiktBruker)
+     */
     fun hentJournalposterForPerson(foedselsnummer: String, journalstatuser: List<Journalstatus>): Journalposter.Result? {
         val token = tokenUtil.getAppAccessTokenWithSafScope()
         logger.info("Hentet token for Saf")
@@ -92,6 +96,10 @@ class SafClient(
         return result
     }
 
+    /**
+     * Saf-tjenesten "saker" returnerer saker som er registrert på alle brukers nåværende og tidligere identer (dnr, fnr og aktørid).
+     * Se beskrivelse av [saf - Tjenester](https://confluence.adeo.no/display/BOA/Query%3A+saker)
+     */
     fun hentSakerForPerson(foedselsnummer: String): Saker.Result? {
         val token = tokenUtil.getAppAccessTokenWithSafScope()
         logger.info("Hentet token for Saf")

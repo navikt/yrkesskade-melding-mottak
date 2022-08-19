@@ -203,6 +203,18 @@ class RutingServiceTest {
     }
 
     @Test
+    fun `skal hente åpne generelle YRK saker nyere enn 24 mnd`() {
+        every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedGenerellYrkesskadesak()
+        assertThat(service.harAapenGenerellYrkesskadeSak("12345678901", RutingService.RutingStatus())).isTrue
+    }
+
+    @Test
+    fun `finner ingen åpen generell YRK sak naar saken er eldre enn 24 mnd`() {
+        every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedForGammelGenerellYrkesskadesak()
+        assertThat(service.harAapenGenerellYrkesskadeSak("12345678901", RutingService.RutingStatus())).isFalse
+    }
+
+    @Test
     fun `hvis sak eksisterer i Infotrygd, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
         every { skjermedePersonerClientMock.erSkjermet(any()) } returns false
@@ -221,6 +233,18 @@ class RutingServiceTest {
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResult()
         assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+    }
+
+    @Test
+    fun `skal hente potensielle kommende saker naar det finnes journalpost nyere enn 24 mnd`() {
+        every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResult()
+        assertThat(service.harPotensiellKommendeSak("12345678901", RutingService.RutingStatus())).isTrue
+    }
+
+    @Test
+    fun `finner ingen potensiell kommende sak naar journalposter er eldre enn 24 mnd`() {
+        every { safClientMock.hentJournalposterForPerson(any(), any()) } returns forGamleJournalposterResult()
+        assertThat(service.harPotensiellKommendeSak("12345678901", RutingService.RutingStatus())).isFalse
     }
 
     @Test

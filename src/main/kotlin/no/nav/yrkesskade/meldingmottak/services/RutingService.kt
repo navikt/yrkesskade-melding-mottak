@@ -10,6 +10,8 @@ import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermedePersonerClient
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Service
 class RutingService(
@@ -99,8 +101,11 @@ class RutingService(
     internal fun harAapenGenerellYrkesskadeSak(foedselsnummer: String, status: RutingStatus): Boolean {
         val sakerForPerson = safClient.hentSakerForPerson(foedselsnummer)?.saker ?: emptyList()
         val generelleYrkesskadesaker =
-            sakerForPerson.filter { sak -> sak?.tema == Tema.YRK && sak.sakstype == Sakstype.GENERELL_SAK }
-        // TODO: 30/06/2022 YSMOD-408 Hva er definisjonen av "åpen"? At saken er opprettet de siste x månedene?
+            sakerForPerson.filter { sak ->
+                sak?.tema == Tema.YRK &&
+                        sak.sakstype == Sakstype.GENERELL_SAK &&
+                        (sak.datoOpprettet == null || sak.datoOpprettet.isAfter(tjueFireMndSiden()))
+            }
         return generelleYrkesskadesaker.isNotEmpty()
             .also { status.aapenGenerellYrkesskadeSak = it }
     }
@@ -121,8 +126,10 @@ class RutingService(
                 foedselsnummer,
                 listOf(Journalstatus.MOTTATT, Journalstatus.UNDER_ARBEID)
             )?.dokumentoversiktBruker?.journalposter ?: emptyList()
-        val journalposterUtenSak = journalposterForPerson.filter { journalpost -> journalpost?.sak == null }
-        // TODO: 01/07/2022 YSMOD-375 Avstem at logikken er riktig. Bør det angis datoer i oppslaget mot saf (fraDato og tilDato)?
+        val journalposterUtenSak = journalposterForPerson.filter { journalpost ->
+            journalpost?.sak == null &&
+                    journalpost?.datoOpprettet?.isAfter(tjueFireMndSiden()) == true
+        }
         return journalposterUtenSak.isNotEmpty()
             .also { status.potensiellKommendeSak = it }
     }
@@ -132,6 +139,8 @@ class RutingService(
 
         return identerMedHistorikk?.hentIdenter?.identer?.map { it.ident }?.toList() ?: listOf(foedselsnummer)
     }
+
+    private fun tjueFireMndSiden() = LocalDateTime.now(ZoneId.of("Europe/Oslo")).minusMonths(24)
 
 
     enum class Rute {
