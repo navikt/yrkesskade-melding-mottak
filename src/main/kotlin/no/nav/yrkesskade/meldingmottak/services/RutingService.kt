@@ -54,13 +54,13 @@ class RutingService(
             || erKode7Fortrolig(person, status)
             || erKode6StrengtFortrolig(person, status)
             || erEgenAnsatt(foedselsnummer, status)
+            || harAapenGenerellYrkesskadeSak(foedselsnummer, status)
         ) {
             return Rute.GOSYS_OG_INFOTRYGD
         }
 
         val foedselsnumreMedHistorikk = hentFoedselsnumreMedHistorikk(foedselsnummer)
-        if (harAapenGenerellYrkesskadeSak(foedselsnummer, status)
-            || harEksisterendeInfotrygdSak(foedselsnumreMedHistorikk, status)
+        if (harEksisterendeInfotrygdSak(foedselsnumreMedHistorikk, status)
             || harPotensiellKommendeSak(foedselsnummer, status)
         ) {
             return Rute.GOSYS_OG_INFOTRYGD
