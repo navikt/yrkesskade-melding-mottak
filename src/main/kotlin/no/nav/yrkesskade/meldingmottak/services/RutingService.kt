@@ -148,17 +148,90 @@ class RutingService(
         YRKESSKADE_SAKSBEHANDLING
     }
 
-    class RutingStatus (
-        var finnesIkkeIPdl: Boolean = false,
-        var doed: Boolean = false,
-        var kode7Fortrolig: Boolean = false,
-        var kode6StrengtFortrolig: Boolean = false,
-        var egenAnsatt: Boolean = false,
-        var aapenGenerellYrkesskadeSak: Boolean = false,
-        var eksisterendeInfotrygdSak: Boolean = false,
-        var potensiellKommendeSak: Boolean = false,
+    class RutingStatus {
+
+        var finnesIkkeIPdl: Boolean = false
+            set(value) {
+                field = value
+                oppdaterRutingResult()
+            }
+
+        var doed: Boolean = false
+            set(value) {
+                field = value
+                oppdaterRutingResult()
+            }
+
+        var kode7Fortrolig: Boolean = false
+            set(value) {
+                field = value
+                oppdaterRutingResult()
+            }
+
+        var kode6StrengtFortrolig: Boolean = false
+            set(value) {
+                field = value
+                oppdaterRutingResult()
+            }
+
+        var egenAnsatt: Boolean = false
+            set(value) {
+                field = value
+                oppdaterRutingResult()
+            }
+
+        var aapenGenerellYrkesskadeSak: Boolean = false
+            set(value) {
+                field = value
+                oppdaterRutingResult()
+            }
+
+        var eksisterendeInfotrygdSak: Boolean = false
+            set(value) {
+                field = value
+                oppdaterRutingResult()
+            }
+
+        var potensiellKommendeSak: Boolean = false
+            set(value) {
+                field = value
+                oppdaterRutingResult()
+            }
+
         var rutingResult: Rute = Rute.YRKESSKADE_SAKSBEHANDLING
-    ) {
+
+        constructor(
+            finnesIkkeIPdl: Boolean = false,
+            doed: Boolean = false,
+            kode7Fortrolig: Boolean = false,
+            kode6StrengtFortrolig: Boolean = false,
+            egenAnsatt: Boolean = false,
+            aapenGenerellYrkesskadeSak: Boolean = false,
+            eksisterendeInfotrygdSak: Boolean = false,
+            potensiellKommendeSak: Boolean = false,
+            rutingResult: Rute = Rute.YRKESSKADE_SAKSBEHANDLING
+        ) {
+            this.finnesIkkeIPdl = finnesIkkeIPdl
+            this.doed = doed
+            this.kode7Fortrolig = kode7Fortrolig
+            this.kode6StrengtFortrolig = kode6StrengtFortrolig
+            this.egenAnsatt = egenAnsatt
+            this.aapenGenerellYrkesskadeSak = aapenGenerellYrkesskadeSak
+            this.eksisterendeInfotrygdSak = eksisterendeInfotrygdSak
+            this.potensiellKommendeSak = potensiellKommendeSak
+            this.rutingResult = rutingResult
+        }
+
+
+        private fun oppdaterRutingResult() {
+            rutingResult = if (enSjekkHarSlaattTil()) {
+                Rute.GOSYS_OG_INFOTRYGD
+            } else {
+                Rute.YRKESSKADE_SAKSBEHANDLING
+            }
+        }
+
+
 
         fun resultatSomTekst(): String {
             val builder: StringBuilder = java.lang.StringBuilder("Rutingstatus for person:\n")
