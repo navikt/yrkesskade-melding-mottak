@@ -106,7 +106,6 @@ class RutingService(
                         sak.sakstype == Sakstype.GENERELL_SAK &&
                         (sak.datoOpprettet == null || sak.datoOpprettet.isAfter(tjueFireMndSiden()))
             }
-        // TODO: 19/08/2022 YSMOD-408 Send med alle foedselsnumre til sjekk for aapen generell YRK-sak
         return generelleYrkesskadesaker.isNotEmpty()
             .also { status.aapenGenerellYrkesskadeSak = it }
     }
@@ -131,7 +130,6 @@ class RutingService(
             journalpost?.sak == null &&
                     journalpost?.datoOpprettet?.isAfter(tjueFireMndSiden()) == true
         }
-        // TODO: 19/08/2022 YSMOD-408 Send med alle foedselsnumre til sjekk for Potensiell kommende sak
         return journalposterUtenSak.isNotEmpty()
             .also { status.potensiellKommendeSak = it }
     }
