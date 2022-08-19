@@ -14,6 +14,7 @@ import com.expediagroup.graphql.generated.saker.Sak
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 fun errorJournalpostRespons(): GraphQLClientResponse<Journalpost.Result> =
     JacksonGraphQLResponse(
@@ -101,7 +102,7 @@ fun sakerMedForGammelGenerellYrkesskadesak(): List<Sak> =
 
 fun generellYrkesskadesak(): Sak =
     Sak(
-        datoOpprettet = LocalDateTime.now().minusMonths(2),
+        datoOpprettet = LocalDateTime.now(ZoneId.of("Europe/Oslo")).minusMonths(2).truncatedTo(ChronoUnit.DAYS),
         fagsakId = "62",
         fagsaksystem = "FS22",
         sakstype = Sakstype.GENERELL_SAK,
@@ -110,7 +111,7 @@ fun generellYrkesskadesak(): Sak =
 
 fun generellYrkesskadesakEldreEnn24Mnd(): Sak =
     Sak(
-        datoOpprettet = LocalDateTime.now(ZoneId.of("Europe/Oslo")).minusMonths(24).minusDays(1),
+        datoOpprettet = LocalDateTime.now(ZoneId.of("Europe/Oslo")).minusMonths(24).minusDays(1).truncatedTo(ChronoUnit.DAYS),
         fagsakId = "61",
         fagsaksystem = "FS22",
         sakstype = Sakstype.GENERELL_SAK,
