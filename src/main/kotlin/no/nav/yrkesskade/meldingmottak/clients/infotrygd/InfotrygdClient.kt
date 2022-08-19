@@ -38,7 +38,7 @@ class InfotrygdClient(
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithYrkesskadeInfotrygdScope()}")
                 .header("Nav-Callid", MDCConstants.MDC_CALL_ID)
-                .bodyValue(fodselsnumre)
+                .bodyValue(InfotrygdEksisterendeSakRequest(fodselsnumre))
                 .retrieve()
                 .bodyToMono<InfotrygdEksisterendeSakResponse>()
                 .block() ?: throw RuntimeException("Kunne ikke sjekke om eksisterende sak")
@@ -73,5 +73,10 @@ class InfotrygdClient(
     }
 }
 
+
+/**
+ * @param foedselsnumre vil typisk være alle historiske pluss aktivt fødselsnummer for en person
+ */
+data class InfotrygdEksisterendeSakRequest(val foedselsnumre: List<String>)
 
 data class InfotrygdEksisterendeSakResponse(val harEksisterendeSak: Boolean)
