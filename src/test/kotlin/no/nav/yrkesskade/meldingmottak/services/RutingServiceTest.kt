@@ -236,6 +236,18 @@ class RutingServiceTest {
     }
 
     @Test
+    fun `skal hente potensielle kommende saker naar det finnes journalpost nyere enn 24 mnd`() {
+        every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResult()
+        assertThat(service.harPotensiellKommendeSak("12345678901", RutingService.RutingStatus())).isTrue
+    }
+
+    @Test
+    fun `finner ingen potensiell kommende sak naar journalposter er eldre enn 24 mnd`() {
+        every { safClientMock.hentJournalposterForPerson(any(), any()) } returns forGamleJournalposterResult()
+        assertThat(service.harPotensiellKommendeSak("12345678901", RutingService.RutingStatus())).isFalse
+    }
+
+    @Test
     fun `hvis ingen ingen eksisterende eller kommende sak, rut til Yrkesskade saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
         every { skjermedePersonerClientMock.erSkjermet(any()) } returns false

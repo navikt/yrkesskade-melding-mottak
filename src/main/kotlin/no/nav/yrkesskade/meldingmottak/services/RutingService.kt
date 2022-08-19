@@ -127,8 +127,11 @@ class RutingService(
                 foedselsnummer,
                 listOf(Journalstatus.MOTTATT, Journalstatus.UNDER_ARBEID)
             )?.dokumentoversiktBruker?.journalposter ?: emptyList()
-        val journalposterUtenSak = journalposterForPerson.filter { journalpost -> journalpost?.sak == null }
-        // TODO: 01/07/2022 YSMOD-375 Avstem at logikken er riktig. Bør det angis datoer i oppslaget mot saf (fraDato og tilDato)?
+        val journalposterUtenSak = journalposterForPerson.filter { journalpost ->
+            journalpost?.sak == null &&
+                    journalpost?.datoOpprettet?.isAfter(tjueFireMndSiden()) == true
+        }
+        // TODO: 19/08/2022 YSMOD-408 Send med alle foedselsnumre til sjekk for Potensiell kommende sak
         return journalposterUtenSak.isNotEmpty()
             .also { status.potensiellKommendeSak = it }
     }
