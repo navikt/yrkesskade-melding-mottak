@@ -10,6 +10,8 @@ import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermedePersonerClient
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Service
 class RutingService(
@@ -52,13 +54,13 @@ class RutingService(
             || erKode7Fortrolig(person, status)
             || erKode6StrengtFortrolig(person, status)
             || erEgenAnsatt(foedselsnummer, status)
-            || harAapenGenerellYrkesskadeSak(foedselsnummer, status)
         ) {
             return Rute.GOSYS_OG_INFOTRYGD
         }
 
         val foedselsnumreMedHistorikk = hentFoedselsnumreMedHistorikk(foedselsnummer)
-        if (harEksisterendeInfotrygdSak(foedselsnumreMedHistorikk, status)
+        if (harAapenGenerellYrkesskadeSak(foedselsnummer, status)
+            || harEksisterendeInfotrygdSak(foedselsnumreMedHistorikk, status)
             || harPotensiellKommendeSak(foedselsnummer, status)
         ) {
             return Rute.GOSYS_OG_INFOTRYGD
@@ -99,8 +101,12 @@ class RutingService(
     internal fun harAapenGenerellYrkesskadeSak(foedselsnummer: String, status: RutingStatus): Boolean {
         val sakerForPerson = safClient.hentSakerForPerson(foedselsnummer)?.saker ?: emptyList()
         val generelleYrkesskadesaker =
-            sakerForPerson.filter { sak -> sak?.tema == Tema.YRK && sak.sakstype == Sakstype.GENERELL_SAK }
-        // TODO: 30/06/2022 YSMOD-408 Hva er definisjonen av "åpen"? At saken er opprettet de siste x månedene?
+            sakerForPerson.filter { sak ->
+                sak?.tema == Tema.YRK &&
+                        sak.sakstype == Sakstype.GENERELL_SAK &&
+                        (sak.datoOpprettet == null || sak.datoOpprettet.isAfter(tjueFireMndSiden()))
+            }
+        // TODO: 19/08/2022 YSMOD-408 Send med alle foedselsnumre til sjekk for aapen generell YRK-sak
         return generelleYrkesskadesaker.isNotEmpty()
             .also { status.aapenGenerellYrkesskadeSak = it }
     }
@@ -132,6 +138,8 @@ class RutingService(
 
         return identerMedHistorikk?.hentIdenter?.identer?.map { it.ident }?.toList() ?: listOf(foedselsnummer)
     }
+
+    private fun tjueFireMndSiden() = LocalDateTime.now(ZoneId.of("Europe/Oslo")).minusMonths(24)
 
 
     enum class Rute {

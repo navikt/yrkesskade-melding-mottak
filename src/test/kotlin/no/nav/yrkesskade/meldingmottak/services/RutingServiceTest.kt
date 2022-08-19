@@ -203,6 +203,18 @@ class RutingServiceTest {
     }
 
     @Test
+    fun `skal hente åpne generelle YRK saker nyere enn 24 mnd`() {
+        every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedGenerellYrkesskadesak()
+        assertThat(service.harAapenGenerellYrkesskadeSak("12345678901", RutingService.RutingStatus())).isTrue
+    }
+
+    @Test
+    fun `finner ingen åpen generell YRK sak naar saken er eldre enn 24 mnd`() {
+        every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedForGammelGenerellYrkesskadesak()
+        assertThat(service.harAapenGenerellYrkesskadeSak("12345678901", RutingService.RutingStatus())).isFalse
+    }
+
+    @Test
     fun `hvis sak eksisterer i Infotrygd, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
         every { skjermedePersonerClientMock.erSkjermet(any()) } returns false
