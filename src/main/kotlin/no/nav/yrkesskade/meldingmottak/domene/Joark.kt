@@ -16,6 +16,7 @@ data class DokumentInfoId(
 
 data class OpprettJournalpostRequest(
 //    val forsoekFerdigstill: Boolean,
+    val journalfoerendeEnhet: String?,
     val tittel: String,
     val journalposttype: Journalposttype,
     val avsenderMottaker: AvsenderMottaker,

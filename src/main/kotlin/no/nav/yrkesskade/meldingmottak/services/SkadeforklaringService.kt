@@ -5,7 +5,18 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
-import no.nav.yrkesskade.meldingmottak.domene.*
+import no.nav.yrkesskade.meldingmottak.domene.AvsenderMottaker
+import no.nav.yrkesskade.meldingmottak.domene.BeriketData
+import no.nav.yrkesskade.meldingmottak.domene.Bruker
+import no.nav.yrkesskade.meldingmottak.domene.BrukerIdType
+import no.nav.yrkesskade.meldingmottak.domene.Dokument
+import no.nav.yrkesskade.meldingmottak.domene.Dokumentvariant
+import no.nav.yrkesskade.meldingmottak.domene.Dokumentvariantformat
+import no.nav.yrkesskade.meldingmottak.domene.Filtype
+import no.nav.yrkesskade.meldingmottak.domene.Journalposttype
+import no.nav.yrkesskade.meldingmottak.domene.Kanal
+import no.nav.yrkesskade.meldingmottak.domene.Navn
+import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostRequest
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.meldingmottak.vedlegg.AttachmentTypeUnsupportedException
 import no.nav.yrkesskade.meldingmottak.vedlegg.Image2PDFConverter
@@ -138,6 +149,7 @@ class SkadeforklaringService(
 
         return OpprettJournalpostRequest(
             tittel = DIGITAL_SKADEFORKLARING_TITTEL,
+            journalfoerendeEnhet = null,
             journalposttype = Journalposttype.INNGAAENDE,
             avsenderMottaker = AvsenderMottaker(
                 navn = beriketData.innmeldersNavn.toString(),

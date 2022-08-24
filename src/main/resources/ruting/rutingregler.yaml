@@ -1,0 +1,23 @@
+rutingregler:
+  yrkessykdom:
+    regel1:
+      kodeverdier:
+        - kjemikalierEllerLoesemidler
+        - stoevpaavirkning
+        - stoey
+        - vibrasjon
+        - straalingEllerRadioaktivStraaling
+        - trykkendringer
+        - allergifremkallendeStoffer
+        - smitteFraVirusEllerBakterier
+        - biologiskVirkestoffSomSoppOgParasitt
+        - vaksinasjonPaalagtIArbeidEllerTjeneste
+        - klimatiskeForholdSomVarmeOgKulde
+        - alternativenePasserIkke
+      enhet: 4803
+    regel2:
+      kodeverdier:
+        - naturhendelserSomSnoeskredOgJordskred
+        - psykososialBelastningEllerKritiskHendelseEllerTrakassering
+        - ergonomiEllerTungtOgEllerRepeterendeArbeid
+      enhet: null

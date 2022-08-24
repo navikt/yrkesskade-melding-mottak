@@ -8,8 +8,21 @@ import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.SkademeldingPaylo
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.skademelding_v1
 import no.nav.yrkesskade.meldingmottak.clients.dokarkiv.DokarkivClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
-import no.nav.yrkesskade.meldingmottak.domene.*
+import no.nav.yrkesskade.meldingmottak.domene.Adresse
+import no.nav.yrkesskade.meldingmottak.domene.AvsenderMottaker
+import no.nav.yrkesskade.meldingmottak.domene.BeriketData
+import no.nav.yrkesskade.meldingmottak.domene.Bruker
+import no.nav.yrkesskade.meldingmottak.domene.BrukerIdType
+import no.nav.yrkesskade.meldingmottak.domene.Dokument
+import no.nav.yrkesskade.meldingmottak.domene.Dokumentvariant
+import no.nav.yrkesskade.meldingmottak.domene.Dokumentvariantformat
+import no.nav.yrkesskade.meldingmottak.domene.Filtype
+import no.nav.yrkesskade.meldingmottak.domene.Journalposttype
+import no.nav.yrkesskade.meldingmottak.domene.Kanal
+import no.nav.yrkesskade.meldingmottak.domene.Navn
+import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostRequest
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
+import no.nav.yrkesskade.meldingmottak.util.ruting.Ruting
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -95,13 +108,14 @@ class SkademeldingService(
         return OpprettJournalpostRequest(
             tittel = DIGITAL_SKADEMELDING_TITTEL,
             journalposttype = Journalposttype.INNGAAENDE,
+            journalfoerendeEnhet = Ruting.utledEnhet(skademelding),
             avsenderMottaker = AvsenderMottaker(
                 navn = record.beriketData.innmeldersOrganisasjonsnavn.first,
-                id = skademelding.innmelder?.paaVegneAv.orEmpty(),
+                id = skademelding.innmelder.paaVegneAv,
                 idType = BrukerIdType.ORGNR
             ),
             bruker = Bruker(
-                id = skademelding.skadelidt!!.norskIdentitetsnummer,
+                id = skademelding.skadelidt.norskIdentitetsnummer,
                 idType = BrukerIdType.FNR
             ),
             tema = TEMA_YRKESSKADE,
