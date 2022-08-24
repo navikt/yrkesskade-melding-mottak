@@ -34,7 +34,9 @@ data class PdfDekningsforhold(
     val navnPaaVirksomheten: Soknadsfelt<String?>,
     val virksomhetensAdresse: Soknadsfelt<PdfAdresse?>,
     val stillingstittelTilDenSkadelidte: Soknadsfelt<List<String>>,
-    val rolletype: Soknadsfelt<PdfRolletype>
+    val rolletype: Soknadsfelt<PdfRolletype>,
+    val tjenesteperiode: Soknadsfelt<PdfPeriode>?,
+    val tjenestegjoerendeAvdeling: Soknadsfelt<String>?
 )
 
 data class PdfRolletype(
@@ -56,11 +58,11 @@ data class PdfSkadetDel(
 data class PdfHendelsesfakta(
     val tid: PdfTid,
     val naarSkjeddeUlykken: Soknadsfelt<String>,
-    val hvorSkjeddeUlykken: Soknadsfelt<String>,
-    val ulykkessted: PdfUlykkessted,
+    val hvorSkjeddeUlykken: Soknadsfelt<String>?,
+    val ulykkessted: PdfUlykkessted?,
     val paavirkningsform: Soknadsfelt<List<String>?>,
-    val aarsakUlykke: Soknadsfelt<List<String>?>,
-    val bakgrunnsaarsak: Soknadsfelt<List<String>?>,
+    val aarsakUlykke: Soknadsfelt<List<String>?>?,
+    val bakgrunnsaarsak: Soknadsfelt<List<String>?>?,
     val stedsbeskrivelse: Soknadsfelt<String?>,
     val utfyllendeBeskrivelse: Soknadsfelt<String?>
 )
