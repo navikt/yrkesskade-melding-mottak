@@ -72,7 +72,27 @@ object PdfSkademeldingMapper {
             virksomhetensAdresse = Soknadsfelt("Virksomhetens adresse", tilPdfAdresse(dekningsforhold.virksomhetensAdresse, kodeverkHolder)),
             stillingstittelTilDenSkadelidte = Soknadsfelt("Stilling", dekningsforhold.stillingstittelTilDenSkadelidte.orEmpty().map { kodeverkHolder.mapKodeTilVerdi(it, "stillingstittel") }),
             rolletype = Soknadsfelt("Rolle", PdfRolletype(dekningsforhold.rolletype, kodeverkHolder.mapKodeTilVerdi(dekningsforhold.rolletype, "rolletype"))),
+            tjenesteperiode = mapTjenesteperiodeHvisFoerstegangstjeneste(dekningsforhold.tjenesteperiode, dekningsforhold.rolletype),
+            tjenestegjoerendeAvdeling = mapTjenestegjoerendeAvdelingHvisFoerstegangstjeneste(dekningsforhold.tjenestegjoerendeAvdeling, dekningsforhold.rolletype)
         )
+    }
+
+    private fun mapTjenesteperiodeHvisFoerstegangstjeneste(periode: Periode?, rolletype: String): Soknadsfelt<PdfPeriode>? {
+        if (rolletype != "vernepliktigIFoerstegangstjenesten") {
+            return null
+        }
+        val pdfPeriode = if (periode != null) tilPdfPeriode(periode!!) else PdfPeriode("", "")
+        return Soknadsfelt("Periode for tjenesten", pdfPeriode)
+    }
+
+    private fun mapTjenestegjoerendeAvdelingHvisFoerstegangstjeneste(
+        tjenestegjoerendeAvdeling: String?,
+        rolletype: String
+    ): Soknadsfelt<String>? {
+        if (rolletype != "vernepliktigIFoerstegangstjenesten") {
+            return null
+        }
+        return Soknadsfelt("Tjenestegjørende avdeling", tjenestegjoerendeAvdeling.orEmpty())
     }
 
     private fun tilPdfSkade(skade: Skade, kodeverkHolder: KodeverkHolder): PdfSkade? {
@@ -123,26 +143,68 @@ object PdfSkademeldingMapper {
             ),
             naarSkjeddeUlykken = Soknadsfelt("Innenfor hvilket tidsrom inntraff ulykken?",
                 kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.naarSkjeddeUlykken, "tidsrom")),
-            hvorSkjeddeUlykken = Soknadsfelt(
-                if (erSykdom) "Hvor skjedde hendelsen" else "Hvor skjedde ulykken",
-                kodeverkHolder.mapKodeTilVerdi(hendelsesfakta.hvorSkjeddeUlykken, "hvorSkjeddeUlykken")
-            ),
-            ulykkessted = PdfUlykkessted(
-                sammeSomVirksomhetensAdresse = Soknadsfelt("Skjedde ulykken på samme adresse", jaNei(hendelsesfakta.ulykkessted.sammeSomVirksomhetensAdresse)),
-                adresse = Soknadsfelt(
-                    if (erSykdom) "Adresse hvor den skadelige påvirkningen har skjedd" else "Adresse for ulykken",
-                    tilPdfAdresse(hendelsesfakta.ulykkessted.adresse, kodeverkHolder)
-                )
-            ),
+            hvorSkjeddeUlykken = tilHvorSkjeddeUlykkenEllerNull(hendelsesfakta.hvorSkjeddeUlykken, erSykdom, kodeverkHolder),
+            ulykkessted = tilPdfUlykkesstedEllerNull(hendelsesfakta.ulykkessted, erSykdom, kodeverkHolder),
             paavirkningsform = Soknadsfelt("Hvilken skadelig påvirkning har personen vært utsatt for",
                 hendelsesfakta.paavirkningsform?.map { kodeverkHolder.mapKodeTilVerdi(it, "paavirkningsform") }),
-            aarsakUlykke = Soknadsfelt("Hva var årsaken til hendelsen og bakgrunn for årsaken",
-                hendelsesfakta.aarsakUlykke?.map { kodeverkHolder.mapKodeTilVerdi(it, "aarsakOgBakgrunn") }),
-            bakgrunnsaarsak = Soknadsfelt("Hva var bakgrunnen til hendelsen",
-                hendelsesfakta.bakgrunnsaarsak?.map { kodeverkHolder.mapKodeTilVerdi(it, "bakgrunnForHendelsen") }),
+            aarsakUlykke = tilAarsakUlykkeEllerNull(hendelsesfakta.aarsakUlykke, kodeverkHolder),
+            bakgrunnsaarsak = tilBakgrunnsaarsakEllerNull(hendelsesfakta.bakgrunnsaarsak, kodeverkHolder),
             stedsbeskrivelse = Soknadsfelt("Hvilken type arbeidsplass er det", typeArbeidsplass(hendelsesfakta, kodeverkHolder)),
             utfyllendeBeskrivelse = Soknadsfelt("Utfyllende beskrivelse", hendelsesfakta.utfyllendeBeskrivelse)
         )
+    }
+
+    private fun tilHvorSkjeddeUlykkenEllerNull(
+        hvorSkjeddeUlykken: String?,
+        erSykdom: Boolean,
+        kodeverkHolder: KodeverkHolder
+    ): Soknadsfelt<String>? {
+        return Soknadsfelt(
+            if (erSykdom) "Hvor skjedde hendelsen" else "Hvor skjedde ulykken",
+            hvorSkjeddeUlykken?.let { kodeverkHolder.mapKodeTilVerdi(it, "hvorSkjeddeUlykken") }.orEmpty()
+        )
+    }
+
+    private fun tilPdfUlykkesstedEllerNull(
+        ulykkessted: Ulykkessted?,
+        erSykdom: Boolean,
+        kodeverkHolder: KodeverkHolder
+    ): PdfUlykkessted?  {
+        if (ulykkessted == null) {
+            return null
+        }
+        return PdfUlykkessted(
+            sammeSomVirksomhetensAdresse = Soknadsfelt(
+                "Skjedde ulykken på samme adresse",
+                jaNei(ulykkessted.sammeSomVirksomhetensAdresse)
+            ),
+            adresse = Soknadsfelt(
+                if (erSykdom) "Adresse hvor den skadelige påvirkningen har skjedd" else "Adresse for ulykken",
+                tilPdfAdresse(ulykkessted.adresse, kodeverkHolder)
+            )
+        )
+    }
+
+    private fun tilAarsakUlykkeEllerNull(
+        aarsakUlykke: List<String>?,
+        kodeverkHolder: KodeverkHolder
+    ): Soknadsfelt<List<String>?>? {
+        if (aarsakUlykke == null) {
+            return null
+        }
+        return Soknadsfelt("Hva var årsaken til hendelsen og bakgrunn for årsaken",
+            aarsakUlykke.map { kodeverkHolder.mapKodeTilVerdi(it, "aarsakOgBakgrunn") })
+    }
+
+    private fun tilBakgrunnsaarsakEllerNull(
+        bakgrunnsaarsak: List<String>?,
+        kodeverkHolder: KodeverkHolder
+    ): Soknadsfelt<List<String>?>? {
+        if (bakgrunnsaarsak == null) {
+            return null
+        }
+        return Soknadsfelt("Hva var bakgrunnen til hendelsen",
+            bakgrunnsaarsak.map { kodeverkHolder.mapKodeTilVerdi(it, "bakgrunnForHendelsen") })
     }
 
     private fun tilPdfPeriode(periode: Periode): PdfPeriode =
