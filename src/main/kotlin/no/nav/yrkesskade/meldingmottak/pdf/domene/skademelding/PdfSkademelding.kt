@@ -57,7 +57,7 @@ data class PdfHendelsesfakta(
     val tid: PdfTid,
     val naarSkjeddeUlykken: Soknadsfelt<String>,
     val hvorSkjeddeUlykken: Soknadsfelt<String>,
-    val ulykkessted: PdfUlykkessted,
+    val ulykkessted: PdfUlykkessted?,
     val paavirkningsform: Soknadsfelt<List<String>?>,
     val aarsakUlykke: Soknadsfelt<List<String>?>,
     val bakgrunnsaarsak: Soknadsfelt<List<String>?>,
