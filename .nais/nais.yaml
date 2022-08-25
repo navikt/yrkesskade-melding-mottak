@@ -49,7 +49,17 @@ spec:
       {{/each}}
     outbound:
       external:
-        - host: yrkesskade-infotrygd.dev-fss-pub.nais.io
+      {{#each externalOutboundHosts}}
+         - host: {{host}}
+      {{#if ports}}
+        ports:
+          {{#each ports}}
+             - name: {{name}}
+          port: {{port}}
+      protocol: {{protocol}}
+      {{/each}}
+      {{/if}}
+      {{/each}}
   resources:
     limits:
       cpu: 2000m
