@@ -8,7 +8,7 @@ class KodeverkHolder private constructor(private val kodeverkService: KodeverkSe
     private val kodeverk: MutableMap<String, Map<String, KodeverdiDto>> = mutableMapOf()
 
     fun mapKodeTilVerdi(kode: String, kodeliste: String): String {
-        return kodeverk.get(kodeliste)!!.getOrDefault(kode, KodeverdiDto(kode, "Ukjent $kode")).verdi!!
+        return kodeverk[kodeliste]!!.getOrDefault(kode, KodeverdiDto(kode, "Ukjent $kode")).verdi!!
     }
 
     fun hentKodeverk(kategorinavn: String?) {
