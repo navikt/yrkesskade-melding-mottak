@@ -4,9 +4,29 @@ package no.nav.yrkesskade.meldingmottak.fixtures
 
 import no.nav.yrkesskade.meldingmottak.domene.BeriketData
 import no.nav.yrkesskade.meldingmottak.domene.Navn
-import no.nav.yrkesskade.model.*
-import no.nav.yrkesskade.skademelding.model.*
-import java.time.*
+import no.nav.yrkesskade.model.SkademeldingBeriketData
+import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
+import no.nav.yrkesskade.model.SkademeldingMetadata
+import no.nav.yrkesskade.model.Spraak
+import no.nav.yrkesskade.model.Systemkilde
+import no.nav.yrkesskade.skademelding.model.Adresse
+import no.nav.yrkesskade.skademelding.model.Dekningsforhold
+import no.nav.yrkesskade.skademelding.model.Hendelsesfakta
+import no.nav.yrkesskade.skademelding.model.Innmelder
+import no.nav.yrkesskade.skademelding.model.Periode
+import no.nav.yrkesskade.skademelding.model.Skade
+import no.nav.yrkesskade.skademelding.model.Skadelidt
+import no.nav.yrkesskade.skademelding.model.Skademelding
+import no.nav.yrkesskade.skademelding.model.SkadetDel
+import no.nav.yrkesskade.skademelding.model.Tid
+import no.nav.yrkesskade.skademelding.model.Tidstype
+import no.nav.yrkesskade.skademelding.model.Ulykkesadresse
+import no.nav.yrkesskade.skademelding.model.Ulykkessted
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 fun enkelSkademeldingInnsendtHendelse(): SkademeldingInnsendtHendelse {
     return SkademeldingInnsendtHendelse(
@@ -110,7 +130,7 @@ private fun hendelsesfakta(): Hendelsesfakta {
         hvorSkjeddeUlykken = "arbeidsstedUte",
         ulykkessted = Ulykkessted(
             sammeSomVirksomhetensAdresse = true,
-            adresse = Adresse(
+            adresse = Ulykkesadresse(
                 adresselinje1 = "Storgaten 13",
                 adresselinje2 = "2345 Småbygda",
                 adresselinje3 = null,
@@ -153,7 +173,7 @@ private fun hendelsesfaktaSykdom(): Hendelsesfakta {
         hvorSkjeddeUlykken = "arbeidsstedUte",
         ulykkessted = Ulykkessted(
             sammeSomVirksomhetensAdresse = true,
-            adresse = Adresse(
+            adresse = Ulykkesadresse(
                 adresselinje1 = "Storgaten 13",
                 adresselinje2 = "2345 Småbygda",
                 adresselinje3 = null,
