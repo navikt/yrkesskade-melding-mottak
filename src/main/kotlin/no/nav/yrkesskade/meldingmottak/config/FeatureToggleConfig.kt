@@ -6,9 +6,11 @@ import no.finn.unleash.UnleashContextProvider
 import no.finn.unleash.util.UnleashConfig
 import no.nav.yrkesskade.featureflag.strategy.ByClusterName
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.context.annotation.Bean
+import org.springframework.core.env.Environment
 import java.lang.invoke.MethodHandles
 import java.net.URI
 
@@ -25,6 +27,9 @@ class FeatureToggleConfig(
         val cluster: String,
         val applicationName: String
     )
+
+    @Autowired
+    lateinit var environment: Environment
 
     @Bean
     fun featureToggle(): FeatureToggleService =
@@ -66,6 +71,10 @@ class FeatureToggleConfig(
     private fun lagDummyFeatureToggleService(): FeatureToggleService {
         return object : FeatureToggleService {
             override fun isEnabled(toggleId: String, defaultValue: Boolean): Boolean {
+                if (toggleId == FeatureToggles.ER_IKKE_PROD.toggleId && environment.activeProfiles.first().orEmpty() != "integration") {
+                    return true;
+                }
+
                 if (unleash.cluster == "lokal") {
                     return false
                 }
@@ -87,4 +96,8 @@ interface FeatureToggleService {
     }
 
     fun isEnabled(toggleId: String, defaultValue: Boolean = false): Boolean
+}
+
+enum class FeatureToggles(val toggleId: String) {
+    ER_IKKE_PROD("yrkesskade.er-ikke-prod")
 }

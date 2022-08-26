@@ -9,6 +9,7 @@ import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClientStub
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
+import no.nav.yrkesskade.meldingmottak.config.FeatureToggleService
 import no.nav.yrkesskade.meldingmottak.fixtures.hentIdenterResultMedBrukerAktoeridOgFoedselsnummer
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalposttypeUtgaaende
 import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalstatusFeilregistrert
@@ -42,16 +43,19 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
 
     private val bigQueryClientStub: BigQueryClient = BigQueryClientStub()
 
+    private val featureToggleService: FeatureToggleService = mockk()
+
     private val journalpostId = "1337"
     private val task = ProsesserJournalfoeringHendelseTask.opprettTask(journalpostId)
 
     private val prosesserJournalfoeringHendelseTask: ProsesserJournalfoeringHendelseTask =
-        ProsesserJournalfoeringHendelseTask(safClientMock, pdlClientMock, rutingServiceMock, oppgaveClientMock, bigQueryClientStub, dokumentTilSaksbehandlingClient)
+        ProsesserJournalfoeringHendelseTask(safClientMock, pdlClientMock, rutingServiceMock, oppgaveClientMock, bigQueryClientStub, dokumentTilSaksbehandlingClient, featureToggleService)
 
     @BeforeEach
     fun init() {
         MDC.put(MDCConstants.MDC_CALL_ID, "mock")
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedBrukerAktoeridOgFoedselsnummer()
+        every { featureToggleService.isEnabled(any(), any()) } returns true
     }
 
     @Test
@@ -67,7 +71,7 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultWithBrukerFnr()
 
         prosesserJournalfoeringHendelseTask.doTask(task)
-        verify(exactly = 1) {pdlClientMock.hentAktorId(any()) }
+        verify(exactly = 1) { pdlClientMock.hentAktorId(any()) }
     }
 
     @Test
