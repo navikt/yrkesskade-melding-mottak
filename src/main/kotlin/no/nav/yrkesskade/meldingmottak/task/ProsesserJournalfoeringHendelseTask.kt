@@ -25,6 +25,7 @@ import no.nav.yrkesskade.meldingmottak.config.FeatureToggleService
 import no.nav.yrkesskade.meldingmottak.config.FeatureToggles
 import no.nav.yrkesskade.meldingmottak.domene.Brevkode
 import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
+import no.nav.yrkesskade.meldingmottak.services.Rute
 import no.nav.yrkesskade.meldingmottak.services.RutingService
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentBrevkode
@@ -167,7 +168,7 @@ class ProsesserJournalfoeringHendelseTask(
      * Bestemmer om en journalpost, for en person, SKAL sendes til nytt saksbehandlingssystem for yrkesskade/-sykdom.
      */
     private fun skalRutesTilYsSaksbehandling(foedselsnummer: String) =
-        rutingService.utfoerRuting(foedselsnummer) == RutingService.Rute.YRKESSKADE_SAKSBEHANDLING
+        rutingService.utfoerRuting(foedselsnummer) == Rute.YRKESSKADE_SAKSBEHANDLING
 
     /**
      * Bestemmer om en journalpost fra en Kafka-record er en tannlegeerklæring.

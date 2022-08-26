@@ -3,19 +3,27 @@ package no.nav.yrkesskade.meldingmottak.util.ruting
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkademelding
 import no.nav.yrkesskade.meldingmottak.fixtures.hendelsesfaktaSykdom
 import no.nav.yrkesskade.meldingmottak.fixtures.skademeldingSykdom
+import no.nav.yrkesskade.meldingmottak.konstanter.ENHET_VIKAFOSSEN
 import no.nav.yrkesskade.meldingmottak.konstanter.ENHET_YRKESSYKDOM
+import no.nav.yrkesskade.meldingmottak.services.RutingStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-internal class YrkessykdomRutingTest {
+internal class YrkessykdomEnhetsrutingTest {
 
     @Test
     fun `skal gi exception naar tidstype ikke er periode`() {
         val exception = assertThrows<IllegalStateException> {
-            YrkessykdomRuting.utledEnhet(enkelSkademelding())
+            YrkessykdomEnhetsruting.utledEnhet(enkelSkademelding(), RutingStatus())
         }
         assertThat(exception.localizedMessage).contains("tidstype må være periode")
+    }
+
+    @Test
+    fun `skal gi tom enhet naar person er kode 6`() {
+        val enhet = YrkessykdomEnhetsruting.utledEnhet(skademeldingSykdom(), RutingStatus(kode6StrengtFortrolig = true))
+        assertThat(enhet).isEqualTo(ENHET_VIKAFOSSEN)
     }
 
     @Test
@@ -26,7 +34,7 @@ internal class YrkessykdomRutingTest {
                 paavirkningsform = emptyList()
             )
         )
-        val enhet = YrkessykdomRuting.utledEnhet(skademeldingSykdomUtenPaavirkningsform)
+        val enhet = YrkessykdomEnhetsruting.utledEnhet(skademeldingSykdomUtenPaavirkningsform, RutingStatus())
         assertThat(enhet).isNull()
     }
 
@@ -38,13 +46,13 @@ internal class YrkessykdomRutingTest {
                 paavirkningsform = null
             )
         )
-        val enhet = YrkessykdomRuting.utledEnhet(skademeldingSykdomUtenPaavirkningsform)
+        val enhet = YrkessykdomEnhetsruting.utledEnhet(skademeldingSykdomUtenPaavirkningsform, RutingStatus())
         assertThat(enhet).isNull()
     }
 
     @Test
     fun `regel1 gir enhet yrkessykdom`() {
-        val enhet = YrkessykdomRuting.utledEnhet(skademeldingSykdom())
+        val enhet = YrkessykdomEnhetsruting.utledEnhet(skademeldingSykdom(), RutingStatus())
         assertThat(enhet).isEqualTo(ENHET_YRKESSYKDOM)
     }
 
@@ -59,7 +67,7 @@ internal class YrkessykdomRutingTest {
             )
         )
 
-        val enhet = YrkessykdomRuting.utledEnhet(skademeldingSykdomSomTrefferRegel2)
+        val enhet = YrkessykdomEnhetsruting.utledEnhet(skademeldingSykdomSomTrefferRegel2, RutingStatus())
         assertThat(enhet).isNull()
     }
 }

@@ -3,20 +3,34 @@ package no.nav.yrkesskade.meldingmottak.services
 import com.expediagroup.graphql.generated.Date
 import com.expediagroup.graphql.generated.HentIdenter
 import com.expediagroup.graphql.generated.enums.AdressebeskyttelseGradering
-import com.expediagroup.graphql.generated.hentperson.*
+import com.expediagroup.graphql.generated.hentperson.Adressebeskyttelse
+import com.expediagroup.graphql.generated.hentperson.Bostedsadresse
+import com.expediagroup.graphql.generated.hentperson.Doedsfall
+import com.expediagroup.graphql.generated.hentperson.Navn
+import com.expediagroup.graphql.generated.hentperson.Person
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.infotrygd.InfotrygdClient
 import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermedePersonerClient
-import no.nav.yrkesskade.meldingmottak.fixtures.*
+import no.nav.yrkesskade.meldingmottak.fixtures.doedPerson
+import no.nav.yrkesskade.meldingmottak.fixtures.forGamleJournalposterResult
+import no.nav.yrkesskade.meldingmottak.fixtures.gyldigFortroligPersonMedNavnOgVegadresse
+import no.nav.yrkesskade.meldingmottak.fixtures.gyldigPersonMedNavnOgVegadresse
+import no.nav.yrkesskade.meldingmottak.fixtures.gyldigStrengtFortroligPersonMedNavnOgVegadresse
+import no.nav.yrkesskade.meldingmottak.fixtures.hentIdenterResultMedFnrHistorikk
+import no.nav.yrkesskade.meldingmottak.fixtures.journalposterResult
+import no.nav.yrkesskade.meldingmottak.fixtures.journalposterResultMedSak
+import no.nav.yrkesskade.meldingmottak.fixtures.sakerResult
+import no.nav.yrkesskade.meldingmottak.fixtures.sakerResultMedForGammelGenerellYrkesskadesak
+import no.nav.yrkesskade.meldingmottak.fixtures.sakerResultMedGenerellYrkesskadesak
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @Suppress("NonAsciiCharacters")
-class RutingServiceTest {
+class EnhetsrutingServiceTest {
 
     private val pdlClientMock: PdlClient = mockk()
     private val safClientMock: SafClient = mockk()
@@ -24,7 +38,7 @@ class RutingServiceTest {
     private val infotrygdClientMock: InfotrygdClient = mockk()
 
     private lateinit var service: RutingService
-    private lateinit var status: RutingService.RutingStatus
+    private lateinit var status: RutingStatus
 
     private val foedselsnummer = "12345678901"
 
@@ -32,7 +46,7 @@ class RutingServiceTest {
     @BeforeEach
     fun init() {
         service = RutingService(pdlClientMock, safClientMock, skjermedePersonerClientMock, infotrygdClientMock)
-        status = RutingService.RutingStatus()
+        status = RutingStatus()
     }
 
     @Test
@@ -165,32 +179,32 @@ class RutingServiceTest {
     @Test
     fun `hvis ingen person i pdl, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns null
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `hvis person er død, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns doedPerson()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `hvis person er kode 7 fortrolig, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigFortroligPersonMedNavnOgVegadresse()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `hvis person er kode 6 strengt fortrolig, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigStrengtFortroligPersonMedNavnOgVegadresse()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `hvis person er egen ansatt, dvs ansatt i NAV, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
         every { skjermedePersonerClientMock.erSkjermet(any()) } returns true
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
@@ -199,19 +213,19 @@ class RutingServiceTest {
         every { skjermedePersonerClientMock.erSkjermet(any()) } returns false
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedGenerellYrkesskadesak()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `skal hente åpne generelle YRK saker nyere enn 24 mnd`() {
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedGenerellYrkesskadesak()
-        assertThat(service.harAapenGenerellYrkesskadeSak("12345678901", RutingService.RutingStatus())).isTrue
+        assertThat(service.harAapenGenerellYrkesskadeSak("12345678901", RutingStatus())).isTrue
     }
 
     @Test
     fun `finner ingen åpen generell YRK sak naar saken er eldre enn 24 mnd`() {
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedForGammelGenerellYrkesskadesak()
-        assertThat(service.harAapenGenerellYrkesskadeSak("12345678901", RutingService.RutingStatus())).isFalse
+        assertThat(service.harAapenGenerellYrkesskadeSak("12345678901", RutingStatus())).isFalse
     }
 
     @Test
@@ -221,7 +235,7 @@ class RutingServiceTest {
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns true
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
@@ -232,19 +246,19 @@ class RutingServiceTest {
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResult()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `skal hente potensielle kommende saker naar det finnes journalpost nyere enn 24 mnd`() {
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResult()
-        assertThat(service.harPotensiellKommendeSak("12345678901", RutingService.RutingStatus())).isTrue
+        assertThat(service.harPotensiellKommendeSak("12345678901", RutingStatus())).isTrue
     }
 
     @Test
     fun `finner ingen potensiell kommende sak naar journalposter er eldre enn 24 mnd`() {
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns forGamleJournalposterResult()
-        assertThat(service.harPotensiellKommendeSak("12345678901", RutingService.RutingStatus())).isFalse
+        assertThat(service.harPotensiellKommendeSak("12345678901", RutingStatus())).isFalse
     }
 
     @Test
@@ -255,7 +269,7 @@ class RutingServiceTest {
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResultMedSak()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(RutingService.Rute.YRKESSKADE_SAKSBEHANDLING)
+        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.YRKESSKADE_SAKSBEHANDLING)
     }
 
 

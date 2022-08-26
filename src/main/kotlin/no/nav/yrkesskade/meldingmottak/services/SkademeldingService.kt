@@ -22,7 +22,6 @@ import no.nav.yrkesskade.meldingmottak.domene.Kanal
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostRequest
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
-import no.nav.yrkesskade.meldingmottak.util.ruting.Ruting
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -42,7 +41,8 @@ class SkademeldingService(
     private val pdfService: PdfService,
     private val pdlClient: PdlClient,
     private val dokarkivClient: DokarkivClient,
-    private val bigQueryClient: BigQueryClient
+    private val bigQueryClient: BigQueryClient,
+    private val rutingService: RutingService
 ) {
     private val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
     private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
@@ -108,7 +108,7 @@ class SkademeldingService(
         return OpprettJournalpostRequest(
             tittel = DIGITAL_SKADEMELDING_TITTEL,
             journalposttype = Journalposttype.INNGAAENDE,
-            journalfoerendeEnhet = Ruting.utledEnhet(skademelding),
+            journalfoerendeEnhet = rutingService.finnEnhet(skademelding),
             avsenderMottaker = AvsenderMottaker(
                 navn = record.beriketData.innmeldersOrganisasjonsnavn.first,
                 id = skademelding.innmelder.paaVegneAv,

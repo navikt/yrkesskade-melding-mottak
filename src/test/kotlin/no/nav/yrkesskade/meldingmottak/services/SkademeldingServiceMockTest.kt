@@ -20,8 +20,9 @@ class SkademeldingServiceMockTest {
     private val pdlClient: PdlClient = mockk()
     private val dokarkivClient: DokarkivClient = mockk()
     private val bigQueryClient = BigQueryClientStub()
+    private val rutingService: RutingService = mockk()
 
-    private val service: SkademeldingService = SkademeldingService(pdfService, pdlClient, dokarkivClient, bigQueryClient)
+    private val service: SkademeldingService = SkademeldingService(pdfService, pdlClient, dokarkivClient, bigQueryClient, rutingService)
 
     @BeforeEach
     fun setup() {
