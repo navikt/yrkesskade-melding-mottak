@@ -226,6 +226,15 @@ object PdfSkademeldingMapper {
         }
 
         return PdfAdresse(
+            adresselinje1 = adresse.adresselinje1.orEmpty(),
+            adresselinje2 = adresse.adresselinje2,
+            adresselinje3 = adresse.adresselinje3,
+            land = landNavnEllerKode(adresse.land, kodeverkHolder)
+        )
+    }
+
+    private fun tilPdfUlykkesadresse(adresse: Ulykkesadresse, kodeverkHolder: KodeverkHolder): PdfAdresse {
+        return PdfAdresse(
             adresselinje1 = adresse.adresselinje1,
             adresselinje2 = adresse.adresselinje2,
             adresselinje3 = adresse.adresselinje3,
