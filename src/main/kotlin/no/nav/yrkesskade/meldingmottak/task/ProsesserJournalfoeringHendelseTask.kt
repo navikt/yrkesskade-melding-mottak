@@ -1,6 +1,7 @@
 package no.nav.yrkesskade.meldingmottak.task
 
 import com.expediagroup.graphql.generated.enums.BrukerIdType
+import com.expediagroup.graphql.generated.enums.IdentGruppe
 import com.expediagroup.graphql.generated.enums.Journalposttype
 import com.expediagroup.graphql.generated.enums.Journalstatus
 import com.expediagroup.graphql.generated.enums.Tema
@@ -20,6 +21,11 @@ import no.nav.yrkesskade.meldingmottak.clients.gosys.OpprettJournalfoeringOppgav
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Prioritet
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
+import no.nav.yrkesskade.meldingmottak.config.FeatureToggleService
+import no.nav.yrkesskade.meldingmottak.config.FeatureToggles
+import no.nav.yrkesskade.meldingmottak.domene.Brevkode
+import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
+import no.nav.yrkesskade.meldingmottak.services.RutingService
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentBrevkode
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentHovedDokumentTittel
@@ -28,6 +34,9 @@ import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.prosessering.AsyncTaskStep
 import no.nav.yrkesskade.prosessering.TaskStepBeskrivelse
 import no.nav.yrkesskade.prosessering.domene.Task
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandling
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingHendelse
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingMetadata
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -45,8 +54,11 @@ import java.lang.invoke.MethodHandles
 class ProsesserJournalfoeringHendelseTask(
     private val safClient: SafClient,
     private val pdlClient: PdlClient,
+    private val rutingService: RutingService,
     private val oppgaveClient: OppgaveClient,
-    private val bigQueryClient: BigQueryClient
+    private val bigQueryClient: BigQueryClient,
+    private val dokumentTilSaksbehandlingClient: DokumentTilSaksbehandlingClient,
+    private val featureToggleService: FeatureToggleService
 ) : AsyncTaskStep {
 
     val log: Logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
@@ -63,10 +75,33 @@ class ProsesserJournalfoeringHendelseTask(
         }
         validerJournalpost(journalpost)
 
-        opprettOppgave(journalpost).also { oppgave ->
-            log.info("Opprettet oppgave for journalpostId ${journalpost.journalpostId}")
-            foerMetrikkIBigQuery(journalpost, oppgave)
+        val foedselsnummer = hentFoedselsnummer(journalpost.bruker, payloadDto.journalpostId)
+
+        // TODO: YSMOD-509 fjerne feature toggle når ruting skal kunne gå til vår saksbehandling
+        if (featureToggleService.isEnabled(FeatureToggles.ER_IKKE_PROD.toggleId, true) &&
+            foedselsnummer != null &&
+            journalpostErKandidatForYsSaksbehandling(journalpost) &&
+            skalRutesTilYsSaksbehandling(foedselsnummer)
+        ) {
+            val dokumentTilSaksbehandlingHendelse = DokumentTilSaksbehandlingHendelse(
+                DokumentTilSaksbehandling(
+                    journalpostId = journalpost.journalpostId,
+                    enhet = "9999",
+                ),
+                metadata = DokumentTilSaksbehandlingMetadata(callId = MDC.get(MDCConstants.MDC_CALL_ID))
+            )
+            dokumentTilSaksbehandlingClient.sendTilSaksbehandling(dokumentTilSaksbehandlingHendelse).also {
+                log.info("Sendt dokument til ny saksbehandlingsløsning for journalpostId ${dokumentTilSaksbehandlingHendelse.dokumentTilSaksbehandling.journalpostId}")
+            }
+
         }
+        else {
+            opprettOppgave(journalpost).also { oppgave ->
+                log.info("Opprettet oppgave for journalpostId ${journalpost.journalpostId}")
+                foerMetrikkIBigQuery(journalpost, oppgave)
+            }
+        }
+
     }
 
     /**
@@ -121,6 +156,33 @@ class ProsesserJournalfoeringHendelseTask(
         return true
     }
 
+    /**
+     * Bestemmer om en journalpost er av en type som KAN sendes til nytt saksbehandlingssystem for yrkesskade/-sykdom.
+     */
+    private fun journalpostErKandidatForYsSaksbehandling(journalpost: Journalpost): Boolean {
+        return erTannlegeerklaering(journalpost)
+    }
+
+    /**
+     * Bestemmer om en journalpost, for en person, SKAL sendes til nytt saksbehandlingssystem for yrkesskade/-sykdom.
+     */
+    private fun skalRutesTilYsSaksbehandling(foedselsnummer: String) =
+        rutingService.utfoerRuting(foedselsnummer) == RutingService.Rute.YRKESSKADE_SAKSBEHANDLING
+
+    /**
+     * Bestemmer om en journalpost fra en Kafka-record er en tannlegeerklæring.
+     */
+    private fun erTannlegeerklaering(journalpost: Journalpost): Boolean =
+        (journalpost.hentBrevkode() == Brevkode.TANNLEGEERKLAERING.kode)
+            .also {
+                if (it) {
+                    log.info("Dette er en tannlegeerklæring, brevkode er ${journalpost.hentBrevkode()}")
+                }
+                else {
+                    log.info("Dette er ingen tannlegeerklæring, brevkode er ${journalpost.hentBrevkode()}")
+                }
+            }
+
     @Throws(RuntimeException::class)
     private fun hentJournalpostFraSaf(journalpostId: String): Journalpost {
         val safResultat = safClient.hentOppdatertJournalpost(journalpostId)
@@ -142,6 +204,44 @@ class ProsesserJournalfoeringHendelseTask(
                         ", datoOpprettet ${it.datoOpprettet}"
             )
         }
+    }
+
+    private fun hentFoedselsnummer(bruker: Bruker?, journalpostId: String): String? {
+        if (bruker?.id.isNullOrEmpty() || bruker?.type == null) {
+            return null
+        }
+
+        return when (bruker.type) {
+            BrukerIdType.FNR -> bruker.id.also {
+                log.info("Hentet fødselsnummer fra bruker på jounalposten")
+                secureLogger.info("Hentet fødselsnummer ${bruker.id} fra bruker på journalposten")
+            }
+            BrukerIdType.AKTOERID -> hentFoedselsnummerFraPdl(bruker.id!!, journalpostId).also {
+                log.info("Hentet fødselsnummer fra pdl")
+                secureLogger.info("Hentet fødselsnummer $it fra pdl for aktørId ${bruker.id}")
+            }
+            else -> {
+                log.info("Bruker på journalpost med id $journalpostId er ikke en person!")
+                secureLogger.info("Bruker ${bruker.id} på journalpost med id $journalpostId er ikke en person!")
+                throw java.lang.RuntimeException("Bruker på journalpost med id $journalpostId er ikke en person!")
+            }
+        }
+    }
+
+    @Throws(RuntimeException::class)
+    private fun hentFoedselsnummerFraPdl(aktorId: String, journalpostId: String): String {
+        val identerResult = pdlClient.hentIdenter(aktorId, listOf(IdentGruppe.FOLKEREGISTERIDENT))
+
+        val foedselsnummer = identerResult?.hentIdenter?.identer?.filter { it.gruppe == IdentGruppe.FOLKEREGISTERIDENT }
+            ?.getOrNull(0)?.ident
+
+        if (foedselsnummer == null) {
+            log.error("Fant ikke fødselsnummer for bruker på journalpost med id $journalpostId")
+            secureLogger.error("Fant ikke fødselsnummer for bruker på journalpost med id $journalpostId og med aktørId $aktorId")
+            throw RuntimeException("Fant ikke fødselsnummer for bruker på journalpost med id $journalpostId")
+        }
+
+        return foedselsnummer
     }
 
     private fun hentAktoerId(bruker: Bruker?): String? {

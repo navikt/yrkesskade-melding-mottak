@@ -20,6 +20,7 @@ import no.nav.yrkesskade.skademelding.model.Skademelding
 import no.nav.yrkesskade.skademelding.model.SkadetDel
 import no.nav.yrkesskade.skademelding.model.Tid
 import no.nav.yrkesskade.skademelding.model.Tidstype
+import no.nav.yrkesskade.skademelding.model.Ulykkesadresse
 import no.nav.yrkesskade.skademelding.model.Ulykkessted
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -129,7 +130,7 @@ private fun hendelsesfakta(): Hendelsesfakta {
         hvorSkjeddeUlykken = "arbeidsstedUte",
         ulykkessted = Ulykkessted(
             sammeSomVirksomhetensAdresse = true,
-            adresse = Adresse(
+            adresse = Ulykkesadresse(
                 adresselinje1 = "Storgaten 13",
                 adresselinje2 = "2345 Småbygda",
                 adresselinje3 = null,
@@ -172,7 +173,7 @@ fun hendelsesfaktaSykdom(): Hendelsesfakta {
         hvorSkjeddeUlykken = "arbeidsstedUte",
         ulykkessted = Ulykkessted(
             sammeSomVirksomhetensAdresse = true,
-            adresse = Adresse(
+            adresse = Ulykkesadresse(
                 adresselinje1 = "Storgaten 13",
                 adresselinje2 = "2345 Småbygda",
                 adresselinje3 = null,

@@ -4,6 +4,7 @@ import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.retry.annotation.Retryable
@@ -38,7 +39,7 @@ class OppgaveClient(
                 }
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithOppgaveScope()}")
-                .header("X-Correlation-ID", MDCConstants.MDC_CALL_ID)
+                .header("X-Correlation-ID", MDC.get(MDCConstants.MDC_CALL_ID))
                 .header("Nav-Consumer-Id", applicationName)
                 .bodyValue(oppgave)
                 .retrieve()
@@ -69,7 +70,7 @@ class OppgaveClient(
                         .build()
                 }
                 .header("Authorization", "Bearer ${tokenUtil.getAppAccessTokenWithOppgaveScope()}")
-                .header("X-Correlation-ID", MDCConstants.MDC_CALL_ID)
+                .header("X-Correlation-ID", MDC.get(MDCConstants.MDC_CALL_ID))
                 .header("Nav-Consumer-Id", applicationName)
                 .retrieve()
                 .bodyToMono<OppgaveResponse>()

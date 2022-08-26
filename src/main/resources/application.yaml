@@ -14,6 +14,9 @@ spring:
       enable-auto-commit: false
       properties:
         spring.json.trusted.packages: no.nav.yrkesskade.model,no.nav.yrkesskade.skadeforklaring.integration.mottak.model
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     listener:
       ack-mode: record
   datasource:
@@ -77,14 +80,18 @@ kodeverk:
     gyldigTidMinutter: 60
 
 YRKESSKADE_DOKGEN_API_URL: http://yrkesskade-dokgen.default
+YRKESSKADE_INFOTRYGD_API_URL: https://yrkesskade-infotrygd.dev-fss-pub.nais.io
 YRKESSKADE_KODEVERK_API_URL: https://yrkesskade-kodeverk.dev.intern.nav.no
 saf.graphql.url: https://saf.dev-fss-pub.nais.io/graphql
 pdl.graphql.url: https://pdl-api.dev-fss-pub.nais.io/graphql
 oppgave.url: https://oppgave-q1.dev-fss-pub.nais.io
 dokarkiv.url: https://dokarkiv.dev-fss-pub.nais.io
+skjermede-personer-pip.url: https://skjermede-personer-pip.dev.intern.nav.no
 
 SAF_APP_CLIENT_ID: dev-fss.teamdokumenthandtering.saf
 PDL_APP_CLIENT_ID: dev-fss.pdl.pdl-api
 DOKARKIV_CLIENT_ID: dev-fss.teamdokumenthandtering.dokarkiv-q1
+SKJERMEDE_PERSONER_CLIENT_ID: dev-gcp.nom.skjermede-personer-pip
 OPPGAVE_APP_CLIENT_ID: bef7cd4d-e65e-41f8-a743-b643e81f2aea
+YRKESSKADE_INFOTRYGD_CLIENT_ID: 90e5df9b-430e-44e8-82c4-be9e392d9010
 TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851         # trygdeetaten.no

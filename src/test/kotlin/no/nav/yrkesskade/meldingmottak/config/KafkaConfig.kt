@@ -6,6 +6,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
+import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingHendelse
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
@@ -15,7 +16,11 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
-import org.springframework.kafka.core.*
+import org.springframework.kafka.core.ConsumerFactory
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory
+import org.springframework.kafka.core.DefaultKafkaProducerFactory
+import org.springframework.kafka.core.KafkaTemplate
+import org.springframework.kafka.core.ProducerFactory
 import org.springframework.kafka.listener.ContainerStoppingErrorHandler
 import org.springframework.kafka.support.serializer.JsonDeserializer
 import org.springframework.kafka.support.serializer.JsonSerializer
@@ -50,6 +55,36 @@ class KafkaConfig {
             StringDeserializer(),
             KafkaAvroDeserializer(schemaRegistryClient, consumerProperties)
         )
+    }
+
+    @Bean
+    fun dokumentTilSaksbehandlingProducerFactory(
+        kafkaProperties: KafkaProperties
+    ): ProducerFactory<String, DokumentTilSaksbehandlingHendelse> {
+        return DefaultKafkaProducerFactory(kafkaProperties.buildProducerProperties())
+    }
+
+    @Bean
+    fun dokumentTilSaksbehandlingHendelseConsumerFactory(
+        kafkaProperties: KafkaProperties
+    ): ConsumerFactory<String, DokumentTilSaksbehandlingHendelse> {
+        val consumerProperties = kafkaProperties.buildConsumerProperties().apply {
+            this["spring.json.trusted.packages"] = "no.nav.yrkesskade.saksbehandling.model"
+            this[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java
+        }
+        return DefaultKafkaConsumerFactory(consumerProperties)
+    }
+
+    @Bean
+    fun dokumentTilSaksbehandlingHendelseListenerContainerFactory(
+        dokumentTilSaksbehandlingHendelseConsumerFactory: ConsumerFactory<String, DokumentTilSaksbehandlingHendelse>
+    ): ConcurrentKafkaListenerContainerFactory<String, DokumentTilSaksbehandlingHendelse> {
+
+        return ConcurrentKafkaListenerContainerFactory<String, DokumentTilSaksbehandlingHendelse>().apply {
+            this.setConsumerFactory(dokumentTilSaksbehandlingHendelseConsumerFactory)
+            this.setErrorHandler(ContainerStoppingErrorHandler())
+            this.setRetryTemplate(retryTemplate())
+        }
     }
 
     @Bean
@@ -145,4 +180,10 @@ class KafkaConfig {
         skadeforklaringProducerFactory: ProducerFactory<String, SkadeforklaringInnsendingHendelse>
     ): KafkaTemplate<String, SkadeforklaringInnsendingHendelse> = KafkaTemplate(skadeforklaringProducerFactory)
 
+    @Bean
+    fun dokumentTilSaksbehandlingHendelseKafkaTemplate(
+        dokumentTilSaksbehandlingProducerFactory: ProducerFactory<String, DokumentTilSaksbehandlingHendelse>
+    ): KafkaTemplate<String, DokumentTilSaksbehandlingHendelse> {
+        return KafkaTemplate(dokumentTilSaksbehandlingProducerFactory)
+    }
 }

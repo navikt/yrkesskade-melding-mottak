@@ -1,0 +1,23 @@
+apiVersion: kafka.nais.io/v1
+kind: Topic
+metadata:
+  name: privat-yrkesskade-dokument-til-saksbehandling
+  namespace: yrkesskade
+  labels:
+    team: yrkesskade
+spec:
+  pool: nav-prod
+  config:
+    cleanupPolicy: delete
+    minimumInSyncReplicas: 1
+    partitions: 1
+    replication: 3
+    retentionBytes: -1
+    retentionHours: 336
+  acl:
+    - team: yrkesskade
+      application: yrkesskade-melding-mottak
+      access: write
+    - team: yrkesskade
+      application: yrkesskade-saksbehandling-backend
+      access: read

@@ -5,6 +5,7 @@ import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgavetype
 import no.nav.yrkesskade.meldingmottak.domene.Journalpoststatus
 import no.nav.yrkesskade.meldingmottak.domene.Kanal
+import no.nav.yrkesskade.meldingmottak.konstanter.TEMA_YRKESSKADE
 import no.nav.yrkesskade.meldingmottak.task.ProsesserJournalfoeringHendelseTask
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.prosessering.domene.TaskRepository
@@ -12,13 +13,13 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.lang.invoke.MethodHandles
 
-private const val TEMA_YRKESSKADE = "YRK"
 
+@Suppress("DuplicatedCode")
 @Service
 class JournalfoeringHendelseService(
     private val taskRepository: TaskRepository,
     private val oppgaveClient: OppgaveClient
-    ) {
+) {
 
     private val log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
     private val secureLogger = getSecureLogger()
@@ -61,8 +62,6 @@ class JournalfoeringHendelseService(
     /**
      * Bestemmer om en Kafka-record har relevant journalpoststatus for prosessering hos oss.
      * Mottakskanalen må med andre ord være en av de vi lytter på (se enum [Journalpoststatus])
-     *
-     * @param record Recorden som kommer fra Kafka-topicet
      */
     private fun journalpoststatusErRelevant(journalpostStatus: String) =
         Journalpoststatus.values()

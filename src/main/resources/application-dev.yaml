@@ -26,6 +26,7 @@ kafka:
     aapen-dok-journalfoering: teamdokumenthandtering.aapen-dok-journalfoering-q1
     skademelding-innsendt: yrkesskade.privat-yrkesskade-skademeldinginnsendt
     skadeforklaring-innsendt: yrkesskade.privat-yrkesskade-skadeforklaringinnsendt
+    dokument-til-saksbehandling: yrkesskade.privat-yrkesskade-dokument-til-saksbehandling
 
 storage.type: GCP
 
@@ -64,6 +65,22 @@ no.nav.security.jwt:
         token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
         grant-type: client_credentials
         scope: api://${DOKARKIV_CLIENT_ID}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
+      skjermede-personer-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${SKJERMEDE_PERSONER_CLIENT_ID}/.default
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-jwk: ${AZURE_APP_JWK}
+          client-auth-method: private_key_jwt
+      yrkesskade-infotrygd-maskintilmaskin:
+        token-endpoint-url: https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token
+        grant-type: client_credentials
+        scope: api://${YRKESSKADE_INFOTRYGD_CLIENT_ID}/.default
         authentication:
           client-id: ${AZURE_APP_CLIENT_ID}
           client-jwk: ${AZURE_APP_JWK}
