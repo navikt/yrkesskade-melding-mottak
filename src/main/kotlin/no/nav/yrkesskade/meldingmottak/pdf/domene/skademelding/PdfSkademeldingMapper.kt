@@ -180,7 +180,7 @@ object PdfSkademeldingMapper {
             ),
             adresse = Soknadsfelt(
                 if (erSykdom) "Adresse hvor den skadelige påvirkningen har skjedd" else "Adresse for ulykken",
-                tilPdfAdresse(ulykkessted.adresse, kodeverkHolder)
+                tilPdfUlykkesadresse(ulykkessted.adresse, kodeverkHolder)
             )
         )
     }
