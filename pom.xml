@@ -115,6 +115,16 @@
             <version>${yrkesskade-felles-backend.version}</version>
         </dependency>
         <dependency>
+            <groupId>no.nav.yrkesskade</groupId>
+            <artifactId>featureflag</artifactId>
+            <version>${yrkesskade-felles-backend.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.yrkesskade</groupId>
+            <artifactId>saksbehandling</artifactId>
+            <version>9d1ea0d6_202207131457</version>
+        </dependency>
+        <dependency>
             <groupId>com.expediagroup</groupId>
             <artifactId>graphql-kotlin-spring-client</artifactId>
             <version>${graphql-kotlin.version}</version>
@@ -216,6 +226,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit5</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.mockito.kotlin</groupId>
             <artifactId>mockito-kotlin</artifactId>
             <version>4.0.0</version>
@@ -287,6 +303,8 @@
                             <schemaFile>${project.basedir}/src/main/resources/graphql/saf.graphqls</schemaFile>
                             <queryFiles>
                                 <queryFile>${project.basedir}/src/main/resources/graphql/journalpost.graphql</queryFile>
+                                <queryFile>${project.basedir}/src/main/resources/graphql/journalposter.graphql</queryFile>
+                                <queryFile>${project.basedir}/src/main/resources/graphql/saker.graphql</queryFile>
                             </queryFiles>
                             <customScalars>
                                 <customScalar>

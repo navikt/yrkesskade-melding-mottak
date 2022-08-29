@@ -3,6 +3,10 @@ package no.nav.yrkesskade.meldingmottak.clients.graphql
 import com.expediagroup.graphql.client.spring.GraphQLWebClient
 import com.expediagroup.graphql.client.types.GraphQLClientResponse
 import com.expediagroup.graphql.generated.Journalpost
+import com.expediagroup.graphql.generated.Journalposter
+import com.expediagroup.graphql.generated.Saker
+import com.expediagroup.graphql.generated.enums.BrukerIdType
+import com.expediagroup.graphql.generated.enums.Journalstatus
 import kotlinx.coroutines.runBlocking
 import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.util.TokenUtil
@@ -17,6 +21,7 @@ import javax.ws.rs.core.HttpHeaders
 /**
  * Klient for å hente oppdatert journalpost fra saf (Sak og arkiv fasade)
  */
+@Suppress("UastIncorrectHttpHeaderInspection")
 @Component
 class SafClient(
     @Value("\${saf.graphql.url}") private val safGraphqlUrl: String,
@@ -54,5 +59,69 @@ class SafClient(
             }
         }
         return oppdatertJournalpost
+    }
+
+    /**
+     * Saf-tjenesten "dokumentoversiktBruker" returnerer en liste over alle dokumentene/journalpostene tilknyttet en bruker, på alle brukers nåværende og tidligere identer (dnr, fnr og aktørid).
+     * Se beskrivelse av [saf - Tjenester](https://confluence.adeo.no/display/BOA/Query%3A+dokumentoversiktBruker)
+     */
+    fun hentJournalposterForPerson(foedselsnummer: String, journalstatuser: List<Journalstatus>): Journalposter.Result? {
+        val token = tokenUtil.getAppAccessTokenWithSafScope()
+        logger.info("Hentet token for Saf")
+        val journalposterQuery = Journalposter(
+            Journalposter.Variables(
+                foedselsnummer,
+                BrukerIdType.FNR,
+                journalstatuser
+            )
+        )
+
+        logger.info("Henter journalposter for person på url $safGraphqlUrl")
+        secureLogger.info("Henter journalposter for personen $foedselsnummer på url $safGraphqlUrl")
+        val result: Journalposter.Result?
+        runBlocking {
+            val response: GraphQLClientResponse<Journalposter.Result> = client.execute(journalposterQuery) {
+                headers {
+                    it.add(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                    it.add("Nav-Callid", MDC.get(MDCConstants.MDC_CALL_ID))
+                    it.add("Nav-Consumer-Id", applicationName)
+                }
+            }
+            result = response.data
+            if (!response.errors.isNullOrEmpty()) {
+                secureLogger.error("Responsen fra SAF inneholder feil: ${response.errors}")
+                throw RuntimeException("Responsen fra SAF inneholder feil! Se securelogs")
+            }
+        }
+        return result
+    }
+
+    /**
+     * Saf-tjenesten "saker" returnerer saker som er registrert på alle brukers nåværende og tidligere identer (dnr, fnr og aktørid).
+     * Se beskrivelse av [saf - Tjenester](https://confluence.adeo.no/display/BOA/Query%3A+saker)
+     */
+    fun hentSakerForPerson(foedselsnummer: String): Saker.Result? {
+        val token = tokenUtil.getAppAccessTokenWithSafScope()
+        logger.info("Hentet token for Saf")
+        val sakerQuery = Saker(Saker.Variables(foedselsnummer))
+
+        logger.info("Henter saker for person NN på url $safGraphqlUrl")
+        secureLogger.info("Henter saker for person $foedselsnummer på url $safGraphqlUrl")
+        val saker: Saker.Result?
+        runBlocking {
+            val response: GraphQLClientResponse<Saker.Result> = client.execute(sakerQuery) {
+                headers {
+                    it.add(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                    it.add("Nav-Callid", MDC.get(MDCConstants.MDC_CALL_ID))
+                    it.add("Nav-Consumer-Id", applicationName)
+                }
+            }
+            saker = response.data
+            if (!response.errors.isNullOrEmpty()) {
+                secureLogger.error("Responsen fra SAF inneholder feil: ${response.errors}")
+                throw RuntimeException("Responsen fra SAF inneholder feil! Se securelogs")
+            }
+        }
+        return saker
     }
 }

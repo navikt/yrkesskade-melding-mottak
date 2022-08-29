@@ -47,6 +47,19 @@ spec:
             {{/each}}
           {{/if}}
       {{/each}}
+    outbound:
+      external:
+      {{#each externalOutboundHosts}}
+         - host: {{host}}
+      {{#if ports}}
+        ports:
+          {{#each ports}}
+             - name: {{name}}
+          port: {{port}}
+      protocol: {{protocol}}
+      {{/each}}
+      {{/if}}
+      {{/each}}
   resources:
     limits:
       cpu: 2000m

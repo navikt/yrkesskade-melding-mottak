@@ -5,6 +5,8 @@ externalHosts:
   - host: pdl-api.dev-fss-pub.nais.io
   - host: oppgave-q1.dev-fss-pub.nais.io
   - host: dokarkiv.dev-fss-pub.nais.io
+externalOutboundHosts:
+  - host: yrkesskade-infotrygd.dev-fss-pub.nais.io
 springProfile: dev
 tenant: trygdeetaten.no
 kafka_pool: nav-dev
