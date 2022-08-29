@@ -79,7 +79,7 @@ class ProsesserJournalfoeringHendelseTask(
         val foedselsnummer = hentFoedselsnummer(journalpost.bruker, payloadDto.journalpostId)
 
         // TODO: YSMOD-509 fjerne feature toggle når ruting skal kunne gå til vår saksbehandling
-        if (featureToggleService.isEnabled(FeatureToggles.ER_IKKE_PROD.toggleId, true) &&
+        if (featureToggleService.isEnabled(FeatureToggles.ER_IKKE_PROD.toggleId, false) &&
             foedselsnummer != null &&
             journalpostErKandidatForYsSaksbehandling(journalpost) &&
             skalRutesTilYsSaksbehandling(foedselsnummer)
