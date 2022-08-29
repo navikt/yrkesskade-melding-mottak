@@ -1,10 +1,10 @@
 package no.nav.yrkesskade.meldingmottak.util.ruting
 
 data class Rutingfil(
-    val rutingregler: Rutingregler
+    val enhetsrutingregler: Enhetsrutingregler
 )
 
-data class Rutingregler(
+data class Enhetsrutingregler(
     val yrkessykdom: Yrkessykdomsregler
 )
 

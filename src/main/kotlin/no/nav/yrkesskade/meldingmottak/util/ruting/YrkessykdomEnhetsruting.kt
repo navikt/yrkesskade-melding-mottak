@@ -25,7 +25,7 @@ class YrkessykdomEnhetsruting {
             val yrkessykdomsregler = yamlMapper.readValue(
                 this::class.java.classLoader.getResource("enhetsruting/enhetsrutingregler.yaml"),
                 Rutingfil::class.java
-            ).rutingregler.yrkessykdom
+            ).enhetsrutingregler.yrkessykdom
 
             val paavirkningsform = skademelding.hendelsesfakta.paavirkningsform
             return when {
