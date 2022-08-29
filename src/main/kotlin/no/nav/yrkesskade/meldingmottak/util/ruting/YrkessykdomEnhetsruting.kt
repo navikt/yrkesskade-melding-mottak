@@ -33,7 +33,6 @@ class YrkessykdomEnhetsruting {
                 paavirkningsform.isNullOrEmpty() -> null
                 paavirkningsform.any { it in yrkessykdomsregler.regel1.kodeverdier } -> yrkessykdomsregler.regel1.enhet
                 paavirkningsform.any { it in yrkessykdomsregler.regel2.kodeverdier } -> yrkessykdomsregler.regel2.enhet
-                paavirkningsform.size > 1 -> ENHET_YRKESSYKDOM
                 else -> null
             }
         }
