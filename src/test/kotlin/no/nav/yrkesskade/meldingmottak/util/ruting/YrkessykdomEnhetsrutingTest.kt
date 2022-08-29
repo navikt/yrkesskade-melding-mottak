@@ -70,4 +70,21 @@ internal class YrkessykdomEnhetsrutingTest {
         val enhet = YrkessykdomEnhetsruting.utledEnhet(skademeldingSykdomSomTrefferRegel2, RutingStatus())
         assertThat(enhet).isNull()
     }
+
+    @Test
+    fun `regel3 slaar inn om man har paavirkningsform fra regel 1 og 2`() {
+        val skademeldingSykdom = skademeldingSykdom()
+        val skademeldingSykdomSomTrefferRegel2 = skademeldingSykdom.copy(
+            hendelsesfakta = hendelsesfaktaSykdom().copy(
+                paavirkningsform = listOf(
+                    "kjemikalierEllerLoesemidler",              // regel 1
+                    "stoevpaavirkning",                         // regel 1
+                    "naturhendelserSomSnoeskredOgJordskred"     // regel 2
+                )
+            )
+        )
+
+        val enhet = YrkessykdomEnhetsruting.utledEnhet(skademeldingSykdomSomTrefferRegel2, RutingStatus())
+        assertThat(enhet).isEqualTo(ENHET_YRKESSYKDOM)
+    }
 }
