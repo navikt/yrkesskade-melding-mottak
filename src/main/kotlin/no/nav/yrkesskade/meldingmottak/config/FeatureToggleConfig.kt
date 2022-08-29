@@ -5,6 +5,7 @@ import no.finn.unleash.UnleashContext
 import no.finn.unleash.UnleashContextProvider
 import no.finn.unleash.util.UnleashConfig
 import no.nav.yrkesskade.featureflag.strategy.ByClusterName
+import no.nav.yrkesskade.featureflag.strategy.IsNotProdStrategy
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -50,7 +51,8 @@ class FeatureToggleConfig(
                 .unleashAPI(unleash.uri)
                 .unleashContextProvider(lagUnleashContextProvider())
                 .build(),
-            ByClusterName(unleash.cluster)
+            ByClusterName(unleash.cluster),
+            IsNotProdStrategy(lagUnleashContextProvider().context)
         )
 
         return object : FeatureToggleService {
