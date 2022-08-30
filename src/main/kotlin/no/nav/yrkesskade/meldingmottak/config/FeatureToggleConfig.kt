@@ -66,6 +66,7 @@ class FeatureToggleConfig(
         return UnleashContextProvider {
             UnleashContext.builder()
                 .appName(unleash.applicationName)
+                .environment(environment.activeProfiles.first().orEmpty())
                 .build()
         }
     }
