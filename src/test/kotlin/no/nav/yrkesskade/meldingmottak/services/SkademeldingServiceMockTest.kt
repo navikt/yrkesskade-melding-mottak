@@ -10,6 +10,7 @@ import no.nav.yrkesskade.meldingmottak.domene.Adresse
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.domene.OpprettJournalpostResponse
 import no.nav.yrkesskade.meldingmottak.fixtures.skademeldingInnsendtHendelse
+import no.nav.yrkesskade.meldingmottak.konstanter.ENHET_YRKESSYKDOM
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,8 +21,9 @@ class SkademeldingServiceMockTest {
     private val pdlClient: PdlClient = mockk()
     private val dokarkivClient: DokarkivClient = mockk()
     private val bigQueryClient = BigQueryClientStub()
+    private val rutingService: RutingService = mockk()
 
-    private val service: SkademeldingService = SkademeldingService(pdfService, pdlClient, dokarkivClient, bigQueryClient)
+    private val service: SkademeldingService = SkademeldingService(pdfService, pdlClient, dokarkivClient, bigQueryClient, rutingService)
 
     @BeforeEach
     fun setup() {
@@ -34,6 +36,7 @@ class SkademeldingServiceMockTest {
                 Adresse("Liaveien 3B", "1250 Plassen", "", ""))
         }
         every { dokarkivClient.journalfoerDokument(any()) } answers { OpprettJournalpostResponse(false, "123", emptyList()) }
+        every { rutingService.finnEnhet(any(), any()) } answers { ENHET_YRKESSYKDOM }
     }
 
     @Test

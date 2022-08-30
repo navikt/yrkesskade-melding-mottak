@@ -48,7 +48,7 @@ fun skademeldingInnsendtHendelseForSykdom(): SkademeldingInnsendtHendelse {
     )
 }
 
-private fun enkelSkademelding(): Skademelding {
+fun enkelSkademelding(): Skademelding {
     return Skademelding(
         innmelder = innmelder(),
         skadelidt = skadelidt(),
@@ -57,7 +57,7 @@ private fun enkelSkademelding(): Skademelding {
     )
 }
 
-private fun skademeldingSykdom(): Skademelding {
+fun skademeldingSykdom(): Skademelding {
     return Skademelding(
         innmelder = innmelder(),
         skadelidt = skadelidt(),
@@ -151,7 +151,7 @@ private fun hendelsesfakta(): Hendelsesfakta {
     )
 }
 
-private fun hendelsesfaktaSykdom(): Hendelsesfakta {
+fun hendelsesfaktaSykdom(): Hendelsesfakta {
     return Hendelsesfakta(
         tid = Tid(
             tidstype = Tidstype.periode,

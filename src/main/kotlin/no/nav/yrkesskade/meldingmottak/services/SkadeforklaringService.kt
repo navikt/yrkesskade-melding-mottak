@@ -134,6 +134,7 @@ class SkadeforklaringService(
 
         return OpprettJournalpostRequest(
             tittel = TITTEL_DIGITAL_SKADEFORKLARING,
+            journalfoerendeEnhet = null,
             journalposttype = Journalposttype.INNGAAENDE,
             avsenderMottaker = AvsenderMottaker(
                 navn = beriketData.innmeldersNavn.toString(),
