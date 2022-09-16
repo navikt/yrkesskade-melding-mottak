@@ -4,17 +4,17 @@ import no.nav.yrkesskade.meldingmottak.domene.BeriketData
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.pdf.domene.*
 import no.nav.yrkesskade.meldingmottak.util.kodeverk.KodeverkHolder
-import no.nav.yrkesskade.skadeforklaring.v1.integration.model.SkadeforklaringInnsendingHendelse
-import no.nav.yrkesskade.skadeforklaring.v1.integration.model.SkadeforklaringMetadata
-import no.nav.yrkesskade.skadeforklaring.v1.model.*
+import no.nav.yrkesskade.skadeforklaring.v2.integration.model.SkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.skadeforklaring.v2.integration.model.SkadeforklaringMetadata
+import no.nav.yrkesskade.skadeforklaring.v2.model.*
 
-object PdfSkadeforklaringMapper {
+object PdfSkadeforklaringV2Mapper {
 
     fun tilPdfSkadeforklaring(
         record: SkadeforklaringInnsendingHendelse,
         kodeverkHolder: KodeverkHolder,
         beriketData: BeriketData? = null
-    ) : PdfSkadeforklaring {
+    ) : PdfSkadeforklaringV2 {
 
         val skadeforklaring = record.skadeforklaring
         val innmelder = tilPdfInnmelder(skadeforklaring.innmelder, beriketData?.innmeldersNavn, kodeverkHolder)
@@ -23,51 +23,53 @@ object PdfSkadeforklaringMapper {
         val arbeidsbeskrivelse = tilPdfArbeidsbeskrivelse(skadeforklaring.arbeidetMedIUlykkesoeyeblikket)
         val ulykkesbeskrivelse = tilPdfUlykkesbeskrivelse(skadeforklaring.noeyaktigBeskrivelseAvHendelsen)
         val fravaer = tilPdfFravaer(skadeforklaring.fravaer, kodeverkHolder)
-        val helseinstitusjon = tilPdfHelseinstitusjon(skadeforklaring.helseinstitusjon)
+        val helseinstitusjoner = tilPdfHelseinstitusjoner(skadeforklaring.helseinstitusjoner)
         val vedleggInfo = tilPdfVedleggInfo(skadeforklaring)
         val dokumentInfo = lagPdfDokumentInfoSkadeforklaring(record.metadata)
+        val erHelsepersonellOppsokt = tilPdfErHelsepersonellOppsokt(skadeforklaring.erHelsepersonellOppsokt)
 
-        return PdfSkadeforklaring(
+        return PdfSkadeforklaringV2(
             innmelder = innmelder,
             skadelidt = skadelidt,
             tid = tid,
             arbeidetMedIUlykkesoeyeblikket = arbeidsbeskrivelse,
             noeyaktigBeskrivelseAvHendelsen = ulykkesbeskrivelse,
             fravaer = fravaer,
-            helseinstitusjon = helseinstitusjon,
+            helseinstitusjoner = helseinstitusjoner,
             vedleggInfo = vedleggInfo,
-            dokumentInfo = dokumentInfo
+            dokumentInfo = dokumentInfo,
+            erHelsepersonellOppsokt = erHelsepersonellOppsokt
         )
     }
 
-    private fun tilPdfInnmelder(innmelder: Innmelder?, innmeldersNavn: Navn?, kodeverkHolder: KodeverkHolder): PdfInnmelder {
-        return PdfInnmelder(
+    private fun tilPdfInnmelder(innmelder: Innmelder?, innmeldersNavn: Navn?, kodeverkHolder: KodeverkHolder): PdfInnmelderV2 {
+        return PdfInnmelderV2(
             norskIdentitetsnummer = Soknadsfelt("Fødselsnummer", innmelder?.norskIdentitetsnummer),
             navn = Soknadsfelt("Navn", innmeldersNavn?.toString().orEmpty()),
             innmelderrolle = Soknadsfelt("Rolle", if (innmelder?.innmelderrolle.isNullOrBlank()) null else kodeverkHolder.mapKodeTilVerdi(innmelder?.innmelderrolle!!, "innmelderrolle"))
         )
     }
 
-    private fun tilPdfSkadelidt(skadelidt: Skadelidt?, skadelidtsNavn: Navn?): PdfSkadelidt {
-        return PdfSkadelidt(
+    private fun tilPdfSkadelidt(skadelidt: Skadelidt?, skadelidtsNavn: Navn?): PdfSkadelidtV2 {
+        return PdfSkadelidtV2(
             Soknadsfelt("Fødselsnummer", skadelidt?.norskIdentitetsnummer),
             Soknadsfelt("Navn", skadelidtsNavn?.toString().orEmpty())
         )
     }
 
-    private fun tilPdfTid(skadeforklaring: Skadeforklaring): PdfTid {
-        return PdfTid(
+    private fun tilPdfTid(skadeforklaring: Skadeforklaring): PdfTidV2 {
+        return PdfTidV2(
             tidstype = skadeforklaring.tid.tidstype.uppercase(),
             tidspunkt = Soknadsfelt(
                 "Når skjedde ulykken?",
-                PdfTidspunkt(
+                PdfTidspunktV2(
                     dato = MapperUtil.datoFormatert(skadeforklaring.tid.tidspunkt),
                     klokkeslett = MapperUtil.klokkeslettFormatert(skadeforklaring.tid.tidspunkt)
                 )
             ),
             periode = Soknadsfelt(
                 "Når skjedde ulykken?",
-                PdfPeriode(
+                PdfPeriodeV2(
                     fra = MapperUtil.datoFormatert(skadeforklaring.tid.periode?.fra),
                     til = MapperUtil.datoFormatert(skadeforklaring.tid.periode?.til)
                 )
@@ -82,7 +84,11 @@ object PdfSkadeforklaringMapper {
     private fun tilPdfUlykkesbeskrivelse(ulykkesbeskrivelse: String): Soknadsfelt<String> =
         Soknadsfelt("Gi en så nøyaktig beskrivelse av hendelsen som mulig", ulykkesbeskrivelse)
 
-    private fun tilPdfFravaer(fravaer: Fravaer, kodeverkHolder: KodeverkHolder): PdfFravaer {
+    private fun tilPdfErHelsepersonellOppsokt(erHelsepersonellOppsokt: String): Soknadsfelt<String> =
+        Soknadsfelt("Ble lege oppsøkt etter skaden?", MapperUtil.jaNei(erHelsepersonellOppsokt))
+
+
+    private fun tilPdfFravaer(fravaer: Fravaer, kodeverkHolder: KodeverkHolder): PdfFravaerV2 {
         val foerteTilFravaer = when(fravaer.foerteDinSkadeEllerSykdomTilFravaer) {
             "fravaersdagerUkjent" -> "Ja"
             "treDagerEllerMindre" -> "Ja"
@@ -91,7 +97,7 @@ object PdfSkadeforklaringMapper {
             else -> "Nei"
         }
 
-        return PdfFravaer(
+        return PdfFravaerV2(
             Soknadsfelt("Førte din skade/sykdom til fravær?", foerteTilFravaer),
             Soknadsfelt("Velg type fravær", if (fravaer.fravaertype.isNullOrBlank()) "" else hentVerdi(fravaer.fravaertype!!, "fravaertype", kodeverkHolder))
         )
@@ -101,24 +107,12 @@ object PdfSkadeforklaringMapper {
         return kodeverkHolder.mapKodeTilVerdi(kode, kodeliste)
     }
 
-    private fun tilPdfHelseinstitusjon(helseinstitusjon: Helseinstitusjon): PdfHelseinstitusjon {
-        return PdfHelseinstitusjon(
-            erHelsepersonellOppsokt = Soknadsfelt("Ble lege oppsøkt etter skaden?", MapperUtil.jaNei(helseinstitusjon.erHelsepersonellOppsokt)),
-            navn = Soknadsfelt("Navn på helseforetak, legevakt eller lege", helseinstitusjon.navn),
-            adresse = Soknadsfelt("Adresse", tilPdfAdresse(helseinstitusjon.adresse))
-        )
-    }
-
-    private fun tilPdfAdresse(adresse: Adresse?): PdfAdresse? {
-        if (adresse == null) {
-            return null
+    private fun tilPdfHelseinstitusjoner(helseinstitusjoner: List<Helseinstitusjon>): List<PdfHelseinstitusjonV2> {
+        return helseinstitusjoner.map {
+            PdfHelseinstitusjonV2(
+                navn = Soknadsfelt("Navn på helseforetak, legevakt eller lege", it.navn),
+            )
         }
-        return PdfAdresse(
-            adresselinje1 = adresse.adresse,
-            adresselinje2 = adresse.postnummer + " " + adresse.poststed,
-            adresselinje3 = null,
-            land = null
-        )
     }
 
     private fun tilPdfVedleggInfo(skadeforklaring: Skadeforklaring): Soknadsfelt<List<String>> {
@@ -136,8 +130,8 @@ object PdfSkadeforklaringMapper {
         return Soknadsfelt("Vedlegg", tekster)
     }
 
-    private fun lagPdfDokumentInfoSkadeforklaring(metadata: SkadeforklaringMetadata): PdfDokumentInfoSkadeforklaring {
-        return PdfDokumentInfoSkadeforklaring(
+    private fun lagPdfDokumentInfoSkadeforklaring(metadata: SkadeforklaringMetadata): PdfDokumentInfoSkadeforklaringV2 {
+        return PdfDokumentInfoSkadeforklaringV2(
             dokumentnavn = "Skadeforklaring ved arbeidsulykke",
             dokumentnummer = "NAV 13-00.21",
             dokumentDatoPrefix = "Innsendt digitalt ",
@@ -146,8 +140,8 @@ object PdfSkadeforklaringMapper {
         )
     }
 
-    private fun lagPdfTeksterSkadeforklaring(): PdfTeksterSkadeforklaring {
-        return PdfTeksterSkadeforklaring(
+    private fun lagPdfTeksterSkadeforklaring(): PdfTeksterSkadeforklaringV2 {
+        return PdfTeksterSkadeforklaringV2(
             innmelderSeksjonstittel = "Om innmelder",
             skadelidtSeksjonstittel = "Den skadelidte",
             tidOgStedSeksjonstittel = "Tid og sted",

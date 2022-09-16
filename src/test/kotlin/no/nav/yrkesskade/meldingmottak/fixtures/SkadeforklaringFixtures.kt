@@ -1,9 +1,9 @@
 package no.nav.yrkesskade.meldingmottak.fixtures
 
-import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
-import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringMetadata
-import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.Spraak
-import no.nav.yrkesskade.skadeforklaring.model.*
+import no.nav.yrkesskade.skadeforklaring.v1.integration.model.SkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.skadeforklaring.v1.integration.model.SkadeforklaringMetadata
+import no.nav.yrkesskade.skadeforklaring.v1.integration.model.Spraak
+import no.nav.yrkesskade.skadeforklaring.v1.model.*
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.Month

@@ -1,3 +1,3 @@
-package no.nav.yrkesskade.skadeforklaring.model
+package no.nav.yrkesskade.skadeforklaring.v2.model
 
 data class Skadelidt(val norskIdentitetsnummer: String)
