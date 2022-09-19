@@ -91,7 +91,7 @@ object PdfSkadeforklaringMapper {
         Soknadsfelt("Ble lege oppsøkt etter skaden?", MapperUtil.jaNei(erHelsepersonellOppsokt))
 
     private fun tilPdfFoersteHelsepersonellOppsoktDato(foersteHelsepersonellOppsoktDato: LocalDate?) =
-        Soknadsfelt("Når ble lege oppsøkt første gang", MapperUtil.datoFormatert(foersteHelsepersonellOppsoktDato))
+        Soknadsfelt("Når ble lege oppsøkt første gang?", MapperUtil.datoFormatert(foersteHelsepersonellOppsoktDato))
 
     private fun tilPdfFravaer(fravaer: Fravaer, kodeverkHolder: KodeverkHolder): PdfFravaer {
         val foerteTilFravaer = when(fravaer.foerteDinSkadeEllerSykdomTilFravaer) {
@@ -112,10 +112,12 @@ object PdfSkadeforklaringMapper {
         return kodeverkHolder.mapKodeTilVerdi(kode, kodeliste)
     }
 
-    private fun tilPdfHelseinstitusjoner(helseinstitusjoner: List<Helseinstitusjon>) =
-        helseinstitusjoner.map {
-            tilPdfHelseinstitusjon(it)
-        }
+    private fun tilPdfHelseinstitusjoner(helseinstitusjoner: List<Helseinstitusjon>): Soknadsfelt<List<String>> {
+        val mappetHelseinstitusjoner = helseinstitusjoner.mapNotNull {
+            it.navn
+        }.orEmpty()
+        return Soknadsfelt("Navn på helseforetak, legevakt eller lege", mappetHelseinstitusjoner)
+    }
 
     private fun tilPdfHelseinstitusjon(helseinstitusjon: Helseinstitusjon): PdfHelseinstitusjon {
         return PdfHelseinstitusjon(

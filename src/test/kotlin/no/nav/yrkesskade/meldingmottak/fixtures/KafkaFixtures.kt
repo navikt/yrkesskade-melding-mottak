@@ -10,6 +10,7 @@ import no.nav.yrkesskade.model.*
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringMetadata
 import no.nav.yrkesskade.skadeforklaring.model.Skadeforklaring
+import no.nav.yrkesskade.skadeforklaring.model.SkadeforklaringFactory
 import no.nav.yrkesskade.skademelding.model.Skademelding
 import java.nio.file.Files
 import java.nio.file.Path
@@ -125,9 +126,8 @@ fun skademeldingInnsendtHendelse(): SkademeldingInnsendtHendelse {
 }
 
 fun skadeforklaringInnsendingHendelse(): SkadeforklaringInnsendingHendelse {
-    val skadeforklaring: Skadeforklaring = jacksonObjectMapper().registerModule(JavaTimeModule()).readValue(
-        Files.readString(Path.of("src/test/resources/skadeforklaringer/skadeforklaring.json"))
-    )
+    val skadeforklaring: Skadeforklaring = SkadeforklaringFactory.enSkadeforklaring()
+
     return SkadeforklaringInnsendingHendelse(
         metadata = SkadeforklaringMetadata(
             tidspunktMottatt = Instant.now(),
