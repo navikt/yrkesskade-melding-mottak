@@ -6,3 +6,4 @@ const val TITTEL_DIGITAL_SKADEFORKLARING_ARKIV = "Arkivlogg fra innsending"
 const val TITTEL_DIGITAL_SKADEFORKLARING = "Skadeforklaring ved arbeidsulykke"
 
 const val ENHET_YRKESSYKDOM = "4803"
+const val ENHET_VIKAFOSSEN = "2103"

@@ -5,7 +5,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.yrkesskade.model.SkademeldingInnsendtHendelse
 import no.nav.yrkesskade.saksbehandling.model.DokumentTilSaksbehandlingHendelse
-import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.skadeforklaring.v1.integration.model.SkadeforklaringInnsendingHendelse
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
@@ -17,6 +17,10 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import org.springframework.kafka.listener.ContainerStoppingErrorHandler
+import org.springframework.kafka.support.converter.RecordMessageConverter
+import org.springframework.kafka.support.converter.StringJsonMessageConverter
+import org.springframework.kafka.support.mapping.DefaultJackson2JavaTypeMapper
+import org.springframework.kafka.support.mapping.Jackson2JavaTypeMapper
 import org.springframework.kafka.support.serializer.JsonDeserializer
 import org.springframework.retry.backoff.ExponentialBackOffPolicy
 import org.springframework.retry.policy.SimpleRetryPolicy
@@ -89,9 +93,23 @@ class KafkaConfig {
 
         return ConcurrentKafkaListenerContainerFactory<String, SkadeforklaringInnsendingHendelse>().apply {
             this.setConsumerFactory(consumerFactory)
+            this.setMessageConverter(skadeforklaringTypeConverter())
             this.setErrorHandler(ContainerStoppingErrorHandler())
             this.setRetryTemplate(retryTemplate())
         }
+    }
+
+    @Bean
+    fun skadeforklaringTypeConverter(): RecordMessageConverter {
+        val converter = StringJsonMessageConverter()
+        val typeMapper = DefaultJackson2JavaTypeMapper()
+        typeMapper.typePrecedence = Jackson2JavaTypeMapper.TypePrecedence.TYPE_ID
+        typeMapper.addTrustedPackages("no.nav.yrkesskade.model,no.nav.yrkesskade.skadeforklaring")
+        val mappings: MutableMap<String, Class<*>> = HashMap()
+        mappings["SkadeforklaringInnsendingHendelseV2"] = no.nav.yrkesskade.skadeforklaring.v2.integration.model.SkadeforklaringInnsendingHendelse::class.java
+        typeMapper.idClassMapping = mappings
+        converter.typeMapper = typeMapper
+        return converter
     }
 
     fun retryTemplate() = RetryTemplate().apply {

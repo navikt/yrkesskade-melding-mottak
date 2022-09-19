@@ -21,8 +21,11 @@ import no.nav.yrkesskade.meldingmottak.clients.gosys.OpprettJournalfoeringOppgav
 import no.nav.yrkesskade.meldingmottak.clients.gosys.Prioritet
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
+import no.nav.yrkesskade.meldingmottak.config.FeatureToggleService
+import no.nav.yrkesskade.meldingmottak.config.FeatureToggles
 import no.nav.yrkesskade.meldingmottak.domene.Brevkode
 import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
+import no.nav.yrkesskade.meldingmottak.services.Rute
 import no.nav.yrkesskade.meldingmottak.services.RutingService
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentBrevkode
@@ -55,7 +58,8 @@ class ProsesserJournalfoeringHendelseTask(
     private val rutingService: RutingService,
     private val oppgaveClient: OppgaveClient,
     private val bigQueryClient: BigQueryClient,
-    private val dokumentTilSaksbehandlingClient: DokumentTilSaksbehandlingClient
+    private val dokumentTilSaksbehandlingClient: DokumentTilSaksbehandlingClient,
+    private val featureToggleService: FeatureToggleService
 ) : AsyncTaskStep {
 
     val log: Logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
@@ -74,7 +78,12 @@ class ProsesserJournalfoeringHendelseTask(
 
         val foedselsnummer = hentFoedselsnummer(journalpost.bruker, payloadDto.journalpostId)
 
-        if (foedselsnummer != null &&
+        // TODO: YSMOD-509 fjerne feature toggle når ruting skal kunne gå til vår saksbehandling
+        val erIkkeProd = featureToggleService.isEnabled(FeatureToggles.ER_IKKE_PROD.toggleId, false).also {
+            log.info("${FeatureToggles.ER_IKKE_PROD.toggleId}: $it")
+        }
+        if (erIkkeProd &&
+            foedselsnummer != null &&
             journalpostErKandidatForYsSaksbehandling(journalpost) &&
             skalRutesTilYsSaksbehandling(foedselsnummer)
         ) {
@@ -162,7 +171,7 @@ class ProsesserJournalfoeringHendelseTask(
      * Bestemmer om en journalpost, for en person, SKAL sendes til nytt saksbehandlingssystem for yrkesskade/-sykdom.
      */
     private fun skalRutesTilYsSaksbehandling(foedselsnummer: String) =
-        rutingService.utfoerRuting(foedselsnummer) == RutingService.Rute.YRKESSKADE_SAKSBEHANDLING
+        rutingService.utfoerRuting(foedselsnummer) == Rute.YRKESSKADE_SAKSBEHANDLING
 
     /**
      * Bestemmer om en journalpost fra en Kafka-record er en tannlegeerklæring.

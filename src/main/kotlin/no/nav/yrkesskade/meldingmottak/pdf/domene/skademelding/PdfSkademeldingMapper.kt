@@ -180,7 +180,7 @@ object PdfSkademeldingMapper {
             ),
             adresse = Soknadsfelt(
                 if (erSykdom) "Adresse hvor den skadelige påvirkningen har skjedd" else "Adresse for ulykken",
-                tilPdfAdresse(ulykkessted.adresse, kodeverkHolder)
+                tilPdfUlykkesadresse(ulykkessted.adresse, kodeverkHolder)
             )
         )
     }
@@ -225,6 +225,15 @@ object PdfSkademeldingMapper {
             return null
         }
 
+        return PdfAdresse(
+            adresselinje1 = adresse.adresselinje1.orEmpty(),
+            adresselinje2 = adresse.adresselinje2,
+            adresselinje3 = adresse.adresselinje3,
+            land = landNavnEllerKode(adresse.land, kodeverkHolder)
+        )
+    }
+
+    private fun tilPdfUlykkesadresse(adresse: Ulykkesadresse, kodeverkHolder: KodeverkHolder): PdfAdresse {
         return PdfAdresse(
             adresselinje1 = adresse.adresselinje1,
             adresselinje2 = adresse.adresselinje2,

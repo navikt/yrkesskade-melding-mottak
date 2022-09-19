@@ -1,4 +1,4 @@
-package no.nav.yrkesskade.skadeforklaring.model
+package no.nav.yrkesskade.skadeforklaring.v2.model
 
 data class Vedleggreferanse (
     val id: String,
