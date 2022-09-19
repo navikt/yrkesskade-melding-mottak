@@ -1,6 +1,5 @@
 package no.nav.yrkesskade.meldingmottak.pdf.domene.skadeforklaring
 
-import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfAdresse
 import no.nav.yrkesskade.meldingmottak.pdf.domene.PdfData
 import no.nav.yrkesskade.meldingmottak.pdf.domene.Soknadsfelt
 
@@ -11,7 +10,9 @@ data class PdfSkadeforklaring(
     val arbeidetMedIUlykkesoeyeblikket: Soknadsfelt<String>,
     val noeyaktigBeskrivelseAvHendelsen: Soknadsfelt<String>,
     val fravaer: PdfFravaer,
-    val helseinstitusjon: PdfHelseinstitusjon,
+    val erHelsepersonellOppsokt: Soknadsfelt<String>,
+    val foersteHelsepersonellOppsoktDato: Soknadsfelt<String>,
+    val helseinstitusjoner: List<PdfHelseinstitusjon>,
     val vedleggInfo: Soknadsfelt<List<String>>,
     val dokumentInfo: PdfDokumentInfoSkadeforklaring
 ) : PdfData()
@@ -33,9 +34,7 @@ data class PdfFravaer(
 )
 
 data class PdfHelseinstitusjon(
-    val erHelsepersonellOppsokt: Soknadsfelt<String>,
     val navn: Soknadsfelt<String?>,
-    val adresse: Soknadsfelt<PdfAdresse?>
 )
 
 data class PdfDokumentInfoSkadeforklaring(

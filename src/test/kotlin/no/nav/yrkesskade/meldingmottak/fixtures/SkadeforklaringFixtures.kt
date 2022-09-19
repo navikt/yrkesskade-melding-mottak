@@ -8,6 +8,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
+import java.time.LocalDate
 
 fun enkelSkadeforklaringInnsendingHendelse(): SkadeforklaringInnsendingHendelse =
     SkadeforklaringInnsendingHendelse(
@@ -56,6 +57,8 @@ fun enkelSkadeforklaring(): Skadeforklaring =
         skadelidt = skadeforklaringSkadelidt(),
         arbeidetMedIUlykkesoeyeblikket = "Dette er arbeidsbeskrivelsen",
         noeyaktigBeskrivelseAvHendelsen = "Dette er ulykkesbeskrivelsen",
+        erHelsepersonellOppsokt = "ja",
+        foersteHelsepersonellOppsoktDato = LocalDate.now(),
         tid = Tid(
             tidstype = "Tidspunkt",
             tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
@@ -64,7 +67,7 @@ fun enkelSkadeforklaring(): Skadeforklaring =
         skalEttersendeDokumentasjon = "ja",
         vedleggreferanser = emptyList(),
         fravaer = Fravaer("treDagerEllerMindre", "sykemelding"),
-        helseinstitusjon = helseinstitusjon()
+        helseinstitusjoner = helseinstitusjoner()
     )
 
 fun enkelSkadeforklaringMedVedlegg(): Skadeforklaring =
@@ -74,6 +77,8 @@ fun enkelSkadeforklaringMedVedlegg(): Skadeforklaring =
         skadelidt = skadeforklaringSkadelidt(),
         arbeidetMedIUlykkesoeyeblikket = "Dette er arbeidsbeskrivelsen",
         noeyaktigBeskrivelseAvHendelsen = "Dette er ulykkesbeskrivelsen",
+        erHelsepersonellOppsokt = "ja",
+        foersteHelsepersonellOppsoktDato = LocalDate.now(),
         tid = Tid(
             tidstype = "Tidspunkt",
             tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
@@ -82,7 +87,7 @@ fun enkelSkadeforklaringMedVedlegg(): Skadeforklaring =
         skalEttersendeDokumentasjon = "nei",
         vedleggreferanser = vedleggReferanser(),
         fravaer = Fravaer("treDagerEllerMindre", "sykemelding"),
-        helseinstitusjon = helseinstitusjon()
+        helseinstitusjoner = helseinstitusjoner()
     )
 
 fun enkelSkadeforklaringMedBildevedlegg(): Skadeforklaring =
@@ -92,6 +97,8 @@ fun enkelSkadeforklaringMedBildevedlegg(): Skadeforklaring =
         skadelidt = skadeforklaringSkadelidt(),
         arbeidetMedIUlykkesoeyeblikket = "Dette er arbeidsbeskrivelsen",
         noeyaktigBeskrivelseAvHendelsen = "Dette er ulykkesbeskrivelsen",
+        erHelsepersonellOppsokt = "ja",
+        foersteHelsepersonellOppsoktDato = LocalDate.now(),
         tid = Tid(
             tidstype = "Tidspunkt",
             tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
@@ -100,7 +107,7 @@ fun enkelSkadeforklaringMedBildevedlegg(): Skadeforklaring =
         skalEttersendeDokumentasjon = "nei",
         vedleggreferanser = vedleggReferanserMedBildevedlegg(),
         fravaer = Fravaer("treDagerEllerMindre", "sykemelding"),
-        helseinstitusjon = helseinstitusjon()
+        helseinstitusjoner = helseinstitusjoner()
     )
 
 fun enkelSkadeforklaringHvorSkadelidtMelderSelv(): Skadeforklaring =
@@ -110,6 +117,8 @@ fun enkelSkadeforklaringHvorSkadelidtMelderSelv(): Skadeforklaring =
         skadelidt = skadeforklaringSkadelidt(),
         arbeidetMedIUlykkesoeyeblikket = "Dette er arbeidsbeskrivelsen",
         noeyaktigBeskrivelseAvHendelsen = "Dette er ulykkesbeskrivelsen",
+        erHelsepersonellOppsokt = "ja",
+        foersteHelsepersonellOppsoktDato = LocalDate.now(),
         tid = Tid(
             tidstype = "Tidspunkt",
             tidspunkt = LocalDateTime.of(2022, Month.APRIL, 10, 14, 3, 50).toInstant(ZoneOffset.UTC),
@@ -118,7 +127,7 @@ fun enkelSkadeforklaringHvorSkadelidtMelderSelv(): Skadeforklaring =
         skalEttersendeDokumentasjon = "ja",
         vedleggreferanser = emptyList(),
         fravaer = Fravaer("treDagerEllerMindre", "egenmelding"),
-        helseinstitusjon = helseinstitusjon()
+        helseinstitusjoner = helseinstitusjoner()
     )
 
 fun skadeforklaringInnmelderErForesatt(): Innmelder =
@@ -137,14 +146,12 @@ fun skadeforklaringSkadelidt(): Skadelidt = Skadelidt("12120522222")
 
 fun helseinstitusjon(): Helseinstitusjon =
     Helseinstitusjon(
-        erHelsepersonellOppsokt = "ja",
-        navn = "Bli-bra-igjen Legesenter",
-        adresse = Adresse(
-            adresse = "Stien 3B",
-            postnummer = "1739",
-            poststed = "Granlia"
-        )
+        navn = "Bli-bra-igjen Legesenter"
     )
+
+fun helseinstitusjoner(): List<Helseinstitusjon> {
+    return listOf(helseinstitusjon())
+}
 
 fun vedleggReferanser(): List<Vedleggreferanse> {
     val vedleggreferanse1 = Vedleggreferanse("vedlegg-1", "Vedlegg1.pdf", 512, "https://vedlegglager/vedlegg1")
