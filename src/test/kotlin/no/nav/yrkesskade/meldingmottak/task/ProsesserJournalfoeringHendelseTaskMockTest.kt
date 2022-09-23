@@ -10,18 +10,9 @@ import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.config.FeatureToggleService
-import no.nav.yrkesskade.meldingmottak.fixtures.hentIdenterResultMedBrukerAktoeridOgFoedselsnummer
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalposttypeUtgaaende
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedJournalstatusFeilregistrert
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedTemaSYK
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultMedUgyldigBrukerIdType
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultTannlegeerklaering
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBruker
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenBrukerId
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultUtenDokumenter
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerAktoerid
-import no.nav.yrkesskade.meldingmottak.fixtures.journalpostResultWithBrukerFnr
+import no.nav.yrkesskade.meldingmottak.fixtures.*
 import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
+import no.nav.yrkesskade.meldingmottak.services.ArbeidsfordelingService
 import no.nav.yrkesskade.meldingmottak.services.Rute
 import no.nav.yrkesskade.meldingmottak.services.RutingService
 import org.assertj.core.api.Assertions.assertThat
@@ -31,6 +22,8 @@ import org.junit.jupiter.api.Test
 import org.slf4j.MDC
 
 internal class ProsesserJournalfoeringHendelseTaskMockTest {
+
+    private val arbeidsfordelingService: ArbeidsfordelingService = mockk(relaxed = true)
 
     private val safClientMock: SafClient = mockk()
 
@@ -50,7 +43,7 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
     private val task = ProsesserJournalfoeringHendelseTask.opprettTask(journalpostId)
 
     private val prosesserJournalfoeringHendelseTask: ProsesserJournalfoeringHendelseTask =
-        ProsesserJournalfoeringHendelseTask(safClientMock, pdlClientMock, rutingServiceMock, oppgaveClientMock, bigQueryClientStub, dokumentTilSaksbehandlingClient, featureToggleService)
+        ProsesserJournalfoeringHendelseTask(arbeidsfordelingService, safClientMock, pdlClientMock, rutingServiceMock, oppgaveClientMock, bigQueryClientStub, dokumentTilSaksbehandlingClient, featureToggleService)
 
     @BeforeEach
     fun init() {
@@ -99,6 +92,7 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
 
         prosesserJournalfoeringHendelseTask.doTask(task)
         verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }
+        verify(exactly = 1) { arbeidsfordelingService.finnBehandlendeEnhetForPerson(any()) }
         verify(exactly = 1) { dokumentTilSaksbehandlingClient.sendTilSaksbehandling(any()) }
     }
 

@@ -3,28 +3,15 @@ package no.nav.yrkesskade.meldingmottak.services
 import com.expediagroup.graphql.generated.Date
 import com.expediagroup.graphql.generated.HentIdenter
 import com.expediagroup.graphql.generated.enums.AdressebeskyttelseGradering
-import com.expediagroup.graphql.generated.hentperson.Adressebeskyttelse
-import com.expediagroup.graphql.generated.hentperson.Bostedsadresse
-import com.expediagroup.graphql.generated.hentperson.Doedsfall
-import com.expediagroup.graphql.generated.hentperson.Navn
-import com.expediagroup.graphql.generated.hentperson.Person
+import com.expediagroup.graphql.generated.hentperson.*
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.infotrygd.InfotrygdClient
 import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermedePersonerClient
-import no.nav.yrkesskade.meldingmottak.fixtures.doedPerson
-import no.nav.yrkesskade.meldingmottak.fixtures.forGamleJournalposterResult
-import no.nav.yrkesskade.meldingmottak.fixtures.gyldigFortroligPersonMedNavnOgVegadresse
-import no.nav.yrkesskade.meldingmottak.fixtures.gyldigPersonMedNavnOgVegadresse
-import no.nav.yrkesskade.meldingmottak.fixtures.gyldigStrengtFortroligPersonMedNavnOgVegadresse
-import no.nav.yrkesskade.meldingmottak.fixtures.hentIdenterResultMedFnrHistorikk
-import no.nav.yrkesskade.meldingmottak.fixtures.journalposterResult
-import no.nav.yrkesskade.meldingmottak.fixtures.journalposterResultMedSak
-import no.nav.yrkesskade.meldingmottak.fixtures.sakerResult
-import no.nav.yrkesskade.meldingmottak.fixtures.sakerResultMedForGammelGenerellYrkesskadesak
-import no.nav.yrkesskade.meldingmottak.fixtures.sakerResultMedGenerellYrkesskadesak
+import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermetPersonRequest
+import no.nav.yrkesskade.meldingmottak.fixtures.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -121,7 +108,7 @@ class EnhetsrutingServiceTest {
 
     @Test
     fun `er egen ansatt, dvs skjermet person`() {
-        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermetPersonRequest::class)) } answers
+        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermetPersonRequest::class)) } answers
                 { true }
 
         assertThat(service.erEgenAnsatt(foedselsnummer, status)).isTrue
@@ -129,7 +116,7 @@ class EnhetsrutingServiceTest {
 
     @Test
     fun `er ikke egen ansatt - variant fnr i resultatet`() {
-        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermetPersonRequest::class)) } answers
+        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermetPersonRequest::class)) } answers
                 { false }
 
         assertThat(service.erEgenAnsatt(foedselsnummer, status)).isFalse
@@ -137,7 +124,7 @@ class EnhetsrutingServiceTest {
 
     @Test
     fun `er ikke egen ansatt - variant fnr ikke i resultatet`() {
-        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermetPersonRequest::class)) } answers
+        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermetPersonRequest::class)) } answers
                 { false }
 
         assertThat(service.erEgenAnsatt(foedselsnummer, status)).isFalse
