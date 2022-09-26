@@ -1,12 +1,7 @@
 package no.nav.yrkesskade.meldingmottak.clients.bigquery.schema
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.google.cloud.bigquery.DatasetId
-import com.google.cloud.bigquery.InsertAllRequest
-import com.google.cloud.bigquery.Schema
-import com.google.cloud.bigquery.StandardTableDefinition
-import com.google.cloud.bigquery.TableId
-import com.google.cloud.bigquery.TableInfo
+import com.google.cloud.bigquery.*
 
 data class SchemaId(val name: String, val version: Int) {
 
@@ -42,5 +37,6 @@ interface SchemaDefinition {
 
 val schemaRegistry: Map<SchemaId, SchemaDefinition> = mapOf(
     skademelding_v1.entry(),
-    journalfoeringhendelse_oppgave_v1.entry()
+    journalfoeringhendelse_oppgave_v1.entry(),
+    ruting_v1.entry()
 )
