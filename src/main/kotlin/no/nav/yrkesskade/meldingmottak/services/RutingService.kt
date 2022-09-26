@@ -1,16 +1,13 @@
 package no.nav.yrkesskade.meldingmottak.services
 
-import com.expediagroup.graphql.generated.enums.AdressebeskyttelseGradering
-import com.expediagroup.graphql.generated.enums.IdentGruppe
-import com.expediagroup.graphql.generated.enums.Journalstatus
-import com.expediagroup.graphql.generated.enums.Sakstype
-import com.expediagroup.graphql.generated.enums.Tema
+import com.expediagroup.graphql.generated.enums.*
 import com.expediagroup.graphql.generated.hentperson.Adressebeskyttelse
 import com.expediagroup.graphql.generated.hentperson.Person
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.infotrygd.InfotrygdClient
 import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermedePersonerClient
+import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermetPersonRequest
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.meldingmottak.util.ruting.Enhetsruting
 import no.nav.yrkesskade.skademelding.model.Skademelding
@@ -99,7 +96,7 @@ class RutingService(
     }
 
     internal fun erEgenAnsatt(foedselsnummer: String, status: RutingStatus): Boolean {
-        val request = SkjermedePersonerClient.SkjermetPersonRequest(foedselsnummer)
+        val request = SkjermetPersonRequest(foedselsnummer)
         return skjermedePersonerClient.erSkjermet(request)
             .also { status.egenAnsatt = it }
     }

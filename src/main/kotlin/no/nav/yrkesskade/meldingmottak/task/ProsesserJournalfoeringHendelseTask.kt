@@ -1,10 +1,6 @@
 package no.nav.yrkesskade.meldingmottak.task
 
-import com.expediagroup.graphql.generated.enums.BrukerIdType
-import com.expediagroup.graphql.generated.enums.IdentGruppe
-import com.expediagroup.graphql.generated.enums.Journalposttype
-import com.expediagroup.graphql.generated.enums.Journalstatus
-import com.expediagroup.graphql.generated.enums.Tema
+import com.expediagroup.graphql.generated.enums.*
 import com.expediagroup.graphql.generated.journalpost.Bruker
 import com.expediagroup.graphql.generated.journalpost.Journalpost
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -13,18 +9,14 @@ import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClient
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.JournalfoeringHendelseOppgavePayload
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.journalfoeringhendelse_oppgave_v1
-import no.nav.yrkesskade.meldingmottak.clients.gosys.KrutkodeMapping
-import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgave
-import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
-import no.nav.yrkesskade.meldingmottak.clients.gosys.Oppgavetype
-import no.nav.yrkesskade.meldingmottak.clients.gosys.OpprettJournalfoeringOppgave
-import no.nav.yrkesskade.meldingmottak.clients.gosys.Prioritet
+import no.nav.yrkesskade.meldingmottak.clients.gosys.*
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.config.FeatureToggleService
 import no.nav.yrkesskade.meldingmottak.config.FeatureToggles
 import no.nav.yrkesskade.meldingmottak.domene.Brevkode
 import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
+import no.nav.yrkesskade.meldingmottak.services.ArbeidsfordelingService
 import no.nav.yrkesskade.meldingmottak.services.Rute
 import no.nav.yrkesskade.meldingmottak.services.RutingService
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
@@ -53,6 +45,7 @@ import java.lang.invoke.MethodHandles
 )
 @Component
 class ProsesserJournalfoeringHendelseTask(
+    private val arbeidsfordelingService: ArbeidsfordelingService,
     private val safClient: SafClient,
     private val pdlClient: PdlClient,
     private val rutingService: RutingService,
@@ -90,7 +83,7 @@ class ProsesserJournalfoeringHendelseTask(
             val dokumentTilSaksbehandlingHendelse = DokumentTilSaksbehandlingHendelse(
                 DokumentTilSaksbehandling(
                     journalpostId = journalpost.journalpostId,
-                    enhet = "9999",
+                    enhet = arbeidsfordelingService.finnBehandlendeEnhetForPerson(foedselsnummer).enhetId
                 ),
                 metadata = DokumentTilSaksbehandlingMetadata(callId = MDC.get(MDCConstants.MDC_CALL_ID))
             )
