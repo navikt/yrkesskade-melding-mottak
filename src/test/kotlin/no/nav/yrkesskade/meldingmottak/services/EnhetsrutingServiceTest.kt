@@ -3,28 +3,15 @@ package no.nav.yrkesskade.meldingmottak.services
 import com.expediagroup.graphql.generated.Date
 import com.expediagroup.graphql.generated.HentIdenter
 import com.expediagroup.graphql.generated.enums.AdressebeskyttelseGradering
-import com.expediagroup.graphql.generated.hentperson.Adressebeskyttelse
-import com.expediagroup.graphql.generated.hentperson.Bostedsadresse
-import com.expediagroup.graphql.generated.hentperson.Doedsfall
-import com.expediagroup.graphql.generated.hentperson.Navn
-import com.expediagroup.graphql.generated.hentperson.Person
+import com.expediagroup.graphql.generated.hentperson.*
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.infotrygd.InfotrygdClient
 import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermedePersonerClient
-import no.nav.yrkesskade.meldingmottak.fixtures.doedPerson
-import no.nav.yrkesskade.meldingmottak.fixtures.forGamleJournalposterResult
-import no.nav.yrkesskade.meldingmottak.fixtures.gyldigFortroligPersonMedNavnOgVegadresse
-import no.nav.yrkesskade.meldingmottak.fixtures.gyldigPersonMedNavnOgVegadresse
-import no.nav.yrkesskade.meldingmottak.fixtures.gyldigStrengtFortroligPersonMedNavnOgVegadresse
-import no.nav.yrkesskade.meldingmottak.fixtures.hentIdenterResultMedFnrHistorikk
-import no.nav.yrkesskade.meldingmottak.fixtures.journalposterResult
-import no.nav.yrkesskade.meldingmottak.fixtures.journalposterResultMedSak
-import no.nav.yrkesskade.meldingmottak.fixtures.sakerResult
-import no.nav.yrkesskade.meldingmottak.fixtures.sakerResultMedForGammelGenerellYrkesskadesak
-import no.nav.yrkesskade.meldingmottak.fixtures.sakerResultMedGenerellYrkesskadesak
+import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermetPersonRequest
+import no.nav.yrkesskade.meldingmottak.fixtures.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -121,7 +108,7 @@ class EnhetsrutingServiceTest {
 
     @Test
     fun `er egen ansatt, dvs skjermet person`() {
-        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermetPersonRequest::class)) } answers
+        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermetPersonRequest::class)) } answers
                 { true }
 
         assertThat(service.erEgenAnsatt(foedselsnummer, status)).isTrue
@@ -129,7 +116,7 @@ class EnhetsrutingServiceTest {
 
     @Test
     fun `er ikke egen ansatt - variant fnr i resultatet`() {
-        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermetPersonRequest::class)) } answers
+        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermetPersonRequest::class)) } answers
                 { false }
 
         assertThat(service.erEgenAnsatt(foedselsnummer, status)).isFalse
@@ -137,7 +124,7 @@ class EnhetsrutingServiceTest {
 
     @Test
     fun `er ikke egen ansatt - variant fnr ikke i resultatet`() {
-        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermedePersonerClient.SkjermetPersonRequest::class)) } answers
+        every { skjermedePersonerClientMock.erSkjermet(ofType(SkjermetPersonRequest::class)) } answers
                 { false }
 
         assertThat(service.erEgenAnsatt(foedselsnummer, status)).isFalse
@@ -179,32 +166,32 @@ class EnhetsrutingServiceTest {
     @Test
     fun `hvis ingen person i pdl, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns null
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `hvis person er død, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns doedPerson()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `hvis person er kode 7 fortrolig, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigFortroligPersonMedNavnOgVegadresse()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `hvis person er kode 6 strengt fortrolig, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigStrengtFortroligPersonMedNavnOgVegadresse()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `hvis person er egen ansatt, dvs ansatt i NAV, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
         every { skjermedePersonerClientMock.erSkjermet(any()) } returns true
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
@@ -213,7 +200,7 @@ class EnhetsrutingServiceTest {
         every { skjermedePersonerClientMock.erSkjermet(any()) } returns false
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedGenerellYrkesskadesak()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
@@ -235,7 +222,7 @@ class EnhetsrutingServiceTest {
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns true
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
@@ -246,7 +233,7 @@ class EnhetsrutingServiceTest {
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResult()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
@@ -269,10 +256,8 @@ class EnhetsrutingServiceTest {
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResultMedSak()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.YRKESSKADE_SAKSBEHANDLING)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.YRKESSKADE_SAKSBEHANDLING)
     }
-
-
 
 
     data class PersonBuilder(
@@ -286,7 +271,5 @@ class EnhetsrutingServiceTest {
         fun doedsfall(doedsdato: Date) = apply { this.doedsfall = listOf(Doedsfall(doedsdato)) }
         fun build() = Person(adressebeskyttelse, navn, doedsfall, bostedsadresse)
     }
-
-
 
 }

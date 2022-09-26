@@ -171,4 +171,28 @@ internal class EnhetsrutingStatusTest {
         assertThat(status.rutingResult).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
+    @Test
+    fun `skal gi riktig rutingårsak`() {
+        assertThat(RutingStatus(finnesIkkeIPdl = true).rutingAarsak()).isEqualTo(RutingAarsak.FINNES_IKKE_I_PDL)
+        assertThat(RutingStatus(doed = true).rutingAarsak()).isEqualTo(RutingAarsak.DOED)
+        assertThat(RutingStatus(kode7Fortrolig = true).rutingAarsak()).isEqualTo(RutingAarsak.KODE_7_FORTROLIG)
+        assertThat(RutingStatus(kode6StrengtFortrolig = true).rutingAarsak()).isEqualTo(RutingAarsak.KODE_6_STRENGT_FORTROLIG)
+        assertThat(RutingStatus(egenAnsatt = true).rutingAarsak()).isEqualTo(RutingAarsak.EGEN_ANSATT)
+        assertThat(RutingStatus(aapenGenerellYrkesskadeSak = true).rutingAarsak()).isEqualTo(RutingAarsak.AAPEN_GENERELL_YRKESSKADESAK)
+        assertThat(RutingStatus(eksisterendeInfotrygdSak = true).rutingAarsak()).isEqualTo(RutingAarsak.EKSISTERENDE_INFOTRYGDSAK)
+        assertThat(RutingStatus(potensiellKommendeSak = true).rutingAarsak()).isEqualTo(RutingAarsak.POTENSIELL_KOMMENDE_SAK)
+    }
+
+    @Test
+    fun `skal gi første rutingårsak når flere tilfeller slår til`() {
+        val rutingStatus = RutingStatus(finnesIkkeIPdl = true, eksisterendeInfotrygdSak = true)
+        assertThat(rutingStatus.rutingAarsak()).isNotEqualTo(RutingAarsak.EKSISTERENDE_INFOTRYGDSAK)
+        assertThat(rutingStatus.rutingAarsak()).isEqualTo(RutingAarsak.FINNES_IKKE_I_PDL)
+    }
+
+    @Test
+    fun `ingen rutingårsak når ingen av sjekkene slår til`() {
+        assertThat(RutingStatus().rutingAarsak()).isNull()
+    }
+
 }
