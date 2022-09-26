@@ -264,25 +264,25 @@ class RutingStatus {
         if (finnesIkkeIPdl) {
             return RutingAarsak.FINNES_IKKE_I_PDL
         }
-        else if (doed) {
+        if (doed) {
             return RutingAarsak.DOED
         }
-        else if (kode7Fortrolig) {
+        if (kode7Fortrolig) {
             return RutingAarsak.KODE_7_FORTROLIG
         }
-        else if (kode6StrengtFortrolig) {
+        if (kode6StrengtFortrolig) {
             return RutingAarsak.KODE_6_STRENGT_FORTROLIG
         }
-        else if (egenAnsatt) {
+        if (egenAnsatt) {
             return RutingAarsak.EGEN_ANSATT
         }
-        else if (aapenGenerellYrkesskadeSak) {
+        if (aapenGenerellYrkesskadeSak) {
             return RutingAarsak.AAPEN_GENERELL_YRKESSKADESAK
         }
-        else if (eksisterendeInfotrygdSak) {
+        if (eksisterendeInfotrygdSak) {
             return RutingAarsak.EKSISTERENDE_INFOTRYGDSAK
         }
-        else if (potensiellKommendeSak) {
+        if (potensiellKommendeSak) {
             return RutingAarsak.POTENSIELL_KOMMENDE_SAK
         }
         return null

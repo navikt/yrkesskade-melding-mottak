@@ -185,12 +185,9 @@ internal class EnhetsrutingStatusTest {
 
     @Test
     fun `skal gi første rutingårsak når flere tilfeller slår til`() {
-        val aarsakA = RutingAarsak.EKSISTERENDE_INFOTRYGDSAK
-        val aarsakB = RutingAarsak.FINNES_IKKE_I_PDL
         val rutingStatus = RutingStatus(finnesIkkeIPdl = true, eksisterendeInfotrygdSak = true)
-        assertThat(aarsakA.ordinal > aarsakB.ordinal)
-        assertThat(rutingStatus.rutingAarsak()).isNotEqualTo(aarsakA)
-        assertThat(rutingStatus.rutingAarsak()).isEqualTo(aarsakB)
+        assertThat(rutingStatus.rutingAarsak()).isNotEqualTo(RutingAarsak.EKSISTERENDE_INFOTRYGDSAK)
+        assertThat(rutingStatus.rutingAarsak()).isEqualTo(RutingAarsak.FINNES_IKKE_I_PDL)
     }
 
     @Test
