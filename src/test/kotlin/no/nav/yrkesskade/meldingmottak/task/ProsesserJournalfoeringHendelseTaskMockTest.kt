@@ -14,7 +14,9 @@ import no.nav.yrkesskade.meldingmottak.fixtures.*
 import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
 import no.nav.yrkesskade.meldingmottak.services.ArbeidsfordelingService
 import no.nav.yrkesskade.meldingmottak.services.Rute
+import no.nav.yrkesskade.meldingmottak.services.RutingResult
 import no.nav.yrkesskade.meldingmottak.services.RutingService
+import no.nav.yrkesskade.meldingmottak.services.RutingStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
@@ -49,6 +51,7 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
     fun init() {
         MDC.put(MDCConstants.MDC_CALL_ID, "mock")
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedBrukerAktoeridOgFoedselsnummer()
+        every { rutingServiceMock.utfoerRuting(any()) } returns RutingResult(Rute.GOSYS_OG_INFOTRYGD, RutingStatus(eksisterendeInfotrygdSak = true))
         every { featureToggleService.isEnabled(any(), any()) } returns true
     }
 
@@ -79,7 +82,7 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
     @Test
     fun `skal lage oppgave naar tannlegeerklaering kommer inn, men rutes til gammelt saksbehandlingssystem Gosys pga eksisterende sak el,l`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultTannlegeerklaering()
-        every { rutingServiceMock.utfoerRuting(any()) } returns Rute.GOSYS_OG_INFOTRYGD
+        every { rutingServiceMock.utfoerRuting(any()) } returns RutingResult(Rute.GOSYS_OG_INFOTRYGD, RutingStatus(eksisterendeInfotrygdSak = true))
 
         prosesserJournalfoeringHendelseTask.doTask(task)
         verify(exactly = 1) { oppgaveClientMock.opprettOppgave(any()) }
@@ -88,7 +91,7 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
     @Test
     fun `skal IKKE lage oppgave naar tannlegeerklaering kommer inn, og record rutes til yrkesskade saksbehandlingssystem`() {
         every { safClientMock.hentOppdatertJournalpost(any()) } returns journalpostResultTannlegeerklaering()
-        every { rutingServiceMock.utfoerRuting(any()) } returns Rute.YRKESSKADE_SAKSBEHANDLING
+        every { rutingServiceMock.utfoerRuting(any()) } returns RutingResult(Rute.YRKESSKADE_SAKSBEHANDLING, RutingStatus())
 
         prosesserJournalfoeringHendelseTask.doTask(task)
         verify(exactly = 0) { oppgaveClientMock.opprettOppgave(any()) }

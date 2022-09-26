@@ -166,32 +166,32 @@ class EnhetsrutingServiceTest {
     @Test
     fun `hvis ingen person i pdl, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns null
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `hvis person er død, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns doedPerson()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `hvis person er kode 7 fortrolig, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigFortroligPersonMedNavnOgVegadresse()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `hvis person er kode 6 strengt fortrolig, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigStrengtFortroligPersonMedNavnOgVegadresse()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
     fun `hvis person er egen ansatt, dvs ansatt i NAV, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigPersonMedNavnOgVegadresse()
         every { skjermedePersonerClientMock.erSkjermet(any()) } returns true
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
@@ -200,7 +200,7 @@ class EnhetsrutingServiceTest {
         every { skjermedePersonerClientMock.erSkjermet(any()) } returns false
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedGenerellYrkesskadesak()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
@@ -222,7 +222,7 @@ class EnhetsrutingServiceTest {
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedFnrHistorikk()
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns true
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
@@ -233,7 +233,7 @@ class EnhetsrutingServiceTest {
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResult()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
     @Test
@@ -256,10 +256,8 @@ class EnhetsrutingServiceTest {
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResult()
         every { infotrygdClientMock.harEksisterendeSak(any()) } returns false
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResultMedSak()
-        assertThat(service.utfoerRuting(foedselsnummer)).isEqualTo(Rute.YRKESSKADE_SAKSBEHANDLING)
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.YRKESSKADE_SAKSBEHANDLING)
     }
-
-
 
 
     data class PersonBuilder(
@@ -273,7 +271,5 @@ class EnhetsrutingServiceTest {
         fun doedsfall(doedsdato: Date) = apply { this.doedsfall = listOf(Doedsfall(doedsdato)) }
         fun build() = Person(adressebeskyttelse, navn, doedsfall, bostedsadresse)
     }
-
-
 
 }

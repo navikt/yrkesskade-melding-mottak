@@ -8,7 +8,9 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.familie.log.mdc.MDCConstants
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClient
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.JournalfoeringHendelseOppgavePayload
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.JournalfoeringHendelseRutingPayload
 import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.journalfoeringhendelse_oppgave_v1
+import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.ruting_v1
 import no.nav.yrkesskade.meldingmottak.clients.gosys.*
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
@@ -18,6 +20,7 @@ import no.nav.yrkesskade.meldingmottak.domene.Brevkode
 import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
 import no.nav.yrkesskade.meldingmottak.services.ArbeidsfordelingService
 import no.nav.yrkesskade.meldingmottak.services.Rute
+import no.nav.yrkesskade.meldingmottak.services.RutingResult
 import no.nav.yrkesskade.meldingmottak.services.RutingService
 import no.nav.yrkesskade.meldingmottak.util.FristFerdigstillelseTimeManager
 import no.nav.yrkesskade.meldingmottak.util.extensions.hentBrevkode
@@ -75,10 +78,16 @@ class ProsesserJournalfoeringHendelseTask(
         val erIkkeProd = featureToggleService.isEnabled(FeatureToggles.ER_IKKE_PROD.toggleId, false).also {
             log.info("${FeatureToggles.ER_IKKE_PROD.toggleId}: $it")
         }
+
+        // TODO: YSMOD-509 rutingsjekken kan inlines når feature toggle er fjernet. den er trukket ut for å sikre at rutingmetrikk ble lagret til bigquery.
+        val skalRutesTilYsSaksbehandling = foedselsnummer != null &&
+                journalpostErKandidatForYsSaksbehandling(journalpost) &&
+                skalRutesTilYsSaksbehandling(foedselsnummer, journalpost)
+
         if (erIkkeProd &&
             foedselsnummer != null &&
             journalpostErKandidatForYsSaksbehandling(journalpost) &&
-            skalRutesTilYsSaksbehandling(foedselsnummer)
+            skalRutesTilYsSaksbehandling
         ) {
             val dokumentTilSaksbehandlingHendelse = DokumentTilSaksbehandlingHendelse(
                 DokumentTilSaksbehandling(
@@ -126,6 +135,26 @@ class ProsesserJournalfoeringHendelseTask(
     }
 
     /**
+     * Legger til en rad i BigQuery-metrikkene om hvilket saksbehandlingssystem meldingen rutes videre til.
+     *
+     * @param journalpost journalposten det gjelder
+     * @param rutingResult hvilket system meldingen rutes videre til, samt årsak til rutingen
+     */
+    private fun foerMetrikkIBigQuery(journalpost: Journalpost, rutingResult: RutingResult) {
+        val payload = JournalfoeringHendelseRutingPayload(
+            brevkode = journalpost.hentBrevkode(),
+            journalpostId = journalpost.journalpostId,
+            tilSystem = rutingResult.rute.name,
+            rutingAarsak = rutingResult.status.rutingAarsak()?.name,
+            callId = MDC.get(MDCConstants.MDC_CALL_ID)
+        )
+        bigQueryClient.insert(
+            ruting_v1,
+            ruting_v1.transform(jacksonObjectMapper().valueToTree(payload))
+        )
+    }
+
+    /**
      * Avgjør om en journalpost er relevant for opprettelse av journalføringsoppgave.
      * Kriterier:
      * 1. Journalpostens status må være mottatt
@@ -163,8 +192,12 @@ class ProsesserJournalfoeringHendelseTask(
     /**
      * Bestemmer om en journalpost, for en person, SKAL sendes til nytt saksbehandlingssystem for yrkesskade/-sykdom.
      */
-    private fun skalRutesTilYsSaksbehandling(foedselsnummer: String) =
-        rutingService.utfoerRuting(foedselsnummer) == Rute.YRKESSKADE_SAKSBEHANDLING
+    private fun skalRutesTilYsSaksbehandling(foedselsnummer: String, journalpost: Journalpost): Boolean {
+        val rutingResult = rutingService.utfoerRuting(foedselsnummer)
+
+        return rutingResult.rute == Rute.YRKESSKADE_SAKSBEHANDLING
+            .also { foerMetrikkIBigQuery(journalpost, rutingResult) }
+    }
 
     /**
      * Bestemmer om en journalpost fra en Kafka-record er en tannlegeerklæring.

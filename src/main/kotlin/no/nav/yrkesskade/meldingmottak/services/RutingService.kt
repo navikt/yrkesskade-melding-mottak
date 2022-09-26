@@ -39,12 +39,14 @@ class RutingService(
      *
      * OBS! Rekkefølgen på noen av kontrollene har betydning, så ikke endre på rekkefølgen.
      */
-    fun utfoerRuting(foedselsnummer: String): Rute {
+    fun utfoerRuting(foedselsnummer: String): RutingResult {
         check(foedselsnummer.isNotBlank()) { "Det må angis et fødselsnummer for å utføre ruting!" }
 
         val status = RutingStatus()
 
-        return ruting(foedselsnummer, status)
+        val rute = ruting(foedselsnummer, status)
+
+        return RutingResult(rute, status)
             .also { log.info(status.resultatSomTekst()) }
     }
 
@@ -152,9 +154,27 @@ class RutingService(
         return Enhetsruting.utledEnhet(skademelding, rutingStatus)
     }
 }
+
+
+data class RutingResult(
+    val rute: Rute,
+    val status: RutingStatus
+)
+
 enum class Rute {
     GOSYS_OG_INFOTRYGD,
     YRKESSKADE_SAKSBEHANDLING
+}
+
+enum class RutingAarsak {
+    FINNES_IKKE_I_PDL,
+    DOED,
+    KODE_7_FORTROLIG,
+    KODE_6_STRENGT_FORTROLIG,
+    EGEN_ANSATT,
+    AAPEN_GENERELL_YRKESSKADESAK,
+    EKSISTERENDE_INFOTRYGDSAK,
+    POTENSIELL_KOMMENDE_SAK
 }
 
 class RutingStatus {
@@ -240,7 +260,33 @@ class RutingStatus {
         }
     }
 
-
+    fun rutingAarsak(): RutingAarsak? {
+        if (finnesIkkeIPdl) {
+            return RutingAarsak.FINNES_IKKE_I_PDL
+        }
+        if (doed) {
+            return RutingAarsak.DOED
+        }
+        if (kode7Fortrolig) {
+            return RutingAarsak.KODE_7_FORTROLIG
+        }
+        if (kode6StrengtFortrolig) {
+            return RutingAarsak.KODE_6_STRENGT_FORTROLIG
+        }
+        if (egenAnsatt) {
+            return RutingAarsak.EGEN_ANSATT
+        }
+        if (aapenGenerellYrkesskadeSak) {
+            return RutingAarsak.AAPEN_GENERELL_YRKESSKADESAK
+        }
+        if (eksisterendeInfotrygdSak) {
+            return RutingAarsak.EKSISTERENDE_INFOTRYGDSAK
+        }
+        if (potensiellKommendeSak) {
+            return RutingAarsak.POTENSIELL_KOMMENDE_SAK
+        }
+        return null
+    }
 
     fun resultatSomTekst(): String {
         val builder: StringBuilder = java.lang.StringBuilder("Rutingstatus for person:\n")
