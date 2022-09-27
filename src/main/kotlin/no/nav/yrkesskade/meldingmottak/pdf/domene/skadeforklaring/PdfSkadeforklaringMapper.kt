@@ -7,6 +7,7 @@ import no.nav.yrkesskade.meldingmottak.util.kodeverk.KodeverkHolder
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringMetadata
 import no.nav.yrkesskade.skadeforklaring.model.*
+import java.time.LocalDate
 
 object PdfSkadeforklaringMapper {
 
@@ -23,7 +24,9 @@ object PdfSkadeforklaringMapper {
         val arbeidsbeskrivelse = tilPdfArbeidsbeskrivelse(skadeforklaring.arbeidetMedIUlykkesoeyeblikket)
         val ulykkesbeskrivelse = tilPdfUlykkesbeskrivelse(skadeforklaring.noeyaktigBeskrivelseAvHendelsen)
         val fravaer = tilPdfFravaer(skadeforklaring.fravaer, kodeverkHolder)
-        val helseinstitusjon = tilPdfHelseinstitusjon(skadeforklaring.helseinstitusjon)
+        val erHelsepersonellOppsokt = tilPdfHelsepersonellOppsokt(skadeforklaring.erHelsepersonellOppsokt)
+        val foersteHelsepersonellOppsoktDato = tilPdfFoersteHelsepersonellOppsoktDato(skadeforklaring.foersteHelsepersonellOppsoktDato)
+        val helseinstitusjoner = tilPdfHelseinstitusjoner(skadeforklaring.helseinstitusjoner)
         val vedleggInfo = tilPdfVedleggInfo(skadeforklaring)
         val dokumentInfo = lagPdfDokumentInfoSkadeforklaring(record.metadata)
 
@@ -34,9 +37,11 @@ object PdfSkadeforklaringMapper {
             arbeidetMedIUlykkesoeyeblikket = arbeidsbeskrivelse,
             noeyaktigBeskrivelseAvHendelsen = ulykkesbeskrivelse,
             fravaer = fravaer,
-            helseinstitusjon = helseinstitusjon,
+            helseinstitusjoner = helseinstitusjoner,
             vedleggInfo = vedleggInfo,
-            dokumentInfo = dokumentInfo
+            dokumentInfo = dokumentInfo,
+            erHelsepersonellOppsokt = erHelsepersonellOppsokt,
+            foersteHelsepersonellOppsoktDato = foersteHelsepersonellOppsoktDato
         )
     }
 
@@ -82,6 +87,12 @@ object PdfSkadeforklaringMapper {
     private fun tilPdfUlykkesbeskrivelse(ulykkesbeskrivelse: String): Soknadsfelt<String> =
         Soknadsfelt("Gi en så nøyaktig beskrivelse av hendelsen som mulig", ulykkesbeskrivelse)
 
+    private fun tilPdfHelsepersonellOppsokt(erHelsepersonellOppsokt: String) =
+        Soknadsfelt("Ble lege oppsøkt etter skaden?", MapperUtil.jaNei(erHelsepersonellOppsokt))
+
+    private fun tilPdfFoersteHelsepersonellOppsoktDato(foersteHelsepersonellOppsoktDato: LocalDate?) =
+        Soknadsfelt("Når ble lege oppsøkt første gang?", MapperUtil.datoFormatert(foersteHelsepersonellOppsoktDato))
+
     private fun tilPdfFravaer(fravaer: Fravaer, kodeverkHolder: KodeverkHolder): PdfFravaer {
         val foerteTilFravaer = when(fravaer.foerteDinSkadeEllerSykdomTilFravaer) {
             "fravaersdagerUkjent" -> "Ja"
@@ -101,23 +112,16 @@ object PdfSkadeforklaringMapper {
         return kodeverkHolder.mapKodeTilVerdi(kode, kodeliste)
     }
 
-    private fun tilPdfHelseinstitusjon(helseinstitusjon: Helseinstitusjon): PdfHelseinstitusjon {
-        return PdfHelseinstitusjon(
-            erHelsepersonellOppsokt = Soknadsfelt("Ble lege oppsøkt etter skaden?", MapperUtil.jaNei(helseinstitusjon.erHelsepersonellOppsokt)),
-            navn = Soknadsfelt("Navn på helseforetak, legevakt eller lege", helseinstitusjon.navn),
-            adresse = Soknadsfelt("Adresse", tilPdfAdresse(helseinstitusjon.adresse))
-        )
+    private fun tilPdfHelseinstitusjoner(helseinstitusjoner: List<Helseinstitusjon>): Soknadsfelt<List<String>> {
+        val mappetHelseinstitusjoner = helseinstitusjoner.mapNotNull {
+            it.navn
+        }.orEmpty()
+        return Soknadsfelt("Navn på helseforetak, legevakt eller lege", mappetHelseinstitusjoner)
     }
 
-    private fun tilPdfAdresse(adresse: Adresse?): PdfAdresse? {
-        if (adresse == null) {
-            return null
-        }
-        return PdfAdresse(
-            adresselinje1 = adresse.adresse,
-            adresselinje2 = adresse.postnummer + " " + adresse.poststed,
-            adresselinje3 = null,
-            land = null
+    private fun tilPdfHelseinstitusjon(helseinstitusjon: Helseinstitusjon): PdfHelseinstitusjon {
+        return PdfHelseinstitusjon(
+            navn = Soknadsfelt("Navn på helseforetak, legevakt eller lege", helseinstitusjon.navn)
         )
     }
 
