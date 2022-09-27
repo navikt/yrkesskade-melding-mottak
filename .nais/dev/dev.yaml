@@ -7,7 +7,6 @@ externalHosts:
   - host: dokarkiv.dev-fss-pub.nais.io
 externalOutboundHosts:
   - host: yrkesskade-infotrygd.dev-fss-pub.nais.io
-  - host: norg2.dev.adeo.no
 springProfile: dev
 tenant: trygdeetaten.no
 kafka_pool: nav-dev
