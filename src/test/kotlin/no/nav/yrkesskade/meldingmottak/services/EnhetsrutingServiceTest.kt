@@ -210,7 +210,7 @@ class EnhetsrutingServiceTest {
     }
 
     @Test
-    fun `finner ingen åpen generell YRK sak naar saken er eldre enn 24 mnd`() {
+    fun `finner ingen åpen generell YRK sak når saken er eldre enn 24 mnd`() {
         every { safClientMock.hentSakerForPerson(any()) } returns sakerResultMedForGammelGenerellYrkesskadesak()
         assertThat(service.harAapenGenerellYrkesskadeSak("12345678901", RutingStatus())).isFalse
     }
@@ -237,13 +237,25 @@ class EnhetsrutingServiceTest {
     }
 
     @Test
-    fun `skal hente potensielle kommende saker naar det finnes journalpost nyere enn 24 mnd`() {
+    fun `skal hente potensielle kommende saker når det finnes journalpost nyere enn 24 mnd`() {
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResult()
         assertThat(service.harPotensiellKommendeSak("12345678901", RutingStatus())).isTrue
     }
 
     @Test
-    fun `finner ingen potensiell kommende sak naar journalposter er eldre enn 24 mnd`() {
+    fun `skal hente potensielle kommende saker også når det ikke finnes dokumenter på journalposten`() {
+        every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResultUtenSakOgDokumenter()
+        assertThat(service.harPotensiellKommendeSak("12345678901", RutingStatus())).isTrue
+    }
+
+    @Test
+    fun `tannlegeerklæring skal ikke regnes som potensielle kommende saker`() {
+        every { safClientMock.hentJournalposterForPerson(any(), any()) } returns journalposterResultMedTannlegeerklaeringUtenSak()
+        assertThat(service.harPotensiellKommendeSak("12345678901", RutingStatus())).isFalse
+    }
+
+    @Test
+    fun `finner ingen potensiell kommende sak når journalposter er eldre enn 24 mnd`() {
         every { safClientMock.hentJournalposterForPerson(any(), any()) } returns forGamleJournalposterResult()
         assertThat(service.harPotensiellKommendeSak("12345678901", RutingStatus())).isFalse
     }
