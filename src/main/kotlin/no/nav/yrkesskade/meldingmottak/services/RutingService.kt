@@ -8,6 +8,7 @@ import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
 import no.nav.yrkesskade.meldingmottak.clients.infotrygd.InfotrygdClient
 import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermedePersonerClient
 import no.nav.yrkesskade.meldingmottak.clients.tilgang.SkjermetPersonRequest
+import no.nav.yrkesskade.meldingmottak.domene.Brevkode
 import no.nav.yrkesskade.meldingmottak.util.getSecureLogger
 import no.nav.yrkesskade.meldingmottak.util.ruting.Enhetsruting
 import no.nav.yrkesskade.skademelding.model.Skademelding
@@ -126,6 +127,7 @@ class RutingService(
      * OBS! Denne kontrollen må komme etter kontrollene på om det finnes saker.
      */
     internal fun harPotensiellKommendeSak(foedselsnummer: String, status: RutingStatus): Boolean {
+        val brevkoderUnntattPotensiellKommendeSak = listOf(Brevkode.TANNLEGEERKLAERING.kode)
         val journalposterForPerson =
             safClient.hentJournalposterForPerson(
                 foedselsnummer,
@@ -133,7 +135,10 @@ class RutingService(
             )?.dokumentoversiktBruker?.journalposter ?: emptyList()
         val journalposterUtenSak = journalposterForPerson.filter { journalpost ->
             journalpost?.sak == null &&
-                    journalpost?.datoOpprettet?.isAfter(tjueFireMndSiden()) == true
+            journalpost?.datoOpprettet?.isAfter(tjueFireMndSiden()) == true &&
+            journalpost.dokumenter?.find { dokumentInfo ->
+                brevkoderUnntattPotensiellKommendeSak.contains(dokumentInfo?.brevkode)
+            } == null
         }
         return journalposterUtenSak.isNotEmpty()
             .also { status.potensiellKommendeSak = it }
