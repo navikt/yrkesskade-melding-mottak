@@ -37,10 +37,10 @@ class ArbeidsfordelingClient(
     }
 
     @Retryable
-    fun finnBehandlendeEnhetMedBesteMatch(kriterie: ArbeidsfordelingKriterie): ArbeidsfordelingResponse? {
+    fun finnBehandlendeEnhetMedBesteMatch(kriterie: ArbeidsfordelingKriterie): ArbeidsfordelingResponse {
         log.info("Finn behandlende enhet for person")
         secureLogger.info("Finn behandlende enhet for person med kriterier tema=${kriterie.tema} geografiskOmraade=${kriterie.geografiskOmraade} diskresjonskode=${kriterie.diskresjonskode} skjermet=${kriterie.skjermet}")
-        return logTimingAndWebClientResponseException("finn behandlende enhet") {
+        val enhetResponseList = logTimingAndWebClientResponseException("finn behandlende enhet") {
             arbeidsfordelingWebClient.post()
                 .uri("api/v1/arbeidsfordeling/enheter/bestmatch")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -48,10 +48,11 @@ class ArbeidsfordelingClient(
                 .header("Nav-Consumer-Id", applicationName)
                 .bodyValue(kriterie)
                 .retrieve()
-                .bodyToMono<ArbeidsfordelingResponse>()
+                .bodyToMono<List<EnhetResponse>>()
                 .block() ?: throw RuntimeException("Kunne ikke finne behandlende enhet")
-        }.also { response ->
-            if (!response?.enheter.isNullOrEmpty()) {
+        }
+        return ArbeidsfordelingResponse(enhetResponseList).also { response ->
+            if (response.enheter.isNotEmpty()) {
                 log.info("Fant behandlende enhet")
                 secureLogger.info("Fant behandlende enhet ${response.enheter.first().enhetNr} ${response.enheter.first().navn}")
             } else {

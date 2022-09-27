@@ -45,7 +45,7 @@ class ArbeidsfordelingService(
         )
 
         val response = arbeidsfordelingClient.finnBehandlendeEnhetMedBesteMatch(arbeidsfordelingskriterie)
-        val enhet = response?.enheter?.firstOrNull()
+        val enhet = response.enheter.firstOrNull()
 
         return Enhet(
             enhetId = enhet?.enhetNr ?: "9999",
