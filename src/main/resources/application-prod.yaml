@@ -97,7 +97,7 @@ dokarkiv.url: https://dokarkiv.prod-fss-pub.nais.io
 api:
   client:
     arbeidsfordeling:
-      url: https://norg2.nais.adeo.no/norg2/
+      url: https://norg2.prod-fss-pub.nais.io/norg2/
     skjermede-personer-pip:
       clientId: prod-gcp.nom.skjermede-personer-pip
       url: https://skjermede-personer-pip.intern.nav.no
