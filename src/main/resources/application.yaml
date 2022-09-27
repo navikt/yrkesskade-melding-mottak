@@ -13,7 +13,7 @@ spring:
       auto-offset-reset: earliest
       enable-auto-commit: false
       properties:
-        spring.json.trusted.packages: no.nav.yrkesskade.model,no.nav.yrkesskade.skadeforklaring
+        spring.json.trusted.packages: no.nav.yrkesskade.model,no.nav.yrkesskade.skadeforklaring.integration.mottak.model
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

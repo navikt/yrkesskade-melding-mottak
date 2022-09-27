@@ -80,7 +80,7 @@ class SkademeldingService(
     ): BeriketData {
         val innmeldersNavn: Navn? = hentNavnFraPersondataloesningen(innmeldersFnr)
         val skadelidtsNavnOgAdresse: Pair<Navn?, Adresse?> = hentNavnOgAdresse(skadelidtsFnr)
-        return BeriketData(innmeldersNavn, skadelidtsNavnOgAdresse.first, innmeldersFnr, skadelidtsFnr, skadelidtsNavnOgAdresse.second)
+        return BeriketData(innmeldersNavn, skadelidtsNavnOgAdresse.first, skadelidtsNavnOgAdresse.second)
     }
 
     private fun hentNavnFraPersondataloesningen(fodselsnummer: String?): Navn? {

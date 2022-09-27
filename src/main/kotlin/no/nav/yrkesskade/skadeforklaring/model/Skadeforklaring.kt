@@ -1,4 +1,4 @@
-package no.nav.yrkesskade.skadeforklaring.v1.model
+package no.nav.yrkesskade.skadeforklaring.model
 
 data class Skadeforklaring(
     val saksnummer: String?,

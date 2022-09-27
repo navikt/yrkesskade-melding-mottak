@@ -24,8 +24,6 @@ data class Adresse(
 data class BeriketData(
     val innmeldersNavn: Navn?,
     val skadelidtsNavn: Navn?,
-    val innmeldersNorskIdentitetsnummer: String?,
-    val skadelidtsNorskIdentitetsnummer: String?,
     val skadelidtsBostedsadresse: Adresse?,
 )
 

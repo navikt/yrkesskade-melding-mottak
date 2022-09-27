@@ -4,9 +4,9 @@ import no.nav.yrkesskade.meldingmottak.domene.BeriketData
 import no.nav.yrkesskade.meldingmottak.domene.Navn
 import no.nav.yrkesskade.meldingmottak.pdf.domene.*
 import no.nav.yrkesskade.meldingmottak.util.kodeverk.KodeverkHolder
-import no.nav.yrkesskade.skadeforklaring.v1.integration.model.SkadeforklaringInnsendingHendelse
-import no.nav.yrkesskade.skadeforklaring.v1.integration.model.SkadeforklaringMetadata
-import no.nav.yrkesskade.skadeforklaring.v1.model.*
+import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringMetadata
+import no.nav.yrkesskade.skadeforklaring.model.*
 
 object PdfSkadeforklaringMapper {
 

@@ -12,12 +12,11 @@ import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHe
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelseMedBildevedlegg
 import no.nav.yrkesskade.meldingmottak.fixtures.enkelSkadeforklaringInnsendingHendelseMedVedlegg
 import no.nav.yrkesskade.meldingmottak.vedlegg.Image2PDFConverter
-import no.nav.yrkesskade.skadeforklaring.v1.integration.model.SkadeforklaringInnsendingHendelse
-import no.nav.yrkesskade.skadeforklaring.v1.model.Vedleggreferanse
+import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
+import no.nav.yrkesskade.skadeforklaring.model.Vedleggreferanse
 import no.nav.yrkesskade.storage.Blob
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
 
@@ -89,28 +88,26 @@ class SkadeforklaringServiceMockTest {
     }
 
     @Test
-    @Disabled
     fun `skal opprette dokumenter for vedlegg`() {
         every { storageService.hent(any(), any()) } answers { Blob("1", "12345678901", readPdfFile(), "vedlegg65.pdf", 210) }
         val vedleggreferanser = listOf(Vedleggreferanse("1", "vedlegg65.pdf", 210,""))
-       // val dokumenter = service.opprettDokumenter(vedleggreferanser, "12345678901")
+        val dokumenter = service.opprettDokumenter(vedleggreferanser, "12345678901")
 
-      //  assertThat(dokumenter.size).isEqualTo(1)
-      //  assertThat(dokumenter[0].tittel).isEqualTo("vedlegg65.pdf")
+        assertThat(dokumenter.size).isEqualTo(1)
+        assertThat(dokumenter[0].tittel).isEqualTo("vedlegg65.pdf")
     }
 
     @Test
-    @Disabled
     fun `skal opprette vedlegg-mangler dokument når vedlegg mangler`() {
         every { storageService.hent(any(), any()) } answers { null }
         val vedleggreferanser = listOf(Vedleggreferanse("21", "vedlegg100.pdf", 300,""))
-//        val dokumenter = service.opprettDokumenter(vedleggreferanser, "12345678901")
-//
-//        assertThat(dokumenter.size).isEqualTo(1)
-//        assertThat(dokumenter[0].tittel).isEqualTo("vedlegg100.pdf - VEDLEGG MANGLER, KONTAKT INNMELDER")
-//        assertThat(dokumenter[0].dokumentvarianter.size).isEqualTo(1)
-//        assertThat(dokumenter[0].dokumentvarianter[0].filtype).isEqualTo(Filtype.PDF)
-//        assertThat(dokumenter[0].dokumentvarianter[0].fysiskDokument.size).isGreaterThan(0)
+        val dokumenter = service.opprettDokumenter(vedleggreferanser, "12345678901")
+
+        assertThat(dokumenter.size).isEqualTo(1)
+        assertThat(dokumenter[0].tittel).isEqualTo("vedlegg100.pdf - VEDLEGG MANGLER, KONTAKT INNMELDER")
+        assertThat(dokumenter[0].dokumentvarianter.size).isEqualTo(1)
+        assertThat(dokumenter[0].dokumentvarianter[0].filtype).isEqualTo(Filtype.PDF)
+        assertThat(dokumenter[0].dokumentvarianter[0].fysiskDokument.size).isGreaterThan(0)
     }
 
 

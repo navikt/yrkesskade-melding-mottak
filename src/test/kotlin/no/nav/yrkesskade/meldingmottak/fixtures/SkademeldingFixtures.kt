@@ -204,8 +204,6 @@ fun beriketData(): BeriketData {
     return BeriketData(
         innmeldersNavn = Navn("Inn", null, "Melder"),
         skadelidtsNavn = Navn("Ska", "De", "Lidt"),
-        innmeldersNorskIdentitetsnummer = "11111177777",
-        skadelidtsNorskIdentitetsnummer = "11111177778",
         skadelidtsBostedsadresse = no.nav.yrkesskade.meldingmottak.domene.Adresse(
             adresselinje1 = "Stigen 7A",
             adresselinje2 = "7730 Småby",

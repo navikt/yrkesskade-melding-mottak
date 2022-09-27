@@ -1,4 +1,4 @@
-package no.nav.yrkesskade.skadeforklaring.v2.integration.model
+package no.nav.yrkesskade.skadeforklaring.integration.mottak.model
 
 import java.time.Instant
 
