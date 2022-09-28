@@ -102,9 +102,9 @@ internal class PdfSkadeforklaringMapperTest {
         assertThat(fravaer.fravaertype.verdi).isEqualTo("Sykemelding")
     }
 
-    private fun assertHelseinstitusjoner(helseinstitusjoner: Soknadsfelt<List<String>>) {
+    private fun assertHelseinstitusjoner(helseinstitusjoner: Soknadsfelt<List<PdfHelseinstitusjon>>) {
         helseinstitusjoner.verdi.forEach {
-            assertThat(it).isEqualTo("Bli-bra-igjen Legesenter")
+            assertThat(it.navn).isEqualTo("Bli-bra-igjen Legesenter")
         }
     }
 

@@ -112,16 +112,16 @@ object PdfSkadeforklaringMapper {
         return kodeverkHolder.mapKodeTilVerdi(kode, kodeliste)
     }
 
-    private fun tilPdfHelseinstitusjoner(helseinstitusjoner: List<Helseinstitusjon>): Soknadsfelt<List<String>> {
+    private fun tilPdfHelseinstitusjoner(helseinstitusjoner: List<Helseinstitusjon>): Soknadsfelt<List<PdfHelseinstitusjon>> {
         val mappetHelseinstitusjoner = helseinstitusjoner.mapNotNull {
-            it.navn
+            tilPdfHelseinstitusjon(it)
         }
         return Soknadsfelt("Hvor har du blitt behandlet (valgfritt)", mappetHelseinstitusjoner)
     }
 
     private fun tilPdfHelseinstitusjon(helseinstitusjon: Helseinstitusjon): PdfHelseinstitusjon {
         return PdfHelseinstitusjon(
-            navn = Soknadsfelt("Hvor har du blitt behandlet (valgfritt)", helseinstitusjon.navn)
+            navn = helseinstitusjon.navn
         )
     }
 

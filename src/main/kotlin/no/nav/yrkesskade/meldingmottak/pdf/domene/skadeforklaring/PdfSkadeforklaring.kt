@@ -12,7 +12,7 @@ data class PdfSkadeforklaring(
     val fravaer: PdfFravaer,
     val erHelsepersonellOppsokt: Soknadsfelt<String>,
     val foersteHelsepersonellOppsoktDato: Soknadsfelt<String>,
-    val helseinstitusjoner: Soknadsfelt<List<String>>,
+    val helseinstitusjoner: Soknadsfelt<List<PdfHelseinstitusjon>>,
     val vedleggInfo: Soknadsfelt<List<String>>,
     val dokumentInfo: PdfDokumentInfoSkadeforklaring
 ) : PdfData()
@@ -34,7 +34,7 @@ data class PdfFravaer(
 )
 
 data class PdfHelseinstitusjon(
-    val navn: Soknadsfelt<String?>,
+    val navn: String?,
 )
 
 data class PdfDokumentInfoSkadeforklaring(
