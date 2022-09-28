@@ -12,6 +12,15 @@ fun gyldigPersonMedNavnOgVegadresse(): Person {
     )
 }
 
+fun gyldigPersonFra(kommunenummer: String?, fornavn: String? = "Per", etternavn: String? = "Olsen"): Person {
+    return Person(
+        listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),
+        listOf(Navn(fornavn!!, null, etternavn!!, "$fornavn $etternavn")),
+        emptyList(),
+        listOf(bostedVegadresse(kommunenummer))
+    )
+}
+
 fun gyldigPersonMedNavnOgMatrikkeladresse(): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.UGRADERT)),
@@ -66,27 +75,27 @@ fun doedPerson(): Person {
     )
 }
 
-fun gyldigFortroligPersonMedNavnOgVegadresse(): Person {
+fun gyldigFortroligPersonMedNavnOgVegadresse(kommunenr: String? = null): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG)),
         listOf(Navn("Fortrolig", null, "Person", "Fortrolig Person")),
         emptyList(),
-        listOf(bostedVegadresse())
+        listOf(bostedVegadresse(kommunenr))
     )
 }
 
-fun gyldigStrengtFortroligPersonMedNavnOgVegadresse(): Person {
+fun gyldigStrengtFortroligPersonMedNavnOgVegadresse(kommunenr: String? = null): Person {
     return Person(
         listOf(Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG)),
         listOf(Navn("Strengt", "Fortrolig", "Person", "Strengt Fortrolig Person")),
         emptyList(),
-        listOf(bostedVegadresse())
+        listOf(bostedVegadresse(kommunenr))
     )
 }
 
-fun bostedVegadresse(): Bostedsadresse {
+fun bostedVegadresse(kommunenummer: String? = null): Bostedsadresse {
     return Bostedsadresse(
-        vegadresse = Vegadresse(matrikkelId = "12345"),
+        vegadresse = Vegadresse(matrikkelId = "12345", kommunenummer = kommunenummer),
         matrikkeladresse = null,
         ukjentBosted = null,
         utenlandskAdresse = null

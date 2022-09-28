@@ -11,10 +11,11 @@ import reactor.netty.http.client.HttpClient
 @Configuration
 class WebClientConfiguration(private val webClientBuilder: WebClient.Builder,
                              @Value("\${oppgave.url}") val oppgaveServiceURL: String,
+                             @Value("\${api.client.arbeidsfordeling.url}") val arbeidsfordelingServiceURL: String,
                              @Value("\${dokarkiv.url}") val dokarkivServiceURL: String,
                              @Value("\${YRKESSKADE_DOKGEN_API_URL}") val pdfServiceURL: String,
                              @Value("\${YRKESSKADE_KODEVERK_API_URL}") val kodeverkServiceURL: String,
-                             @Value("\${skjermede-personer-pip.url}") val skjermedePersonerServiceURL: String,
+                             @Value("\${api.client.skjermede-personer-pip.url}") val skjermedePersonerServiceURL: String,
                              @Value("\${YRKESSKADE_INFOTRYGD_API_URL}") val infotrygdServiceURL: String) {
 
     companion object {
@@ -26,6 +27,14 @@ class WebClientConfiguration(private val webClientBuilder: WebClient.Builder,
     fun oppgaveWebClient(): WebClient {
         return webClientBuilder
             .baseUrl(oppgaveServiceURL)
+            .clientConnector(ReactorClientHttpConnector(HttpClient.newConnection()))
+            .build()
+    }
+
+    @Bean
+    fun arbeidsfordelingWebClient(): WebClient {
+        return webClientBuilder
+            .baseUrl(arbeidsfordelingServiceURL)
             .clientConnector(ReactorClientHttpConnector(HttpClient.newConnection()))
             .build()
     }

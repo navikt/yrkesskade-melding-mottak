@@ -19,6 +19,11 @@ query($ident: String!, $idtype: BrukerIdType!, $journalstatuser: [Journalstatus]
         sakstype
         tema
       }
+      dokumenter {
+        dokumentInfoId
+        tittel
+        brevkode
+      }
     }
   }
 }

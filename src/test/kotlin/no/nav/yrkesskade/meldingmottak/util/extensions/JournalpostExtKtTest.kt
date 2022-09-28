@@ -31,19 +31,19 @@ internal class JournalpostExtKtTest {
         assertThat(journalpostMedNedlagtEnhet.journalfoerendeEnhetEllerNull()).isNull()
     }
 
-    @Test
-    fun `journalfoerendeEnhetEllerNull gir yrkessykdomsenheten naar brevkoden er arbeidstilsynsmeldingskopi`() {
-        val journalpostMedArbeidstilsynsmeldingKopi = gyldigJournalpostMedAktoerId().copy(
-            dokumenter = listOf(
-                DokumentInfo(
-                    "Kopi av melding om arbeidsrelatert sykdom til Arbeidstilsynet",
-                    Brevkode.ARBEIDSTILSYNSMELDING_KOPI.kode
-                )
-            )
-        )
-
-        assertThat(
-            journalpostMedArbeidstilsynsmeldingKopi.journalfoerendeEnhetEllerNull()
-        ).isEqualTo(ENHET_YRKESSYKDOM)
-    }
+//    @Test
+//    fun `journalfoerendeEnhetEllerNull gir yrkessykdomsenheten naar brevkoden er arbeidstilsynsmeldingskopi`() {
+//        val journalpostMedArbeidstilsynsmeldingKopi = gyldigJournalpostMedAktoerId().copy(
+//            dokumenter = listOf(
+//                DokumentInfo(
+//                    "Kopi av melding om arbeidsrelatert sykdom til Arbeidstilsynet",
+//                    Brevkode.ARBEIDSTILSYNSMELDING_KOPI.kode
+//                )
+//            )
+//        )
+//
+//        assertThat(
+//            journalpostMedArbeidstilsynsmeldingKopi.journalfoerendeEnhetEllerNull()
+//        ).isEqualTo(ENHET_YRKESSYKDOM)
+//    }
 }

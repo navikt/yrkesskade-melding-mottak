@@ -85,11 +85,17 @@ fun sakerResultMedForGammelGenerellYrkesskadesak(): Saker.Result =
 fun journalposterResult(): Journalposter.Result =
     Journalposter.Result(Dokumentoversikt(journalposter()))
 
+fun journalposterResultMedTannlegeerklaeringUtenSak(): Journalposter.Result =
+    Journalposter.Result(Dokumentoversikt(journalposterMedTannlegeerklaeringUtenSak()))
+
 fun forGamleJournalposterResult(): Journalposter.Result =
     Journalposter.Result(Dokumentoversikt(forGamleJournalposter()))
 
 fun journalposterResultMedSak(): Journalposter.Result =
     Journalposter.Result(Dokumentoversikt(journalposterMedSak()))
+
+fun journalposterResultUtenSakOgDokumenter(): Journalposter.Result =
+    Journalposter.Result(Dokumentoversikt(journalposterUtenSakOgDokumenter()))
 
 fun saker(): List<Sak> =
     listOf(fagsakAnnetTema())
