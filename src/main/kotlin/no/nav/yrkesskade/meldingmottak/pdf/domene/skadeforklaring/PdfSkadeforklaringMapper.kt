@@ -88,10 +88,10 @@ object PdfSkadeforklaringMapper {
         Soknadsfelt("Gi en så nøyaktig beskrivelse av hendelsen som mulig", ulykkesbeskrivelse)
 
     private fun tilPdfHelsepersonellOppsokt(erHelsepersonellOppsokt: String) =
-        Soknadsfelt("Ble lege oppsøkt etter skaden?", MapperUtil.jaNei(erHelsepersonellOppsokt))
+        Soknadsfelt("Ble helsepersonell oppsøkt etter skaden?", MapperUtil.jaNei(erHelsepersonellOppsokt))
 
     private fun tilPdfFoersteHelsepersonellOppsoktDato(foersteHelsepersonellOppsoktDato: LocalDate?) =
-        Soknadsfelt("Når ble lege oppsøkt første gang?", MapperUtil.datoFormatert(foersteHelsepersonellOppsoktDato))
+        Soknadsfelt("Når hadde du første time hos lege/behandler?", MapperUtil.datoFormatert(foersteHelsepersonellOppsoktDato))
 
     private fun tilPdfFravaer(fravaer: Fravaer, kodeverkHolder: KodeverkHolder): PdfFravaer {
         val foerteTilFravaer = when(fravaer.foerteDinSkadeEllerSykdomTilFravaer) {
@@ -115,26 +115,26 @@ object PdfSkadeforklaringMapper {
     private fun tilPdfHelseinstitusjoner(helseinstitusjoner: List<Helseinstitusjon>): Soknadsfelt<List<String>> {
         val mappetHelseinstitusjoner = helseinstitusjoner.mapNotNull {
             it.navn
-        }.orEmpty()
-        return Soknadsfelt("Navn på helseforetak, legevakt eller lege", mappetHelseinstitusjoner)
+        }
+        return Soknadsfelt("Hvor har du blitt behandlet (valgfritt)", mappetHelseinstitusjoner)
     }
 
     private fun tilPdfHelseinstitusjon(helseinstitusjon: Helseinstitusjon): PdfHelseinstitusjon {
         return PdfHelseinstitusjon(
-            navn = Soknadsfelt("Navn på helseforetak, legevakt eller lege", helseinstitusjon.navn)
+            navn = Soknadsfelt("Hvor har du blitt behandlet (valgfritt)", helseinstitusjon.navn)
         )
     }
 
     private fun tilPdfVedleggInfo(skadeforklaring: Skadeforklaring): Soknadsfelt<List<String>> {
         val tekster = mutableListOf<String>()
         if (skadeforklaring.vedleggreferanser.isNotEmpty()) {
-            tekster.add("Bruker har opplastet vedlegg")
+            tekster.add("Bruker har blitt bedt om å  sende inn dokumentasjon og har lagt ved alt i denne innsendingen")
         }
         if (skadeforklaring.skalEttersendeDokumentasjon == "ja") {
             tekster.add("Bruker skal ettersende dokumentasjon")
         }
         else {
-            tekster.add("Bruker har ingenting mer å tilføye")
+            tekster.add("Bruker skal ikke sende inn ytterligere dokumentasjon")
         }
 
         return Soknadsfelt("Vedlegg", tekster)
