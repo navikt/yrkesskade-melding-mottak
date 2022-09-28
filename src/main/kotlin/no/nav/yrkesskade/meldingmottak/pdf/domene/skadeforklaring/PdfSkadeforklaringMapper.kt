@@ -127,14 +127,10 @@ object PdfSkadeforklaringMapper {
 
     private fun tilPdfVedleggInfo(skadeforklaring: Skadeforklaring): Soknadsfelt<List<String>> {
         val tekster = mutableListOf<String>()
-        if (skadeforklaring.vedleggreferanser.isNotEmpty()) {
-            tekster.add("Bruker har blitt bedt om å  sende inn dokumentasjon og har lagt ved alt i denne innsendingen")
-        }
-        if (skadeforklaring.skalEttersendeDokumentasjon == "ja") {
-            tekster.add("Bruker skal ettersende dokumentasjon")
-        }
-        else {
-            tekster.add("Bruker skal ikke sende inn ytterligere dokumentasjon")
+        when (skadeforklaring.skalEttersendeDokumentasjon) {
+            "ja" -> tekster.add("Bruker skal ettersende dokumentasjon")
+            "nei" -> tekster.add("Bruker skal ikke sende inn ytterligere dokumentasjon")
+            "ferdig" -> tekster.add("Bruker har blitt bedt om å  sende inn dokumentasjon og har lagt ved alt i denne innsendingen")
         }
 
         return Soknadsfelt("Vedlegg", tekster)
