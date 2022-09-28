@@ -3,6 +3,7 @@ package no.nav.yrkesskade.meldingmottak.services
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
+@Suppress("NonAsciiCharacters")
 internal class EnhetsrutingStatusTest {
 
     @Test
@@ -13,6 +14,7 @@ internal class EnhetsrutingStatusTest {
             ------------------------------------------
             Finnes ikke i PDL                            [Nei]
             Er død                                       [Nei]
+            Har vergemål eller fremtidsfullmakt          [Nei]
             Er fortrolig (kode 7)                        [Nei]
             Er strengt fortrolig (kode 6)                [Nei]
             Er egen ansatt/skjermet person               [Nei]
@@ -35,6 +37,7 @@ internal class EnhetsrutingStatusTest {
             ------------------------------------------
             Finnes ikke i PDL                             [Ja]
             Er død                                       [Nei]
+            Har vergemål eller fremtidsfullmakt          [Nei]
             Er fortrolig (kode 7)                        [Nei]
             Er strengt fortrolig (kode 6)                [Nei]
             Er egen ansatt/skjermet person               [Nei]
@@ -51,6 +54,11 @@ internal class EnhetsrutingStatusTest {
     @Test
     fun `tekst naar person er doed`() {
         assertThat(RutingStatus(doed = true).resultatSomTekst()).contains("Er død                                        [Ja]")
+    }
+
+    @Test
+    fun `tekst naar person har vergemål eller fremtidsfullmakt`() {
+        assertThat(RutingStatus(harVergemaalEllerFremtidsfullmakt = true).resultatSomTekst()).contains("Har vergemål eller fremtidsfullmakt           [Ja]")
     }
 
     @Test
@@ -102,6 +110,17 @@ internal class EnhetsrutingStatusTest {
 
         status.doed = true
         assertThat(status.doed).isTrue
+        assertThat(status.rutingResult).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+    }
+
+    @Test
+    fun `resultat skal oppdateres naar Har vergemål eller fremtidsfullmaktHar vergemål eller fremtidsfullmakt blir satt`() {
+        val status = RutingStatus()
+        assertThat(status.harVergemaalEllerFremtidsfullmakt).isFalse
+        assertThat(status.rutingResult).isEqualTo(Rute.YRKESSKADE_SAKSBEHANDLING)
+
+        status.harVergemaalEllerFremtidsfullmakt = true
+        assertThat(status.harVergemaalEllerFremtidsfullmakt).isTrue
         assertThat(status.rutingResult).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
     }
 
@@ -175,6 +194,7 @@ internal class EnhetsrutingStatusTest {
     fun `skal gi riktig rutingårsak`() {
         assertThat(RutingStatus(finnesIkkeIPdl = true).rutingAarsak()).isEqualTo(RutingAarsak.FINNES_IKKE_I_PDL)
         assertThat(RutingStatus(doed = true).rutingAarsak()).isEqualTo(RutingAarsak.DOED)
+        assertThat(RutingStatus(harVergemaalEllerFremtidsfullmakt = true).rutingAarsak()).isEqualTo(RutingAarsak.VERGEMAAL_FREMTIDSFULLMAKT)
         assertThat(RutingStatus(kode7Fortrolig = true).rutingAarsak()).isEqualTo(RutingAarsak.KODE_7_FORTROLIG)
         assertThat(RutingStatus(kode6StrengtFortrolig = true).rutingAarsak()).isEqualTo(RutingAarsak.KODE_6_STRENGT_FORTROLIG)
         assertThat(RutingStatus(egenAnsatt = true).rutingAarsak()).isEqualTo(RutingAarsak.EGEN_ANSATT)
