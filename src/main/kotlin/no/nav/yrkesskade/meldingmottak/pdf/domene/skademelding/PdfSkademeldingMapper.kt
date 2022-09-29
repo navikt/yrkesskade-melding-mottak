@@ -32,6 +32,11 @@ object PdfSkademeldingMapper {
         return PdfSkademelding(innmelder, skadelidt, skade, hendelsesfakta, dokumentInfo)
     }
 
+    private fun erMilitaerRolletype(rolletype: String) : Boolean {
+        val militaerRolletyper = listOf("vernepliktigIFoerstegangstjenesten", "militaerTilsatt")
+
+        return militaerRolletyper.contains(rolletype)
+    }
 
     private fun tilPdfInnmelder(innmelder: Innmelder?, innmeldersNavn: Navn?): PdfInnmelder? {
         if (innmelder == null) {
@@ -73,12 +78,12 @@ object PdfSkademeldingMapper {
             stillingstittelTilDenSkadelidte = Soknadsfelt("Stilling", dekningsforhold.stillingstittelTilDenSkadelidte.orEmpty().map { kodeverkHolder.mapKodeTilVerdi(it, "stillingstittel") }),
             rolletype = Soknadsfelt("Rolle", PdfRolletype(dekningsforhold.rolletype, kodeverkHolder.mapKodeTilVerdi(dekningsforhold.rolletype, "rolletype"))),
             tjenesteperiode = mapTjenesteperiodeHvisFoerstegangstjeneste(dekningsforhold.tjenesteperiode, dekningsforhold.rolletype),
-            tjenestegjoerendeAvdeling = mapTjenestegjoerendeAvdelingHvisFoerstegangstjeneste(dekningsforhold.tjenestegjoerendeAvdeling, dekningsforhold.rolletype)
+            tjenestegjoerendeAvdeling = mapTjenestegjoerendeAvdelingHvisFoerstegangstjeneste(dekningsforhold.tjenestegjoerendeAvdelingNavnPaaFartoey, dekningsforhold.rolletype)
         )
     }
 
     private fun mapTjenesteperiodeHvisFoerstegangstjeneste(periode: Periode?, rolletype: String): Soknadsfelt<PdfPeriode>? {
-        if (rolletype != "vernepliktigIFoerstegangstjenesten") {
+        if (!erMilitaerRolletype(rolletype)) {
             return null
         }
         val pdfPeriode = if (periode != null) tilPdfPeriode(periode!!) else PdfPeriode("", "")
@@ -89,10 +94,10 @@ object PdfSkademeldingMapper {
         tjenestegjoerendeAvdeling: String?,
         rolletype: String
     ): Soknadsfelt<String>? {
-        if (rolletype != "vernepliktigIFoerstegangstjenesten") {
+        if (!erMilitaerRolletype(rolletype)) {
             return null
         }
-        return Soknadsfelt("Tjenestegjørende avdeling", tjenestegjoerendeAvdeling.orEmpty())
+        return Soknadsfelt("Tjenestegjørende avdeling eller navn på fartøy", tjenestegjoerendeAvdeling.orEmpty())
     }
 
     private fun tilPdfSkade(skade: Skade, kodeverkHolder: KodeverkHolder): PdfSkade? {
