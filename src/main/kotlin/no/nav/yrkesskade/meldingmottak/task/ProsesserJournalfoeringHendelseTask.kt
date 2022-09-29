@@ -14,8 +14,6 @@ import no.nav.yrkesskade.meldingmottak.clients.bigquery.schema.ruting_v1
 import no.nav.yrkesskade.meldingmottak.clients.gosys.*
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
-import no.nav.yrkesskade.meldingmottak.config.FeatureToggleService
-import no.nav.yrkesskade.meldingmottak.config.FeatureToggles
 import no.nav.yrkesskade.meldingmottak.domene.Brevkode
 import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
 import no.nav.yrkesskade.meldingmottak.services.ArbeidsfordelingService
@@ -54,8 +52,7 @@ class ProsesserJournalfoeringHendelseTask(
     private val rutingService: RutingService,
     private val oppgaveClient: OppgaveClient,
     private val bigQueryClient: BigQueryClient,
-    private val dokumentTilSaksbehandlingClient: DokumentTilSaksbehandlingClient,
-    private val featureToggleService: FeatureToggleService
+    private val dokumentTilSaksbehandlingClient: DokumentTilSaksbehandlingClient
 ) : AsyncTaskStep {
 
     val log: Logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass())
@@ -74,20 +71,9 @@ class ProsesserJournalfoeringHendelseTask(
 
         val foedselsnummer = hentFoedselsnummer(journalpost.bruker, payloadDto.journalpostId)
 
-        // TODO: YSMOD-509 fjerne feature toggle når ruting skal kunne gå til vår saksbehandling
-        val erIkkeProd = featureToggleService.isEnabled(FeatureToggles.ER_IKKE_PROD.toggleId, false).also {
-            log.info("${FeatureToggles.ER_IKKE_PROD.toggleId}: $it")
-        }
-
-        // TODO: YSMOD-509 rutingsjekken kan inlines når feature toggle er fjernet. den er trukket ut for å sikre at rutingmetrikk ble lagret til bigquery.
-        val skalRutesTilYsSaksbehandling = foedselsnummer != null &&
-                journalpostErKandidatForYsSaksbehandling(journalpost) &&
-                skalRutesTilYsSaksbehandling(foedselsnummer, journalpost)
-
-        if (erIkkeProd &&
-            foedselsnummer != null &&
+        if (foedselsnummer != null &&
             journalpostErKandidatForYsSaksbehandling(journalpost) &&
-            skalRutesTilYsSaksbehandling
+            skalRutesTilYsSaksbehandling(foedselsnummer, journalpost)
         ) {
             val dokumentTilSaksbehandlingHendelse = DokumentTilSaksbehandlingHendelse(
                 DokumentTilSaksbehandling(

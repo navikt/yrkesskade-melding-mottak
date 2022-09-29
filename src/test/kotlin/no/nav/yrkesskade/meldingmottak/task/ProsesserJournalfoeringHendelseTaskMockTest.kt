@@ -9,7 +9,6 @@ import no.nav.yrkesskade.meldingmottak.clients.bigquery.BigQueryClientStub
 import no.nav.yrkesskade.meldingmottak.clients.gosys.OppgaveClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.PdlClient
 import no.nav.yrkesskade.meldingmottak.clients.graphql.SafClient
-import no.nav.yrkesskade.meldingmottak.config.FeatureToggleService
 import no.nav.yrkesskade.meldingmottak.fixtures.*
 import no.nav.yrkesskade.meldingmottak.hendelser.DokumentTilSaksbehandlingClient
 import no.nav.yrkesskade.meldingmottak.services.ArbeidsfordelingService
@@ -39,20 +38,17 @@ internal class ProsesserJournalfoeringHendelseTaskMockTest {
 
     private val bigQueryClientStub: BigQueryClient = BigQueryClientStub()
 
-    private val featureToggleService: FeatureToggleService = mockk()
-
     private val journalpostId = "1337"
     private val task = ProsesserJournalfoeringHendelseTask.opprettTask(journalpostId)
 
     private val prosesserJournalfoeringHendelseTask: ProsesserJournalfoeringHendelseTask =
-        ProsesserJournalfoeringHendelseTask(arbeidsfordelingService, safClientMock, pdlClientMock, rutingServiceMock, oppgaveClientMock, bigQueryClientStub, dokumentTilSaksbehandlingClient, featureToggleService)
+        ProsesserJournalfoeringHendelseTask(arbeidsfordelingService, safClientMock, pdlClientMock, rutingServiceMock, oppgaveClientMock, bigQueryClientStub, dokumentTilSaksbehandlingClient)
 
     @BeforeEach
     fun init() {
         MDC.put(MDCConstants.MDC_CALL_ID, "mock")
         every { pdlClientMock.hentIdenter(any(), any(), any()) } returns hentIdenterResultMedBrukerAktoeridOgFoedselsnummer()
         every { rutingServiceMock.utfoerRuting(any()) } returns RutingResult(Rute.GOSYS_OG_INFOTRYGD, RutingStatus(eksisterendeInfotrygdSak = true))
-        every { featureToggleService.isEnabled(any(), any()) } returns true
     }
 
     @Test
