@@ -34,5 +34,12 @@ query($ident: ID!) {
                 landkode
             }
         }
+        vergemaalEllerFremtidsfullmakt {
+          type
+          folkeregistermetadata {
+            gyldighetstidspunkt
+            opphoerstidspunkt
+          }
+        }
     }
 }

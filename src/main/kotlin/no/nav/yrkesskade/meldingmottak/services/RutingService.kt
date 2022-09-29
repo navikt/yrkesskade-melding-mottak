@@ -57,6 +57,7 @@ class RutingService(
 
         if (finnesIkkeIPdl(person, status)
             || erDoed(person!!, status)
+            || harVergemaalEllerFremtidsfullmakt(person, status)
             || erKode7Fortrolig(person, status)
             || erKode6StrengtFortrolig(person, status)
             || erEgenAnsatt(foedselsnummer, status)
@@ -86,6 +87,10 @@ class RutingService(
     internal fun erDoed(person: Person, status: RutingStatus): Boolean =
         person.doedsfall.isNotEmpty()
             .also { status.doed = it }
+
+    internal fun harVergemaalEllerFremtidsfullmakt(person: Person, status: RutingStatus): Boolean =
+        person.vergemaalEllerFremtidsfullmakt.isNotEmpty()
+            .also { status.harVergemaalEllerFremtidsfullmakt = it }
 
     internal fun erKode7Fortrolig(person: Person, status: RutingStatus): Boolean {
         return person.adressebeskyttelse.contains(Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG))
@@ -174,6 +179,7 @@ enum class Rute {
 enum class RutingAarsak {
     FINNES_IKKE_I_PDL,
     DOED,
+    VERGEMAAL_FREMTIDSFULLMAKT,
     KODE_7_FORTROLIG,
     KODE_6_STRENGT_FORTROLIG,
     EGEN_ANSATT,
@@ -191,6 +197,12 @@ class RutingStatus {
         }
 
     var doed: Boolean = false
+        set(value) {
+            field = value
+            oppdaterRutingResult()
+        }
+
+    var harVergemaalEllerFremtidsfullmakt: Boolean = false
         set(value) {
             field = value
             oppdaterRutingResult()
@@ -237,6 +249,7 @@ class RutingStatus {
     constructor(
         finnesIkkeIPdl: Boolean = false,
         doed: Boolean = false,
+        harVergemaalEllerFremtidsfullmakt: Boolean = false,
         kode7Fortrolig: Boolean = false,
         kode6StrengtFortrolig: Boolean = false,
         egenAnsatt: Boolean = false,
@@ -247,6 +260,7 @@ class RutingStatus {
     ) {
         this.finnesIkkeIPdl = finnesIkkeIPdl
         this.doed = doed
+        this.harVergemaalEllerFremtidsfullmakt = harVergemaalEllerFremtidsfullmakt
         this.kode7Fortrolig = kode7Fortrolig
         this.kode6StrengtFortrolig = kode6StrengtFortrolig
         this.egenAnsatt = egenAnsatt
@@ -271,6 +285,9 @@ class RutingStatus {
         }
         if (doed) {
             return RutingAarsak.DOED
+        }
+        if (harVergemaalEllerFremtidsfullmakt) {
+            return RutingAarsak.VERGEMAAL_FREMTIDSFULLMAKT
         }
         if (kode7Fortrolig) {
             return RutingAarsak.KODE_7_FORTROLIG
@@ -298,6 +315,7 @@ class RutingStatus {
         builder.append("------------------------------------------\n")
         leggTilStatusLinje("Finnes ikke i PDL", finnesIkkeIPdl, builder)
         leggTilStatusLinje("Er død", doed, builder)
+        leggTilStatusLinje("Har vergemål eller fremtidsfullmakt", harVergemaalEllerFremtidsfullmakt, builder)
         leggTilStatusLinje("Er fortrolig (kode 7)", kode7Fortrolig, builder)
         leggTilStatusLinje("Er strengt fortrolig (kode 6)", kode6StrengtFortrolig, builder)
         leggTilStatusLinje("Er egen ansatt/skjermet person", egenAnsatt, builder)
@@ -325,6 +343,7 @@ class RutingStatus {
     private fun enSjekkHarSlaattTil(): Boolean {
         return finnesIkkeIPdl ||
                 doed ||
+                harVergemaalEllerFremtidsfullmakt ||
                 kode7Fortrolig ||
                 kode6StrengtFortrolig ||
                 egenAnsatt ||

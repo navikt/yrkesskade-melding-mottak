@@ -44,8 +44,13 @@ class EnhetsrutingServiceTest {
 
     @Test
     fun `er levende`() {
-        val person = Person(emptyList(), emptyList(), emptyList(), emptyList())
+        val person = Person(emptyList(), emptyList(), emptyList(), emptyList(), emptyList())
         assertThat(service.erDoed(person, status)).isFalse
+    }
+
+    @Test
+    fun `har vergemål`() {
+        assertThat(service.harVergemaalEllerFremtidsfullmakt(PersonBuilder().vergemaal().build(), status)).isTrue
     }
 
     @Test
@@ -176,6 +181,12 @@ class EnhetsrutingServiceTest {
     }
 
     @Test
+    fun `hvis person har vergemål eller fremtidsfullmakt, rut til gammelt saksbehandlingssystem`() {
+        every { pdlClientMock.hentPerson(any()) } returns personMedVergemaal()
+        assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
+    }
+
+    @Test
     fun `hvis person er kode 7 fortrolig, rut til gammelt saksbehandlingssystem`() {
         every { pdlClientMock.hentPerson(any()) } returns gyldigFortroligPersonMedNavnOgVegadresse()
         assertThat(service.utfoerRuting(foedselsnummer).rute).isEqualTo(Rute.GOSYS_OG_INFOTRYGD)
@@ -276,12 +287,14 @@ class EnhetsrutingServiceTest {
         var adressebeskyttelse: List<Adressebeskyttelse> = emptyList(),
         var navn: List<Navn> = emptyList(),
         var doedsfall: List<Doedsfall> = emptyList(),
-        var bostedsadresse: List<Bostedsadresse> = emptyList()
+        var bostedsadresse: List<Bostedsadresse> = emptyList(),
+        var vergemaalEllerFremtidsfullmakt: List<VergemaalEllerFremtidsfullmakt> = emptyList()
     ) {
         fun adressebeskyttelse(gradering: AdressebeskyttelseGradering) = apply { this.adressebeskyttelse = listOf(Adressebeskyttelse(gradering))}
         fun doedsfallUtenDato() = apply { this.doedsfall = listOf(Doedsfall(null)) }
         fun doedsfall(doedsdato: Date) = apply { this.doedsfall = listOf(Doedsfall(doedsdato)) }
-        fun build() = Person(adressebeskyttelse, navn, doedsfall, bostedsadresse)
+        fun vergemaal() = apply { this.vergemaalEllerFremtidsfullmakt = listOf(VergemaalEllerFremtidsfullmakt("voksen", Folkeregistermetadata(null, null))) }
+        fun build() = Person(adressebeskyttelse, navn, doedsfall, bostedsadresse, vergemaalEllerFremtidsfullmakt)
     }
 
 }
