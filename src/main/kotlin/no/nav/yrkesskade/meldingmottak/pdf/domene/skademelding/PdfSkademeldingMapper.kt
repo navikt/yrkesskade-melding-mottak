@@ -78,7 +78,7 @@ object PdfSkademeldingMapper {
             stillingstittelTilDenSkadelidte = Soknadsfelt("Stilling", dekningsforhold.stillingstittelTilDenSkadelidte.orEmpty().map { kodeverkHolder.mapKodeTilVerdi(it, "stillingstittel") }),
             rolletype = Soknadsfelt("Rolle", PdfRolletype(dekningsforhold.rolletype, kodeverkHolder.mapKodeTilVerdi(dekningsforhold.rolletype, "rolletype"))),
             tjenesteperiode = mapTjenesteperiodeHvisFoerstegangstjeneste(dekningsforhold.tjenesteperiodeEllerManoever, dekningsforhold.rolletype),
-            tjenestegjoerendeAvdeling = mapTjenestegjoerendeAvdelingHvisFoerstegangstjeneste(dekningsforhold.tjenestegjoerendeAvdelingNavnPaaFartoey, dekningsforhold.rolletype)
+            tjenestegjoerendeAvdeling = mapTjenestegjoerendeAvdelingHvisFoerstegangstjeneste(dekningsforhold.navnPaatjenestegjoerendeavdelingEllerFartoeyEllerStudiested, dekningsforhold.rolletype)
         )
     }
 
