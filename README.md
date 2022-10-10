@@ -1,3 +1,6 @@
+Dette repoet er flyttet til https://github.com/navikt/yrkesskade
+
+
 # yrkesskade-melding-mottak
 Mottaksmodul for innsendte meldinger om yrkesskade, -sykdom og menerstatning
 
