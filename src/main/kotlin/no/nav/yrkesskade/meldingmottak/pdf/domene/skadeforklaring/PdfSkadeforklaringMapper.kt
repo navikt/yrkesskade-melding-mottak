@@ -7,6 +7,7 @@ import no.nav.yrkesskade.meldingmottak.util.kodeverk.KodeverkHolder
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringInnsendingHendelse
 import no.nav.yrkesskade.skadeforklaring.integration.mottak.model.SkadeforklaringMetadata
 import no.nav.yrkesskade.skadeforklaring.model.*
+import java.time.LocalDate
 
 object PdfSkadeforklaringMapper {
 
@@ -23,7 +24,9 @@ object PdfSkadeforklaringMapper {
         val arbeidsbeskrivelse = tilPdfArbeidsbeskrivelse(skadeforklaring.arbeidetMedIUlykkesoeyeblikket)
         val ulykkesbeskrivelse = tilPdfUlykkesbeskrivelse(skadeforklaring.noeyaktigBeskrivelseAvHendelsen)
         val fravaer = tilPdfFravaer(skadeforklaring.fravaer, kodeverkHolder)
-        val helseinstitusjon = tilPdfHelseinstitusjon(skadeforklaring.helseinstitusjon)
+        val erHelsepersonellOppsokt = tilPdfHelsepersonellOppsokt(skadeforklaring.erHelsepersonellOppsokt)
+        val foersteHelsepersonellOppsoktDato = tilPdfFoersteHelsepersonellOppsoktDato(skadeforklaring.foersteHelsepersonellOppsoktDato)
+        val helseinstitusjoner = tilPdfHelseinstitusjoner(skadeforklaring.helseinstitusjoner)
         val vedleggInfo = tilPdfVedleggInfo(skadeforklaring)
         val dokumentInfo = lagPdfDokumentInfoSkadeforklaring(record.metadata)
 
@@ -34,9 +37,11 @@ object PdfSkadeforklaringMapper {
             arbeidetMedIUlykkesoeyeblikket = arbeidsbeskrivelse,
             noeyaktigBeskrivelseAvHendelsen = ulykkesbeskrivelse,
             fravaer = fravaer,
-            helseinstitusjon = helseinstitusjon,
+            helseinstitusjoner = helseinstitusjoner,
             vedleggInfo = vedleggInfo,
-            dokumentInfo = dokumentInfo
+            dokumentInfo = dokumentInfo,
+            erHelsepersonellOppsokt = erHelsepersonellOppsokt,
+            foersteHelsepersonellOppsoktDato = foersteHelsepersonellOppsoktDato
         )
     }
 
@@ -82,6 +87,12 @@ object PdfSkadeforklaringMapper {
     private fun tilPdfUlykkesbeskrivelse(ulykkesbeskrivelse: String): Soknadsfelt<String> =
         Soknadsfelt("Gi en så nøyaktig beskrivelse av hendelsen som mulig", ulykkesbeskrivelse)
 
+    private fun tilPdfHelsepersonellOppsokt(erHelsepersonellOppsokt: String) =
+        Soknadsfelt("Ble helsepersonell oppsøkt etter skaden?", MapperUtil.jaNei(erHelsepersonellOppsokt))
+
+    private fun tilPdfFoersteHelsepersonellOppsoktDato(foersteHelsepersonellOppsoktDato: LocalDate?) =
+        Soknadsfelt("Når hadde du første time hos lege/behandler?", MapperUtil.datoFormatert(foersteHelsepersonellOppsoktDato))
+
     private fun tilPdfFravaer(fravaer: Fravaer, kodeverkHolder: KodeverkHolder): PdfFravaer {
         val foerteTilFravaer = when(fravaer.foerteDinSkadeEllerSykdomTilFravaer) {
             "fravaersdagerUkjent" -> "Ja"
@@ -101,36 +112,25 @@ object PdfSkadeforklaringMapper {
         return kodeverkHolder.mapKodeTilVerdi(kode, kodeliste)
     }
 
-    private fun tilPdfHelseinstitusjon(helseinstitusjon: Helseinstitusjon): PdfHelseinstitusjon {
-        return PdfHelseinstitusjon(
-            erHelsepersonellOppsokt = Soknadsfelt("Ble lege oppsøkt etter skaden?", MapperUtil.jaNei(helseinstitusjon.erHelsepersonellOppsokt)),
-            navn = Soknadsfelt("Navn på helseforetak, legevakt eller lege", helseinstitusjon.navn),
-            adresse = Soknadsfelt("Adresse", tilPdfAdresse(helseinstitusjon.adresse))
-        )
+    private fun tilPdfHelseinstitusjoner(helseinstitusjoner: List<Helseinstitusjon>): Soknadsfelt<List<PdfHelseinstitusjon>> {
+        val mappetHelseinstitusjoner = helseinstitusjoner.mapNotNull {
+            tilPdfHelseinstitusjon(it)
+        }
+        return Soknadsfelt("Hvor har du blitt behandlet (valgfritt)", mappetHelseinstitusjoner)
     }
 
-    private fun tilPdfAdresse(adresse: Adresse?): PdfAdresse? {
-        if (adresse == null) {
-            return null
-        }
-        return PdfAdresse(
-            adresselinje1 = adresse.adresse,
-            adresselinje2 = adresse.postnummer + " " + adresse.poststed,
-            adresselinje3 = null,
-            land = null
+    private fun tilPdfHelseinstitusjon(helseinstitusjon: Helseinstitusjon): PdfHelseinstitusjon {
+        return PdfHelseinstitusjon(
+            navn = helseinstitusjon.navn
         )
     }
 
     private fun tilPdfVedleggInfo(skadeforklaring: Skadeforklaring): Soknadsfelt<List<String>> {
         val tekster = mutableListOf<String>()
-        if (skadeforklaring.vedleggreferanser.isNotEmpty()) {
-            tekster.add("Bruker har opplastet vedlegg")
-        }
-        if (skadeforklaring.skalEttersendeDokumentasjon == "ja") {
-            tekster.add("Bruker skal ettersende dokumentasjon")
-        }
-        else {
-            tekster.add("Bruker har ingenting mer å tilføye")
+        when (skadeforklaring.skalEttersendeDokumentasjon) {
+            "ja" -> tekster.add("Bruker skal ettersende dokumentasjon")
+            "nei" -> tekster.add("Bruker skal ikke sende inn ytterligere dokumentasjon")
+            "ferdig" -> tekster.add("Bruker har blitt bedt om å  sende inn dokumentasjon og har lagt ved alt i denne innsendingen")
         }
 
         return Soknadsfelt("Vedlegg", tekster)
